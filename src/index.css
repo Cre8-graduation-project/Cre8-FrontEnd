@@ -9,6 +9,7 @@
   display: flex;
   flex-direction: column;
   min-width: 500px;
+  min-height: 100dvh;
 
   color-scheme: light dark;
   color: var(--color-gray-900);

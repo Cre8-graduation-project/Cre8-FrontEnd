@@ -15,7 +15,6 @@ export default function SubTagSelector({ tagList, selectedTag, setTag, toggle = 
         tagList.map((tag, index) => (
           <li className={classes.chip} key={index}>
             <Chip
-              size="small"
               label={tag}
               color={(selectedTag == tag) ? "primary" : "default"}
               onClick={() => {

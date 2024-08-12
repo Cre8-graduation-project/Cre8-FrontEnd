@@ -26,13 +26,7 @@
 }
 
 .recPostInfoArea {
-  display: flex;
-  flex-direction: row;
-  border-bottom: 1px solid var(--color-gray-500);
-}
-.recPostInfoAreaBox {
-  width: 50%;
-  padding: 1.3rem 1.3rem 1rem 1.3rem;
+  padding: 0 1.3rem;
 
   p {
     margin: 0;
@@ -45,19 +39,6 @@
 }
 .recPostInfoAreaRow {
   display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  padding: 0.3rem 0 0.3rem 0;
-  font-size: 0.9rem;
-
-  ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-}
-.recPostInfoAreaInputRow {
-  display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.3rem 0 0.3rem 0;
@@ -66,6 +47,12 @@
   input {
     width: 1rem;
     flex-grow: 3;
+    margin: 0;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 }
 
@@ -73,6 +60,8 @@
   padding: 0.3rem 1.3rem;
   min-height: 10rem;
   flex-grow: 1;
+  margin-top: 0.7rem;
+  border-top: 1px solid var(--color-gray-500);
 }
 
 .recPostBtnArea {
@@ -105,6 +94,8 @@
 .editDescArea {
   display: flex;
   flex-direction: column;
+  margin-top: 0.7rem;
+  border-top: 1px solid var(--color-gray-500);
 }
 .editDescArea h3 {
   margin: 1.3rem 1.3rem 0.9rem 1.3rem;

@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useRouteLoaderData } from "react-router-dom";
-import { Divider, ImageList, ImageListItem, Chip, Fab } from "@mui/material";
-
+import {
+  Divider,
+  ImageList,
+  ImageListItem,
+  Chip,
+  Fab,
+  Grid,
+} from "@mui/material";
 import PageContent from "../../components/PageContent";
 import TitleBar from "../../components/TitleBar";
 import TagList from "../../components/Tag/TagList";
@@ -69,36 +75,50 @@ export default function JobPostPage() {
             </ImageList>
           </div>
           <div className={classes.jobPostInfoArea}>
-            <div className={classes.jobPostInfoAreaBox}>
-              <h3>역량</h3>
-              {data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
-                (item, itemIndex) => (
-                  <div key={itemIndex} className={classes.jobPostInfoAreaRow}>
-                    <p>{item.subCategoryName}</p>
-                    <ul>
-                      {item.childTagName.map((child, childIndex) => (
-                        <li key={childIndex}>
-                          <Chip label={child} size="small" />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )
-              )}
-            </div>
-            <Divider orientation="vertical" flexItem />
-            <div className={classes.jobPostInfoAreaBox}>
-              <h3>작성자 정보</h3>
-              <div className={classes.jobPostInfoAreaRow}>
-                <p>희망 급여</p>
-                <Chip label={data.paymentMethod} size="small" />
-                <b>{data.paymentAmount}</b>
-              </div>
-              <div className={classes.jobPostInfoAreaRow}>
-                <p>작업 경력</p>
-                <b>{data.careerYear}</b>
-              </div>
-            </div>
+            <Grid
+              container
+              columns={{ xs: 2, sm: 31 }}
+              spacing={{ xs: 2, sm: 2 }}
+              sx={{
+                marginTop: "0.7rem !important",
+              }}
+              justifyContent="space-between"
+            >
+              <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+                <h3>역량</h3>
+                {data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
+                  (item, itemIndex) => (
+                    <div key={itemIndex} className={classes.jobPostInfoAreaRow}>
+                      <p>{item.subCategoryName}</p>
+                      <ul>
+                        {item.childTagName.map((child, childIndex) => (
+                          <li key={childIndex}>
+                            <Chip label={child} size="small" />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )
+                )}
+              </Grid>
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ mr: "-1px", paddingLeft: "16px" }}
+              />
+              <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+                <h3>작성자 정보</h3>
+                <div className={classes.jobPostInfoAreaRow}>
+                  <p>희망 급여</p>
+                  <Chip label={data.paymentMethod} size="small" />
+                  <b>{data.paymentAmount}</b>
+                </div>
+                <div className={classes.jobPostInfoAreaRow}>
+                  <p>작업 경력</p>
+                  <b>{data.careerYear}</b>
+                </div>
+              </Grid>
+            </Grid>
           </div>
           <div className={classes.jobPostDescArea}>
             <ReadOnlyEditor content={JSON.parse(data.contents)} />

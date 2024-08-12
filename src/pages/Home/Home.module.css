@@ -1,0 +1,6 @@
+.homePostArea {
+  display: flex;
+  flex-direction: row;
+  margin: 0 1.3rem;
+  gap: 1.3rem;
+}

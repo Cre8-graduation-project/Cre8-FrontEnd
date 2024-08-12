@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  useParams,
-  useNavigate,
-  useLocation,
-  useRouteLoaderData,
-} from "react-router-dom";
+import { useNavigate, useLocation, useRouteLoaderData } from "react-router-dom";
 import {
   Backdrop,
   CircularProgress,
@@ -12,6 +7,7 @@ import {
   Chip,
   Divider,
   Button,
+  Grid,
 } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
 
@@ -31,10 +27,14 @@ export default function RecruitEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { memberCode } = useAuth();
-  const [data, setData] = useState(useRouteLoaderData("recruit-page-edit"));
+  const [data, setData] = useState(
+    location.state.isCreation
+      ? INITIAL_REC_VALUE
+      : useRouteLoaderData("recruit-page-edit")
+  );
   // Portfolio Description in JSON type
   const [postContent, setPostContent] = useState(
-    JSON.parse(data.contents) || ""
+    location.state.isCreation ? "" : JSON.parse(data.contents)
   );
   // Tag Data
   const [tagData, setTagData] = useState();
@@ -64,7 +64,7 @@ export default function RecruitEditPage() {
   useEffect(() => {
     // After Main Tag Data is loaded...
     // load recruit data as initial value
-    if (tagData && data.tagPostResponseDto.workFieldTagName) {
+    if (tagData && data?.tagPostResponseDto?.workFieldTagName) {
       tagData.map((item) => {
         if (data.tagPostResponseDto.workFieldTagName == item.name) {
           setSelectedTag(item.workFieldTagId);
@@ -81,31 +81,37 @@ export default function RecruitEditPage() {
         setTagElementData(res);
         //console.log(tagElementData);
       });
+      setSelectedElement(new Set());
     }
   }, [selectedTag]);
   useEffect(() => {
     // After Tag Element loaded...
     // load post data as initial value
-    let tempData = [];
-    data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
-      (subItem) => {
-        tempData = [...tempData, ...subItem.childTagName];
-      }
-    );
-    const tempElement = new Set();
-    // 
-    if (tagElementData && tempData) {
-      tagElementData.map((elementItem) => {
-        elementItem.workFieldChildTagResponseDtoList.map((childItem) => {
-          if (tempData.length == 0) {
-            setSelectedElement(new Set(tempElement));
-          }
-          if (tempData[0] == childItem.name) {
-            tempElement.add(childItem.workFieldChildTagId);
-            tempData.shift();
-          }
+    if (
+      data?.tagPostResponseDto?.subCategoryWithChildTagResponseDtoList?.length >
+      0
+    ) {
+      let tempData = [];
+      data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
+        (subItem) => {
+          tempData = [...tempData, ...subItem.childTagName];
+        }
+      );
+      const tempElement = new Set();
+      //
+      if (tagElementData && tempData) {
+        tagElementData.map((elementItem) => {
+          elementItem.workFieldChildTagResponseDtoList.map((childItem) => {
+            if (tempData.length == 0) {
+              setSelectedElement(new Set(tempElement));
+            }
+            if (tempData[0] == childItem.name) {
+              tempElement.add(childItem.workFieldChildTagId);
+              tempData.shift();
+            }
+          });
         });
-      });
+      }
     }
   }, [tagElementData]);
 
@@ -125,7 +131,12 @@ export default function RecruitEditPage() {
   const handleSaveEdit = (e) => {
     e.preventDefault();
 
-    if(isEmpty(memberCode) || isEmpty(data.title) || isEmpty(data.companyName) || isEmpty(postContent)) {
+    if (
+      isEmpty(memberCode) ||
+      isEmpty(data.title) ||
+      isEmpty(data.companyName) ||
+      isEmpty(postContent)
+    ) {
       Toast.error("입력되지 않은 내용이 있습니다.");
       return;
     }
@@ -133,25 +144,26 @@ export default function RecruitEditPage() {
     setIsUploading(true);
 
     var inputData = {
-      "employerPostId": memberCode,
-      "title": data.title,
-      "workFieldId": selectedTag,
-      "workFieldChildTagId": [...selectedElement],
-      "paymentMethod": data.paymentMethod,
-      "paymentAmount": data.paymentAmount,
-      "companyName": data.companyName,
-      "numberOfEmployee": data.numberOfEmployee,
-      "enrollDurationType": data.enrollDurationType,
-      "deadLine": data.deadLine,
-      "hopeCareerYear": isCareerNotRequired ? 0 : data.hopeCareerYear,
-      "contents": JSON.stringify(postContent),
-    }
-    
+      employerPostId: memberCode,
+      title: data.title,
+      workFieldId: selectedTag,
+      workFieldChildTagId: [...selectedElement],
+      paymentMethod: data.paymentMethod,
+      paymentAmount: data.paymentAmount,
+      companyName: data.companyName,
+      numberOfEmployee: data.numberOfEmployee,
+      enrollDurationType: data.enrollDurationType,
+      deadLine: data.deadLine,
+      hopeCareerYear: isCareerNotRequired ? 0 : data.hopeCareerYear,
+      contents: JSON.stringify(postContent),
+      contact: data.contact,
+    };
+
     recPostEditAction(inputData, location.state.isCreation)
       .then((res) => {
         // Success
         if (res && res.status === 200) {
-          navigate("..");
+          navigate("..", { relative: "path" });
         }
       })
       .catch((error) => {
@@ -173,8 +185,9 @@ export default function RecruitEditPage() {
         }
       />
       <div className={classes.editTitleArea}>
-        <h3>게시글 정보</h3>
+        <h3>게시글 정보 *</h3>
         <TextField
+          size="small"
           fullWidth
           label="제목"
           variant="outlined"
@@ -184,6 +197,7 @@ export default function RecruitEditPage() {
           required
         />
         <TextField
+          size="small"
           fullWidth
           label="모집 주체"
           variant="outlined"
@@ -192,9 +206,19 @@ export default function RecruitEditPage() {
           onChange={handleInputChange}
           required
         />
+        <TextField
+          size="small"
+          fullWidth
+          label="연락처 (이메일 / 전화번호)"
+          variant="outlined"
+          name="contact"
+          value={data.contact}
+          onChange={handleInputChange}
+          required
+        />
       </div>
       <div className={classes.editTagArea}>
-        <h3>구인 태그 설정</h3>
+        <h3>구인 태그 설정 *</h3>
         <TagSelector
           title="작업 분야"
           tagList={tagData}
@@ -213,103 +237,121 @@ export default function RecruitEditPage() {
           ))}
       </div>
       <div className={classes.recPostInfoArea}>
-        <div className={classes.recPostInfoAreaBox}>
-          <h3>급여 정보</h3>
-          <div className={classes.recPostInfoAreaRow}>
-            <p>지급 방식</p>
-            <SubTagSelector
-              tagList={payType}
-              selectedTag={data.paymentMethod}
-              setTag={(input) => {
-                setData({
-                  ...data,
-                  paymentMethod: input,
-                })
-              }}
-            />
-          </div>
-          <div className={classes.recPostInfoAreaInputRow}>
-            <p>희망 급여</p>
-            <input
-              type="number"
-              name="paymentAmount"
-              value={data.paymentAmount}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-        <Divider orientation="vertical" flexItem />
-        <div className={classes.recPostInfoAreaBox}>
-          <h3>모집 조건</h3>
-          <div className={classes.recPostInfoAreaInputRow}>
-            <p>모집 인원</p>
-            <input
-              type="number"
-              name="numberOfEmployee"
-              value={data.numberOfEmployee}
-              onChange={handleInputChange}
-            />
-            <b>명</b>
-          </div>
-          <div className={classes.recPostInfoAreaRow}>
-            <p>모집 기간</p>
-            <SubTagSelector
-              tagList={durationType}
-              selectedTag={data.enrollDurationType}
-              setTag={(input) => {
-                setData({
-                  ...data,
-                  enrollDurationType: input,
-                })
-              }}
-            />
-          </div>
-          {data.enrollDurationType == "마감일 지정" && (
-            <div className={classes.recPostInfoAreaInputRow}>
-              <p>모집 기간</p>
-              <input
-                type="date"
-                name="deadLine"
-                max="9999-12-31"
-                value={data.deadLine}
-                onChange={handleInputChange}
+        <Grid
+          container
+          columns={{ xs: 2, sm: 31 }}
+          spacing={{ xs: 2, sm: 2 }}
+          sx={{
+            marginTop: "0.7rem !important",
+          }}
+          justifyContent="space-between"
+        >
+          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+            <h3>급여 정보 *</h3>
+            <div className={classes.recPostInfoAreaRow}>
+              <p>지급 방식</p>
+              <SubTagSelector
+                tagList={payType}
+                selectedTag={data.paymentMethod}
+                setTag={(input) => {
+                  setData({
+                    ...data,
+                    paymentMethod: input,
+                  });
+                }}
               />
             </div>
-          )}
-          <div className={classes.recPostInfoAreaInputRow}>
-            <p>요구 경력</p>
-            <Chip
-              size="small"
-              label="경력 무관"
-              color={isCareerNotRequired ? "primary" : "default"}
-              onClick={() => {
-                setIsCareerNotRequired(!isCareerNotRequired);
-              }}
-            />
-            {!isCareerNotRequired && (
-              <>
+            <div className={classes.recPostInfoAreaRow}>
+              <p>희망 급여</p>
+              <input
+                type="number"
+                name="paymentAmount"
+                value={data.paymentAmount}
+                onChange={handleInputChange}
+              />
+              <b>원</b>
+            </div>
+          </Grid>
+          <Divider
+            orientation="vertical"
+            flexItem
+            sx={{ mr: "-1px", paddingLeft: "16px" }}
+          />
+          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+            <h3>모집 조건 *</h3>
+            <div className={classes.recPostInfoAreaRow}>
+              <p>모집 인원</p>
+              <input
+                type="number"
+                name="numberOfEmployee"
+                value={data.numberOfEmployee}
+                onChange={handleInputChange}
+              />
+              <b>명</b>
+            </div>
+            <div className={classes.recPostInfoAreaRow}>
+              <p>모집 기간</p>
+              <SubTagSelector
+                tagList={durationType}
+                selectedTag={data.enrollDurationType}
+                setTag={(input) => {
+                  setData({
+                    ...data,
+                    enrollDurationType: input,
+                  });
+                }}
+              />
+            </div>
+            {data.enrollDurationType == "마감일 지정" && (
+              <div className={classes.recPostInfoAreaRow}>
+                <p>모집 기간</p>
                 <input
-                  type="number"
-                  name="hopeCareerYear"
-                  value={data.hopeCareerYear}
+                  type="date"
+                  name="deadLine"
+                  max="9999-12-31"
+                  value={data.deadLine}
                   onChange={handleInputChange}
                 />
-                <b>명</b>
-              </>
+              </div>
             )}
-          </div>
-        </div>
+            <div className={classes.recPostInfoAreaRow}>
+              <p>요구 경력</p>
+              <Chip
+                label="경력 무관"
+                color={isCareerNotRequired ? "primary" : "default"}
+                onClick={() => {
+                  setIsCareerNotRequired(!isCareerNotRequired);
+                }}
+              />
+              {!isCareerNotRequired && (
+                <>
+                  <input
+                    type="number"
+                    name="hopeCareerYear"
+                    value={data.hopeCareerYear}
+                    onChange={handleInputChange}
+                  />
+                  <b>명</b>
+                </>
+              )}
+            </div>
+          </Grid>
+        </Grid>
       </div>
       <div className={classes.editDescArea}>
-        <h3>작업물 설명</h3>
+        <h3>작업물 설명 *</h3>
         <RecPostEditor
           postContent={postContent}
           setPostContent={setPostContent}
         />
       </div>
       <div className={classes.editBtnArea}>
-        <Button variant="outlined" onClick={handleCancelEdit}>취소</Button>
-        <Button variant="contained" onClick={handleSaveEdit}>저장</Button>
+        <Button variant="outlined" onClick={handleCancelEdit}>
+          취소
+        </Button>
+        <Button variant="contained" onClick={handleSaveEdit}>
+          저장
+        </Button>
       </div>
     </div>
   );
@@ -320,7 +362,7 @@ async function recPostEditAction(inputData, isCreation = true) {
   try {
     const response = await apiInstance({
       method: isCreation ? "post" : "put",
-      url: "/employer/posts",
+      url: "/api/v1/employer/posts",
       data: inputData,
     });
     if (response.status === 200) {
@@ -370,4 +412,27 @@ const RecPostEditor = ({ postContent, setPostContent }) => {
       <EditorContent editor={editor} />
     </div>
   );
+};
+
+const INITIAL_REC_VALUE = {
+  status: "",
+  message: "",
+  data: {
+    title: "",
+    companyName: "",
+    tagPostResponseDto: {
+      workFieldTagName: "",
+      subCategoryWithChildTagResponseDtoList: [],
+    },
+    paymentMethod: "",
+    paymentAmount: "",
+    numberOfEmployee: "",
+    enrollDurationType: "",
+    deadLine: "",
+    hopeCareerYear: "",
+    contents: "",
+    contact: "",
+    writerId: "",
+    writerAccessUrl: "",
+  },
 };

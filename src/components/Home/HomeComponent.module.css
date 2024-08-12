@@ -5,10 +5,132 @@
   margin: 1.3rem;
   padding: 1.3rem;
   background-color: var(--color-primary-200);
+  border: 1px solid var(--color-primary-300);
   border-radius: 1rem;
   height: 7rem;
 
   h2 {
-    margin: 0.3rem;
+    margin: 0.3rem 0;
+  }
+}
+
+.homePostCardArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  h3 {
+    margin: 1.5rem 0;
+    margin-top: 0.3rem;
+  }
+}
+
+.homePostCard {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  gap: 0.3rem;
+  background-color: var(--color-gray-100) !important;
+  border: 1px solid var(--color-gray-200);
+  font-size: 15px;
+}
+.homePostLink {
+  padding: 0 0.3rem;
+  border-radius: 0.3rem;
+  display: flex;
+}
+.homePostLink:hover {
+  background-color: var(--color-gray-150) !important;
+}
+.homePostLink .titleCategory {
+  color: #656360;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+.homePostLink .titleName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.homePostLink .titleComment {
+  color: #ef5350;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-left: 4px;
+}
+
+.homeCategoryArea {
+  margin: 0.3rem 1.3rem;
+
+  h3 {
+    margin: 1.5rem 0;
+  }
+}
+
+.homeCategoryCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 1.3rem 0.5rem 1.3rem;
+  border-radius: 1.2rem !important;
+  background-color: var(--color-gray-100) !important;
+  border: 1px solid var(--color-gray-200);
+
+  img {
+    width: 10dvw;
+    min-width: 5rem;
+  }
+  p {
+    font-size: medium;
+    font-weight: 600;
+    margin-top: 0.6em;
+    margin-bottom: 0.4em;
+  }
+}
+.homeCategoryCard:hover {
+  background-color: var(--color-gray-150) !important;
+}
+
+.homeJobPostCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.3rem 1rem 1rem 1rem;
+  border-radius: 1rem !important;
+  background-color: var(--color-gray-100) !important;
+  border: 1px solid var(--color-gray-200);
+  gap: 0.8rem;
+
+  h3 {
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  ul {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+  }
+  ul::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30%;
+    background: linear-gradient(to left, var(--color-gray-100) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  li {
+    display: inline-block;
+    padding-right: 0.5rem;
   }
 }

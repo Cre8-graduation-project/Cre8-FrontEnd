@@ -15,6 +15,7 @@ import {
   Chip,
   Divider,
   Button,
+  Grid,
 } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
 
@@ -34,11 +35,14 @@ export default function JobEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { memberCode } = useAuth();
-  //const [data, setData] = useState(useRouteLoaderData("job-page-edit"));
-  const [data, setData] = useState(dummyPageData);
+  const [data, setData] = useState(
+    location.state.isCreation
+      ? INITIAL_JOB_VALUE
+      : useRouteLoaderData("job-page-edit")
+  );
   // Job Description in JSON type
   const [postContent, setPostContent] = useState(
-    JSON.parse(data.contents) || ""
+    location.state.isCreation ? "" : JSON.parse(data.contents)
   );
   // Tag Data
   const [tagData, setTagData] = useState();
@@ -64,7 +68,7 @@ export default function JobEditPage() {
   useEffect(() => {
     // After Main Tag Data is loaded...
     // load recruit data as initial value
-    if (tagData && data.tagPostResponseDto.workFieldTagName) {
+    if (tagData && data?.tagPostResponseDto?.workFieldTagName) {
       tagData.map((item) => {
         if (data.tagPostResponseDto.workFieldTagName == item.name) {
           setSelectedTag(item.workFieldTagId);
@@ -81,31 +85,37 @@ export default function JobEditPage() {
         setTagElementData(res);
         //console.log(tagElementData);
       });
+      setSelectedElement(new Set());
     }
   }, [selectedTag]);
   useEffect(() => {
     // After Tag Element loaded...
     // load post data as initial value
-    let tempData = [];
-    data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
-      (subItem) => {
-        tempData = [...tempData, ...subItem.childTagName];
-      }
-    );
-    const tempElement = new Set();
-    //
-    if (tagElementData && tempData) {
-      tagElementData.map((elementItem) => {
-        elementItem.workFieldChildTagResponseDtoList.map((childItem) => {
-          if (tempData.length == 0) {
-            setSelectedElement(new Set(tempElement));
-          }
-          if (tempData[0] == childItem.name) {
-            tempElement.add(childItem.workFieldChildTagId);
-            tempData.shift();
-          }
+    if (
+      data?.tagPostResponseDto?.subCategoryWithChildTagResponseDtoList?.length >
+      0
+    ) {
+      let tempData = [];
+      data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
+        (subItem) => {
+          tempData = [...tempData, ...subItem.childTagName];
+        }
+      );
+      const tempElement = new Set();
+      //
+      if (tagElementData && tempData) {
+        tagElementData.map((elementItem) => {
+          elementItem.workFieldChildTagResponseDtoList.map((childItem) => {
+            if (tempData.length == 0) {
+              setSelectedElement(new Set(tempElement));
+            }
+            if (tempData[0] == childItem.name) {
+              tempElement.add(childItem.workFieldChildTagId);
+              tempData.shift();
+            }
+          });
         });
-      });
+      }
     }
   }, [tagElementData]);
 
@@ -141,6 +151,7 @@ export default function JobEditPage() {
       paymentAmount: data.paymentAmount,
       careerYear: data.careerYear,
       contents: JSON.stringify(postContent),
+      contact: data.contact,
     };
 
     //console.log(inputData);
@@ -149,7 +160,7 @@ export default function JobEditPage() {
       .then((res) => {
         // Success
         if (res && res.status === 200) {
-          navigate("..");
+          navigate("..", { relative: "path" });
         }
       })
       .catch((error) => {
@@ -169,10 +180,11 @@ export default function JobEditPage() {
         title={
           location.state.isCreation ? "구직 게시글 작성" : "구직 게시글 수정"
         }
-      />
+      ></TitleBar>
       <div className={classes.editTitleArea}>
-        <h3>게시글 정보</h3>
+        <h3>게시글 정보 *</h3>
         <TextField
+          size="small"
           fullWidth
           label="제목"
           variant="outlined"
@@ -181,9 +193,19 @@ export default function JobEditPage() {
           onChange={handleInputChange}
           required
         />
+        <TextField
+          size="small"
+          fullWidth
+          label="연락처 (이메일 / 전화번호)"
+          variant="outlined"
+          name="contact"
+          value={data.contact}
+          onChange={handleInputChange}
+          required
+        />
       </div>
       <div className={classes.editTagArea}>
-        <h3>구인 태그 설정</h3>
+        <h3>구인 태그 설정 *</h3>
         <TagSelector
           title="작업 분야"
           tagList={tagData}
@@ -202,48 +224,59 @@ export default function JobEditPage() {
           ))}
       </div>
       <div className={classes.jobPostInfoArea}>
-        <div className={classes.jobPostInfoAreaBox}>
-          <h3>급여 정보</h3>
-          <div className={classes.jobPostInfoAreaRow}>
-            <p>지급 방식</p>
-            <SubTagSelector
-              tagList={payType}
-              selectedTag={data.paymentMethod}
-              setTag={(input) => {
-                setData({
-                  ...data,
-                  paymentMethod: input,
-                });
-              }}
-            />
-          </div>
-          <div className={classes.jobPostInfoAreaInputRow}>
-            <p>희망 급여</p>
-            <input
-              type="number"
-              name="paymentAmount"
-              value={data.paymentAmount}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-        <Divider orientation="vertical" flexItem />
-        <div className={classes.jobPostInfoAreaBox}>
-          <h3>추가 정보</h3>
-          <div className={classes.jobPostInfoAreaInputRow}>
-            <p>요구 경력</p>
-            <input
-              type="number"
-              name="careerYear"
-              value={data.careerYear}
-              onChange={handleInputChange}
-            />
-            <b>년</b>
-          </div>
-        </div>
+        <Grid
+          container
+          columns={{ xs: 2, sm: 31 }}
+          spacing={{ xs: 2, sm: 2 }}
+          sx={{
+            marginTop: "0.7rem !important",
+          }}
+          justifyContent="space-between"
+        >
+          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+            <h3>급여 정보 *</h3>
+            <div className={classes.jobPostInfoAreaRow}>
+              <p>지급 방식</p>
+              <SubTagSelector
+                tagList={payType}
+                selectedTag={data.paymentMethod}
+                setTag={(input) => {
+                  setData({
+                    ...data,
+                    paymentMethod: input,
+                  });
+                }}
+              />
+            </div>
+            <div className={classes.jobPostInfoAreaRow}>
+              <p>희망 급여</p>
+              <input
+                type="number"
+                name="paymentAmount"
+                value={data.paymentAmount}
+                onChange={handleInputChange}
+              />
+              <b>원</b>
+            </div>
+          </Grid>
+          <Divider orientation="vertical" flexItem sx={{ mr: "-1px", paddingLeft: "16px"}} />
+          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+            <h3>추가 정보 *</h3>
+            <div className={classes.jobPostInfoAreaRow}>
+              <p>작업 경력</p>
+              <input
+                type="number"
+                name="careerYear"
+                value={data.careerYear}
+                onChange={handleInputChange}
+              />
+              <b>년</b>
+            </div>
+          </Grid>
+        </Grid>
       </div>
       <div className={classes.editDescArea}>
-        <h3>작업물 설명</h3>
+        <h3>작업물 설명 *</h3>
         <RecPostEditor
           postContent={postContent}
           setPostContent={setPostContent}
@@ -271,7 +304,7 @@ async function jobPostEditAction(inputData, isCreation = true) {
   try {
     const response = await apiInstance({
       method: isCreation ? "post" : "put",
-      url: "/employee/posts",
+      url: "/api/v1/employee/posts",
       data: inputData,
     });
     if (response.status === 200) {
@@ -323,28 +356,25 @@ const RecPostEditor = ({ postContent, setPostContent }) => {
   );
 };
 
-const dummyPageData = {
-  title: "string",
-  name: "string",
-  sex: "string",
-  birthYear: 0,
-  tagPostResponseDto: {
-    workFieldTagName: "string",
-    subCategoryWithChildTagResponseDtoList: [
-      {
-        subCategoryName: "string",
-        childTagName: ["string"],
-      },
-    ],
-  },
-  portfolioSimpleResponseDtoList: [
-    {
-      id: 0,
-      accessUrl: "string",
+const INITIAL_JOB_VALUE = {
+  status: "",
+  message: "",
+  data: {
+    title: "",
+    name: "",
+    sex: "",
+    birthYear: "",
+    tagPostResponseDto: {
+      workFieldTagName: "",
+      subCategoryWithChildTagResponseDtoList: [],
     },
-  ],
-  paymentMethod: "string",
-  paymentAmount: 0,
-  careerYear: 0,
-  contents: JSON.stringify({}),
+    portfolioSimpleResponseDtoList: [],
+    paymentMethod: "",
+    paymentAmount: "",
+    careerYear: "",
+    contents: "",
+    contact: "",
+    writerId: "",
+    writerAccessUrl: "",
+  },
 };

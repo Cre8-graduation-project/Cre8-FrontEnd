@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate, useRouteLoaderData } from "react-router-dom";
+import { useLocation, useNavigate, useRouteLoaderData } from "react-router-dom";
 import { Button, Pagination } from "@mui/material";
 
 import TitleBar from "../../components/TitleBar";
@@ -16,11 +16,13 @@ import classes from "./Recruit.module.css";
 export default function RecruitPage() {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   // Tag Data
   const tagData = useRouteLoaderData("recruit-page");
   const [tagElementData, setTagElementData] = useState();
   // User selected tag
-  const [selectedTag, setSelectedTag] = useState();
+  const requestedTagID = location?.state?.tagID ?? "";
+  const [selectedTag, setSelectedTag] = useState(requestedTagID);
   const [selectedElement, setSelectedElement] = useState(new Set());
   // Recruit Post Data
   const [recruitPostData, setRecruitPostData] = useState({});
@@ -180,24 +182,3 @@ async function searchRecruitPost(recruitSearchObj, recruitPageObj) {
   }
   return {};
 }
-
-const dummyData = {
-  totalCount: 2,
-  employerPostSearchResponseDtoList: [
-    {
-      employerPostId: 0,
-      title: "Test Post 1",
-      companyName: "Test Company",
-      enrollDurationType: "Duration 1",
-      tagNameList: ["Tag1", "Tag2"],
-    },
-    {
-      employerPostId: 1,
-      title: "Test Post 2",
-      companyName: "테스트 회사",
-      enrollDurationType: "Duration 2",
-      tagNameList: ["hello?", "yyyyyyy"],
-    },
-  ],
-  totalPages: 1,
-};

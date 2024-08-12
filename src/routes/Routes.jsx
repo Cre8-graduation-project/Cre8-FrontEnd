@@ -4,7 +4,7 @@ import { useAuth } from "../provider/authProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 import RootLayout from "../pages/RootLayout.jsx";
-import HomePage from "../pages/Home.jsx";
+import HomePage from "../pages/Home/Home.jsx";
 import RecruitPage from "../pages/Recruit/Recruit.jsx";
 import RecruitPostPage, { recruitPostLoader } from "../pages/Recruit/RecruitPost.jsx";
 import RecruitEditPage from "../pages/Recruit/RecruitEdit.jsx";
