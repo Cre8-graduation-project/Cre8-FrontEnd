@@ -8,13 +8,14 @@ import apiInstance from "../../provider/networkProvider";
 import { ReadOnlyEditor } from "../../components/Editor";
 import classes from "./Portfolio.module.css";
 
-export default function PortfolioPage() {
-  const data = useRouteLoaderData("portfolio-page");
-  //const data = dummyPortfolioPageData;
-
+export default function PortfolioPage({ isFromJobPost = false }) {
+  const data = !isFromJobPost
+    ? useRouteLoaderData("portfolio-page")
+    : useRouteLoaderData("portfolio-in-jobPost");
+    
   return (
     <>
-      <TitleBar backBtnTarget={"..?tab=2"} title="포트폴리오" />
+      <TitleBar backBtnTarget={!isFromJobPost ? "..?tab=2" : ".."} title="포트폴리오" />
       {!data ? (
         <PageContent>
           <p>포트폴리오를 불러오는 중 오류가 발생했습니다.</p>
@@ -32,9 +33,9 @@ export default function PortfolioPage() {
             gap={20}
             sx={{ padding: "0 1.3rem 1.3rem 1.3rem" }}
           >
-            {data.accessUrl.map((item, index) => (
+            {data.portfolioImageResponseDtoList.map((item, index) => (
               <ImageListItem key={`IMG_${index}`}>
-                <img src={`${item}`} alt={`IMG_${index}`} />
+                <img src={`${item.portfolioImageAccessUrl}`} alt={`IMG_${index}`} />
               </ImageListItem>
             ))}
           </ImageList>
@@ -48,7 +49,7 @@ export default function PortfolioPage() {
 export async function portfolioLoader({ request, params }) {
   const pID = params.portfolioID;
   try {
-    const response = await apiInstance.get(`/portfolios/${pID}`);
+    const response = await apiInstance.get(`/api/v1/portfolios/${pID}`);
     if (response.status === 200) {
       // 조회 성공
       return response.data.data;
@@ -59,19 +60,3 @@ export async function portfolioLoader({ request, params }) {
   }
   return null;
 }
-
-const dummyPortfolioPageData = {
-  tagName: [
-    "Sample Tag",
-    "Tag2",
-    "Looooooooooong Tag",
-    "Suuuuuuuuuuuper Loooooooooooooooooooooooooooong Tag",
-    "Hello",
-  ],
-  accessUrl: [
-    "https://media1.tenor.com/m/CWHdjtoLXToAAAAC/among-us.gif",
-    "https://media1.tenor.com/m/f4PUj7wUIm4AAAAC/cat-tongue.gif",
-    "https://media1.tenor.com/m/w0dZ4Eltk7IAAAAC/vuknok.gif",
-  ],
-  description: "This is dummy data",
-};

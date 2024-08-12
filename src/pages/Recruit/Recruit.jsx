@@ -31,7 +31,7 @@ export default function RecruitPage() {
   const debouncedSearchRecruitPost = useCallback(
     debounce((searchObj, pageObj) => {
       searchRecruitPost(searchObj, pageObj).then((data) => {
-        console.log(data)
+        //console.log(data)
         setRecruitPostData(data);
       });
     }, 300),
@@ -91,7 +91,7 @@ export default function RecruitPage() {
   };
 
   return (
-    <div>
+    <>
       <TitleBar title="구인">
         {isLoggedIn && (
           <Button
@@ -148,18 +148,18 @@ export default function RecruitPage() {
           onChange={onPageChange}
         />
       </div>
-    </div>
+    </>
   );
 }
 
 // 구인 게시글 검색 함수
 async function searchRecruitPost(recruitSearchObj, recruitPageObj) {
   //console.log("Searching!");
-  console.log(recruitSearchObj);
+  //console.log(recruitSearchObj);
   //console.log(recruitPageObj);
 
   try {
-    const response = await apiInstance.get("/api/v1/employer-post/search", {
+    const response = await apiInstance.get("/api/v1/employer-posts/search", {
       params: {
         ...recruitSearchObj,
         ...recruitPageObj,

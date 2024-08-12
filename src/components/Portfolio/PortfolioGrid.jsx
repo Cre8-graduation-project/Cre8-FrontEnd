@@ -194,7 +194,7 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
 // 포트폴리오 목록 데이터 요청 함수
 async function fetchPortfolioGrid(memberCode) {
   try {
-    const response = await apiInstance.get(`/portfolios/member/${memberCode}`);
+    const response = await apiInstance.get(`/api/v1/portfolios/member/${memberCode}`);
     if (response.status === 200) {
       // 조회 성공
       if (response.data.data == "") {
@@ -214,7 +214,7 @@ async function fetchPortfolioGrid(memberCode) {
 // 포트폴리오 생성 함수
 async function createPortfolioPost() {
   try {
-    const response = await apiInstance.post(`/portfolios`);
+    const response = await apiInstance.post(`/api/v1/portfolios`);
     if (response.status === 201) {
       // 생성 성공
       return response.data.data;
@@ -229,7 +229,7 @@ async function createPortfolioPost() {
 // 포트폴리오 삭제 함수
 export async function removePortfolioPost(portfolioID) {
   try {
-    const response = await apiInstance.delete(`/portfolios/${portfolioID}`);
+    const response = await apiInstance.delete(`/api/v1/portfolios/${portfolioID}`);
     if (response.status === 200) {
       // 생성 성공
       return response.data.data;

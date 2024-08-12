@@ -3,7 +3,7 @@ import {
   useRouteLoaderData,
   useLocation,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { Avatar, Tab, IconButton, Button } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -276,20 +276,3 @@ function getExternalLink(link) {
   }
   return link;
 }
-
-// Temp Dummy Data
-const dummyPortfolioListData = [
-  {
-    id: 0,
-    accessUrl: "https://media1.tenor.com/m/CWHdjtoLXToAAAAC/among-us.gif",
-  },
-  {
-    id: 1,
-    accessUrl: "https://media1.tenor.com/m/f4PUj7wUIm4AAAAC/cat-tongue.gif",
-  },
-  {
-    id: 2,
-    accessUrl: "https://media1.tenor.com/m/w0dZ4Eltk7IAAAAC/vuknok.gif",
-  },
-];
-

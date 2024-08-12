@@ -31,7 +31,7 @@ export default function JobPage() {
   const debouncedSearchJobPost = useCallback(
     debounce((searchObj, pageObj) => {
       searchJobPost(searchObj, pageObj).then((data) => {
-        console.log(data)
+        //console.log(data)
         setJobPostData(data);
       });
     }, 300),
@@ -88,7 +88,7 @@ export default function JobPage() {
   };
 
   return (
-    <div>
+    <>
       <TitleBar title="구직">
         {isLoggedIn && (
           <Button
@@ -145,18 +145,14 @@ export default function JobPage() {
           onChange={onPageChange}
         />
       </div>
-    </div>
+    </>
   );
 }
 
 // 구직 게시글 검색 함수
 async function searchJobPost(jobSearchObj, jobPageObj) {
-  //console.log("Searching!");
-  console.log(jobSearchObj);
-  console.log(jobPageObj);
-
   try {
-    const response = await apiInstance.get("/api/v1/employee-post/search", {
+    const response = await apiInstance.get("/api/v1/employee-posts/search", {
       params: {
         ...jobSearchObj,
         ...jobPageObj,
@@ -168,7 +164,7 @@ async function searchJobPost(jobSearchObj, jobPageObj) {
         // 데이터가 비어있으면 null 반환
         return {};
       } else {
-        console.log(response.data.data)
+        //console.log(response.data.data)
         return response.data.data;
       }
     }
@@ -178,26 +174,3 @@ async function searchJobPost(jobSearchObj, jobPageObj) {
   }
   return {};
 }
-
-const dummyData = {
-  totalCount: 2,
-  employerPostSearchResponseDtoList: [
-    {
-      employeePostId: 1,
-      title: "Test Post 1",
-      memberName: "Member1",
-      sex: "M",
-      year: 0,
-      tagNameList: ["hello?", "yyyyyyy"],
-    },
-    {
-      employeePostId: 2,
-      title: "Test Post 2",
-      memberName: "Member2",
-      sex: "W",
-      year: 3,
-      tagNameList: ["asdgfsdg?", "wewewegyyyyy"],
-    },
-  ],
-  totalPages: 1,
-};

@@ -49,3 +49,4 @@ sketch
 *.pem
 /.gitmessage.txt
 /vite.config.js
+.vercel

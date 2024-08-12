@@ -11,7 +11,8 @@ import RecruitEditPage from "../pages/Recruit/RecruitEdit.jsx";
 import JobPage from "../pages/Job/Job.jsx";
 import JobPostPage, { jobPostLoader } from "../pages/Job/JobPost.jsx";
 import JobEditPage from "../pages/Job/JobEdit.jsx";
-import CommunityPage from "../pages/Community.jsx";
+import CommunityPage from "../pages/Community/Community.jsx";
+import ChatPage, { chatListLoader } from "../pages/Chat/Chat.jsx";
 import LoginPage from "../pages/UserAuth/Login.jsx";
 import RegisterPage, { action as registerAction } from "../pages/UserAuth/Register.jsx";
 import RecoverPasswordPage from "../pages/UserAuth/RecoverPassword.jsx";
@@ -65,6 +66,12 @@ const Routes = () => {
           id: "jobPost-page",
           loader: jobPostLoader,
           element: <JobPostPage />,
+        },
+        {
+          path: ":jobPostID/:portfolioID",
+          id: "portfolio-in-jobPost",
+          loader: portfolioLoader,
+          element: <PortfolioPage isFromJobPost={true} />,
         },
       ],
     },
@@ -149,6 +156,17 @@ const Routes = () => {
               id: "job-page-edit",
               loader: jobPostLoader,
               element: <JobEditPage />,
+            }
+          ]
+        },
+        {
+          path: "chat",
+          children: [
+            {
+              index: true,
+              id: "chat-page",
+              loader: chatListLoader,
+              element: <ChatPage />,
             }
           ]
         },

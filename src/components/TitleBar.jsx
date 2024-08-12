@@ -8,7 +8,7 @@ export default function TitleBar({ backBtnTarget = null, title, children }) {
 
   const handleBackBtnClick = () => {
     if (backBtnTarget) {
-      navigate(backBtnTarget);
+      navigate(backBtnTarget, {relative: "path"});
     }
   };
 

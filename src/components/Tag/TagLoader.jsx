@@ -3,7 +3,7 @@ import apiInstance from "../../provider/networkProvider";
 // 작업 분야 태그 목록 요청 함수
 export async function tagLoader() {
   try {
-    const response = await apiInstance.get("/tag");
+    const response = await apiInstance.get("/api/v1/tags");
     if (response.status === 200) {
       // 조회 성공
       return response.data.data;
@@ -18,7 +18,7 @@ export async function tagLoader() {
 // 태그 내 카테고리 목록 요청 함수
 export async function tagCategoryLoader(workFieldTagID) {
   try {
-    const response = await apiInstance.get(`/tag/subcategory/${workFieldTagID}`);
+    const response = await apiInstance.get(`/api/v1/tags/subcategory/${workFieldTagID}`);
     if (response.status === 200) {
       // 조회 성공
       return response.data.data;
@@ -33,7 +33,7 @@ export async function tagCategoryLoader(workFieldTagID) {
 // 태그 내 카테고리 및 하위 항목 요청 함수
 export async function tagElementLoader(workFieldTagID) {
   try {
-    const response = await apiInstance.get(`/tag/child/${workFieldTagID}`);
+    const response = await apiInstance.get(`/api/v1/tags/child/${workFieldTagID}`);
     if (response.status === 200) {
       // 조회 성공
       return response.data.data;

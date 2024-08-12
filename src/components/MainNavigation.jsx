@@ -28,6 +28,10 @@ export default function MainNavigation() {
     setAnchorEl(null);
   };
 
+  const handleChatClick = () => {
+    navigate("/chat");
+  }
+
   const handleProfile = () => {
     navigate(`/p/${userID}`);
   };
@@ -114,7 +118,7 @@ export default function MainNavigation() {
           <>
             <ul className={classes.buttonList}>
               <li>
-                <IconButton>
+                <IconButton onClick={handleChatClick}>
                   <RiChat4Line size={18} className={classes.navIcon} />
                 </IconButton>
               </li>

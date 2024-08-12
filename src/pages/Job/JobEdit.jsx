@@ -23,7 +23,6 @@ import TagSelector from "../../components/Tag/TagSelector";
 import SubTagSelector from "../../components/Tag/SubTagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
 import { tagElementLoader, tagLoader } from "../../components/Tag/TagLoader";
-import { removePortfolioPost } from "../../components/Portfolio/PortfolioGrid";
 import apiInstance from "../../provider/networkProvider";
 import { Toast } from "../../components/Toast";
 import { EditorMenuBar, editorExtensions } from "../../components/Editor";
@@ -32,7 +31,6 @@ import { useAuth } from "../../provider/authProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 
 export default function JobEditPage() {
-  const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { memberCode } = useAuth();

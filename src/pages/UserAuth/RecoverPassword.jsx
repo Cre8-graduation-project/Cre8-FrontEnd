@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Form, useNavigation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { Toast } from "../../components/Toast";
@@ -7,7 +7,6 @@ import classes from "./UserAuth.module.css";
 const apiAddress = import.meta.env.VITE_API_SERVER;
 
 export default function LoginPage() {
-  const navigate = useNavigate();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   // 사용자 입력 정보

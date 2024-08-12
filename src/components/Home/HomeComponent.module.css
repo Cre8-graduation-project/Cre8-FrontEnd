@@ -1,0 +1,14 @@
+.homeBanner {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 1.3rem;
+  padding: 1.3rem;
+  background-color: var(--color-primary-200);
+  border-radius: 1rem;
+  height: 7rem;
+
+  h2 {
+    margin: 0.3rem;
+  }
+}

@@ -1,16 +1,18 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
-:root {
+#root {
   font-family: Pretendard, system-ui, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
 
+  display: flex;
+  flex-direction: column;
   min-width: 500px;
 
   color-scheme: light dark;
   color: var(--color-gray-900);
-  background-color: var(--color-gray-100);
+  background-color: white;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -48,6 +50,7 @@ body {
 main {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
 }
 
 input {

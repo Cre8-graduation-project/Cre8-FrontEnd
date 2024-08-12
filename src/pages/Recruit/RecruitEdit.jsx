@@ -28,12 +28,10 @@ import { useAuth } from "../../provider/authProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 
 export default function RecruitEditPage() {
-  const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { memberCode } = useAuth();
   const [data, setData] = useState(useRouteLoaderData("recruit-page-edit"));
-  //const [data, setData] = useState(dummyPageData);
   // Portfolio Description in JSON type
   const [postContent, setPostContent] = useState(
     JSON.parse(data.contents) || ""
@@ -148,8 +146,6 @@ export default function RecruitEditPage() {
       "hopeCareerYear": isCareerNotRequired ? 0 : data.hopeCareerYear,
       "contents": JSON.stringify(postContent),
     }
-
-    //console.log(inputData);
     
     recPostEditAction(inputData, location.state.isCreation)
       .then((res) => {
@@ -319,13 +315,8 @@ export default function RecruitEditPage() {
   );
 }
 
-// 포트폴리오 데이터 수정 요청 함수
+// 구인 게시글 수정 요청 함수
 async function recPostEditAction(inputData, isCreation = true) {
-  /*
-  for (let [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-  */
   try {
     const response = await apiInstance({
       method: isCreation ? "post" : "put",
@@ -351,7 +342,7 @@ async function recPostEditAction(inputData, isCreation = true) {
   return null;
 }
 
-// 포트폴리오 에디터
+// 구인 게시글 에디터
 const RecPostEditor = ({ postContent, setPostContent }) => {
   const editor = useEditor({
     extensions: editorExtensions,
@@ -379,25 +370,4 @@ const RecPostEditor = ({ postContent, setPostContent }) => {
       <EditorContent editor={editor} />
     </div>
   );
-};
-
-const dummyPageData = {
-  title: "Title",
-  companyName: "Company",
-  tagPostResponseDto: {
-    workFieldTagName: "영상 편집",
-    subCategoryWithChildTagResponseDtoList: [
-      {
-        subCategoryName: "편집 도구",
-        childTagName: ["Premiere Pro"],
-      },
-    ],
-  },
-  paymentMethod: "월급",
-  paymentAmount: 1000000,
-  numberOfEmployee: 3,
-  enrollDurationType: "채용 시 마감",
-  localDate: "2024-07-24",
-  hopeCareerYear: 3,
-  contents: "{}",
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouteLoaderData } from "react-router-dom";
-import { Divider, ImageList, ImageListItem, Chip, Fab } from "@mui/material";
+import { Divider, Chip, Fab } from "@mui/material";
 
 import PageContent from "../../components/PageContent";
 import TitleBar from "../../components/TitleBar";
@@ -11,8 +11,6 @@ import classes from "./Recruit.module.css";
 
 export default function RecruitPostPage() {
   const data = useRouteLoaderData("recruitPost-page");
-  //console.log(data);
-  //const data = dummyPageData;
   // Tag List
   const [tagDataList, setTagDataList] = useState([]);
 
@@ -111,11 +109,11 @@ export default function RecruitPostPage() {
   );
 }
 
-// 포트폴리오 데이터 요청 함수
+// 구인 게시글 데이터 요청 함수
 export async function recruitPostLoader({ request, params }) {
   const rpID = params.recruitPostID;
   try {
-    const response = await apiInstance.get(`/employer/posts/${rpID}`);
+    const response = await apiInstance.get(`/api/v1/employer/posts/${rpID}`);
     if (response.status === 200) {
       // 조회 성공
       return response.data.data;
@@ -126,32 +124,3 @@ export async function recruitPostLoader({ request, params }) {
   }
   return null;
 }
-
-const dummyPageData = {
-  title: "Sample Title",
-  companyName: "Sample Company",
-  tagPostResponseDto: {
-    workFieldTagName: "영상 편집",
-    subCategoryWithChildTagResponseDtoList: [
-      {
-        subCategoryName: "작업 도구",
-        childTagName: ["Addddddddddt", "Dddddde"],
-      },
-    ],
-  },
-  paymentMethod: "Payment Type",
-  paymentAmount: 10000,
-  numberOfEmployee: 0,
-  enrollDurationType: "Duration",
-  localDate: "2024-07-21",
-  hopeCareerYear: 0,
-  contents: JSON.stringify({
-    type: "paragraph",
-    content: [
-      {
-        type: "text",
-        text: "Wow, this editor instance exports its content as JSON.",
-      },
-    ],
-  }),
-};

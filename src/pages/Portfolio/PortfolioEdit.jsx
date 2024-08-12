@@ -33,9 +33,10 @@ export default function PortfolioEditPage() {
   const [data, setData] = useState(useRouteLoaderData("portfolio-page-edit"));
   // Portfolio Description in JSON type
   const [ptfDesc, setPtfDesc] = useState(JSON.parse(data.description) || "");
-  const [uploadedImgArray, setUploadedImgArray] = useState([
-    ...Array(data.accessUrl.length).fill(null),
-  ]);
+  // Uploaded Image Array
+  const [uploadedImgArray, setUploadedImgArray] = useState([]);
+  // Deleted Image Array
+  const [deletedImageList, setDeletedImageList] = useState([]);
   // Tag Data
   const [tagData, setTagData] = useState();
   const [tagElementData, setTagElementData] = useState();
@@ -102,17 +103,34 @@ export default function PortfolioEditPage() {
   }, [tagElementData]);
 
   const handleDeleteImg = (index) => {
-    //console.log("REMOVE IMAGE!!");
-    setUploadedImgArray((prevArray) => {
-      prevArray.splice(index, 1);
-      return prevArray;
-    });
+    console.log("REMOVE IMAGE!!");
+    console.log(index);
+    console.log(data.portfolioImageResponseDtoList[index].portfolioImageId);
+    // If delete target is newly added image
+    if(data.portfolioImageResponseDtoList[index].portfolioImageId == null) {
+      const newImgIndex = index + uploadedImgArray.length - data.portfolioImageResponseDtoList.length;
+      console.log(newImgIndex)
+      console.log(uploadedImgArray)
+      setUploadedImgArray((prevArray) => {
+        prevArray.splice(newImgIndex, 1);
+        return prevArray;
+      });
+      console.log(uploadedImgArray)
+    } 
+    // If delete target is already uploaded image
+    else {
+      setDeletedImageList([
+        ...deletedImageList,
+        data.portfolioImageResponseDtoList[index].portfolioImageId
+      ]);
+    }
+
     setData((prevData) => {
-      const newArray = [...prevData.accessUrl];
+      const newArray = [...prevData.portfolioImageResponseDtoList];
       newArray.splice(index, 1);
       return {
         ...prevData,
-        accessUrl: newArray,
+        portfolioImageResponseDtoList: newArray,
       };
     });
   };
@@ -124,11 +142,20 @@ export default function PortfolioEditPage() {
       // Fetch Preview Image
       const uploadedImg = e.target.files[0];
       const imgURL = window.URL.createObjectURL(uploadedImg);
-      setUploadedImgArray((prevArray) => [...prevArray, uploadedImg]);
+      setUploadedImgArray((prevArray) => [
+        ...prevArray, 
+        uploadedImg,
+      ]);
       setData((prevData) => {
         return {
           ...prevData,
-          accessUrl: [...prevData.accessUrl, imgURL],
+          portfolioImageResponseDtoList: [
+            ...prevData.portfolioImageResponseDtoList, 
+            {
+              portfolioImageId: null,
+              portfolioImageAccessUrl: imgURL,
+            },
+          ],
         };
       });
     }
@@ -160,6 +187,12 @@ export default function PortfolioEditPage() {
         formData.append("multipartFileList", file);
       }
     });
+    deletedImageList.forEach((imageID) => {
+      if (imageID) {
+        formData.append("deletePortfolioImageList", imageID);
+      }
+    })
+    if(deletedImageList.length == 0) formData.append("deletePortfolioImageList", "");
     formData.append("description", JSON.stringify(ptfDesc));
 
     portfolioEditAction(formData)
@@ -207,9 +240,9 @@ export default function PortfolioEditPage() {
       <div className={classes.editImageArea}>
         <h3>이미지 첨부</h3>
         <ImageList cols={5} gap={10} sx={{ padding: "0.4rem 1.3rem" }}>
-          {data.accessUrl.map((item, index) => (
+          {data.portfolioImageResponseDtoList.map((item, index) => (
             <ImageListItem key={`IMG_${index}`}>
-              <img src={`${item}`} alt={`IMG_${index}`} />
+              <img src={`${item.portfolioImageAccessUrl}`} alt={`IMG_${index}`} />
               <IconButton
                 className={classes.deleteButton}
                 onClick={() => {
@@ -259,15 +292,15 @@ export default function PortfolioEditPage() {
 
 // 포트폴리오 데이터 수정 요청 함수
 async function portfolioEditAction(formData) {
-  /*
+  
   for (let [key, value] of formData.entries()) {
     console.log(key, value);
   }
-  */
+  
   try {
     const response = await apiInstance({
       method: "put",
-      url: "/portfolios",
+      url: "/api/v1/portfolios",
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
@@ -320,14 +353,4 @@ const PortfolioEditor = ({ ptfDesc, setPtfDesc }) => {
       <EditorContent editor={editor} />
     </div>
   );
-};
-
-const dummyPortfolioPageData = {
-  tagName: ["Sample Tag", "Tag2", "Looooooooooong Tag"],
-  accessUrl: [
-    "https://media1.tenor.com/m/CWHdjtoLXToAAAAC/among-us.gif",
-    "https://media1.tenor.com/m/f4PUj7wUIm4AAAAC/cat-tongue.gif",
-    "https://media1.tenor.com/m/w0dZ4Eltk7IAAAAC/vuknok.gif",
-  ],
-  description: "This is dummy data",
 };

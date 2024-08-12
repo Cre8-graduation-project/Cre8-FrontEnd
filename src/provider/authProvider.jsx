@@ -2,7 +2,6 @@ import { createContext, useContext, useMemo, useEffect, useState, useCallback } 
 const apiAddress = import.meta.env.VITE_API_SERVER;
 const TOKEN_REISSUE_INTERVAL = 5 * 60 * 1000 // 5 minutes
 
-let currentToken = null;
 let logoutFunction = null;
 let onLoginFunction = null;
 
@@ -29,17 +28,17 @@ export const AuthProvider = ({ children }) => {
         },
         credentials: "include",
       });
-      if (response.ok) {
+      if (response.status === 200) {
         const json = await response.json();
         setToken(json.data.accessToken);
         //console.log("Token reissued successfully");
       }
-      if (response && response.status == 400) {
+      else {
         // refreshToken deprecated
-        logout();
+        //logout();
       }
     } catch (error) {
-      console.error("Error reissuing token:", error);
+      //console.error("Error reissuing token:", error);
       logout();
     }
   }, [token]);
@@ -53,7 +52,6 @@ export const AuthProvider = ({ children }) => {
   // This feature runs whenever Token values are changed
   useEffect(() => {
     if (token) {
-      currentToken = token;
       localStorage.setItem("token", token);
     }
   }, [token]);
@@ -70,11 +68,10 @@ export const AuthProvider = ({ children }) => {
 
   // Logout Feature
   const logout = useCallback(() => {
-    //console.log("Logging out!")
+    console.log("Logging out!")
     setToken("");
     setUserID("");
     setMemberCode("");
-    currentToken = "";
     localStorage.removeItem("token");
     localStorage.removeItem("userID");
     localStorage.removeItem("memberCode");
@@ -105,7 +102,6 @@ export const useAuth = () => {
 };
 
 // Exposed Feature sets
-export const getCurrentToken = () => currentToken;
 export const requestLogout = () => logoutFunction && logoutFunction();
 export const onLogin = ({ newToken, newUserID, newMemberCode }) =>
   onLoginFunction && onLoginFunction({ newToken, newUserID, newMemberCode });

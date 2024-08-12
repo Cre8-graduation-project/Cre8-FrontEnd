@@ -1,7 +1,7 @@
 const apiAddress = import.meta.env.VITE_API_SERVER
 
 export async function fetchTestData() {
-  const response = await fetch(apiAddress + "/test");
+  const response = await fetch(apiAddress + "/api/v1/test");
   const resData = await response.json();
 
   if (!response.ok) {
@@ -12,7 +12,7 @@ export async function fetchTestData() {
 }
 
 export async function addTestData(name) {
-  const response = await fetch(apiAddress + "/test", {
+  const response = await fetch(apiAddress + "/api/v1/test", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +30,7 @@ export async function addTestData(name) {
 }
 
 export async function fetchRedisTestData() {
-  const response = await fetch(apiAddress + "/redis/test");
+  const response = await fetch(apiAddress + "/api/v1/redis/test");
   const resData = await response.json();
 
   if (!response.ok) {
@@ -41,7 +41,7 @@ export async function fetchRedisTestData() {
 }
 
 export async function addRedisTestData(redisName) {
-  const response = await fetch(apiAddress + "/redis/test", {
+  const response = await fetch(apiAddress + "/api/v1/redis/test", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -28,7 +28,7 @@ export default function JobPostPage() {
   }, []);
 
   const handleImgClick = (e, portfolioID) => {
-    //navigate(`./${portfolioID}`);
+    navigate(`./${portfolioID}`);
   };
 
   return (
@@ -125,7 +125,7 @@ export default function JobPostPage() {
 export async function jobPostLoader({ request, params }) {
   const rpID = params.jobPostID;
   try {
-    const response = await apiInstance.get(`/employee/posts/${rpID}`);
+    const response = await apiInstance.get(`/api/v1/employee/posts/${rpID}`);
     if (response.status === 200) {
       // 조회 성공
       return response.data.data;

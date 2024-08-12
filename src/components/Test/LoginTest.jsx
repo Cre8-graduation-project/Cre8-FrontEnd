@@ -12,7 +12,7 @@ export default function LoginTest() {
   const [loginMessage, setLoginMessage] = useState("");
 
   const handleClick = async () => {
-    let url = apiAddress + "/test/login";
+    let url = apiAddress + "/api/v1/test/login";
 
     const response = await fetch(url, {
       method: "GET",

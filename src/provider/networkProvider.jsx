@@ -1,6 +1,6 @@
 import qs from "qs";
 import axios from 'axios';
-import { getCurrentToken, requestLogout } from './authProvider';
+import { requestLogout } from './authProvider';
 
 const apiAddress = import.meta.env.VITE_API_SERVER;
 axios.defaults.withCredentials = true;
@@ -21,8 +21,8 @@ const apiInstance = axios.create({
 // Before Request
 apiInstance.interceptors.request.use(
   (config) => {
-    const token = getCurrentToken();
-    config.headers['Authorization'] = `Bearer ${token}`;
+    const token = localStorage.getItem("token");
+    if(token != null) config.headers['Authorization'] = `Bearer ${token}`;
     return config;
   },
   (error) => {
