@@ -1,11 +1,9 @@
 import {
   useNavigate,
-  useParams,
   useRouteLoaderData,
   useLocation,
 } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Avatar, Link, Tab, Button } from "@mui/material";
+import { Avatar, Link, Tab, Button, Divider } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 import classes from "./Profile.module.css";
@@ -28,7 +26,7 @@ export default function ProfilePage() {
     uLinkYoutube: data.youtubeLink || "",
     uLinkTwitter: data.twitterLink || "",
     uLinkWebpage: data.personalLink || "",
-    uAbout: JSON.parse(data.personalStatement) || "",
+    uAbout: data.personalStatement || "",
     uMemberCode: data.memberCode,
   };
   // Tab Index
@@ -123,6 +121,7 @@ export default function ProfilePage() {
         <TabContext value={tabIndex}>
           <TabList onChange={handleTabChange} className={classes.tabList}>
             <Tab value="1" label="자기소개" />
+            <Tab label="" icon={<Divider orientation="vertical"/>} sx={{ maxWidth: "1px", minWidth: "1px", padding: "0.8rem 0" }} disabled />
             <Tab value="2" label="포트폴리오" />
           </TabList>
           <TabPanel value="1" sx={{ padding: "0.5rem 1.3rem", height: "80%" }}>

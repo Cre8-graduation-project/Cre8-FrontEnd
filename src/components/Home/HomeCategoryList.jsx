@@ -24,7 +24,7 @@ export default function HomeCategoryList() {
         {categoryData.map((item, index) => (
           <Grid item key={index} xs={2} md={2}>
             <Card
-              elevation={3}
+              elevation={2}
               className={classes.homeCategoryCard}
               onClick={() => {
                 handleCardClick(item.tagID);

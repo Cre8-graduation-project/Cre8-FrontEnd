@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { useRouteLoaderData } from "react-router-dom";
+import { useState, useCallback, useEffect } from "react";
+import { useRouteLoaderData, useLocation } from "react-router-dom";
 import {
   Button,
   Dialog,
@@ -16,7 +16,9 @@ import ChatInputBar from "../../components/Chat/ChatInputBar";
 import { Toast } from "../../components/Toast";
 import ChatContent from "../../components/Chat/ChatContent";
 import { useChatConnection } from "../../provider/chatProvider";
+import { isEmpty } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
+
 import classes from "./Chat.module.css";
 
 export default function ChatPage() {
@@ -27,6 +29,19 @@ export default function ChatPage() {
     nickName: "",
   });
   const [chatContent, setChatContent] = useState([]);
+  const location = useLocation();
+  const chatQuery = location.state?.chatQuery ?? {};
+
+  useEffect(() => {
+    // Immediately start chat upon request
+    if(!isEmpty(chatQuery)) {
+      chatRequestWithUserCode(chatQuery.targetCode).then((res) => {
+        if (res != null) {
+          setSelectedRoom({ roomId: res, nickName: chatQuery.targetNickName });
+        }
+      });
+    }
+  }, [])
 
   const onMsgReceived = useCallback((msg) => {
     // update chat content
@@ -51,8 +66,9 @@ export default function ChatPage() {
     */
   }, []);
   const { sendMessage, connectionStatus } = useChatConnection(selectedRoom.roomId, onMsgReceived);
-  console.log(connectionStatus);
+  //console.log(connectionStatus);
 
+  // Start Chat Button
   const handleStartChatClick = () => {
     setNewChatDialogOpen(true);
   };
@@ -177,7 +193,7 @@ export default function ChatPage() {
 
 // 채팅 시작 요청 함수
 async function chatRequest(uID) {
-  console.log(uID);
+  //console.log(uID);
   try {
     const response = await apiInstance.get("/api/v1/members/pk", {
       params: { loginId: uID },
@@ -198,6 +214,23 @@ async function chatRequest(uID) {
     }
   } catch (error) {
     // 조회 실패
+    //console.error(error.message);
+    Toast.error("입력한 대상을 찾을 수 없습니다.");
+  }
+  return null;
+}
+
+// 채팅 시작 요청 함수
+async function chatRequestWithUserCode(uCode) {
+  //console.log(uCode);
+  try {
+    const chatResponse = await apiInstance.get(
+      `/api/v1/chats/user/${uCode}`
+    );
+    if (chatResponse.status === 200) {
+      return chatResponse.data.data;
+    }
+  } catch (error) {
     //console.error(error.message);
     Toast.error("입력한 대상을 찾을 수 없습니다.");
   }

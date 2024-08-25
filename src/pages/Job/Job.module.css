@@ -1,3 +1,12 @@
+.jobSearchArea {
+  display: flex;
+  flex-direction: row;
+  gap: 0.4rem;
+  padding: 0.8rem 1.2rem;
+  border-top: 1px solid var(--color-gray-500);
+  border-bottom: 1px solid var(--color-gray-500);
+}
+
 .jobTagArea {
   border-top: 1px solid var(--color-gray-500);
 }
@@ -19,9 +28,13 @@
   padding: 1.3rem;
   border-bottom: 1px solid var(--color-gray-500);
 
-  h2, h3 {
+  h2, h4 {
     margin-top: 0;
     margin-bottom: 1rem;
+  }
+  h3 {
+    margin-top: 0;
+    margin-bottom: 0.7rem;
   }
 }
 
@@ -83,6 +96,7 @@
 .jobPostDescArea {
   padding: 0.3rem 1.3rem;
   margin-top: 0.7rem;
+  margin-bottom: 4rem;
   min-height: 10rem;
   flex-grow: 1;
   border-top: 1px solid var(--color-gray-500);
@@ -97,6 +111,18 @@
   border-bottom: 1px solid var(--color-gray-500);
 }
 
+.jobPostFAB {
+  position: fixed;
+  bottom: 1.3rem;
+  right: 1.3rem;
+
+  button {
+    margin-left: 0.5rem;
+  }
+}
+.jobPostFAB:hover {
+  color: var(--color-gray-100);
+}
 
 .editTitleArea {
   display: flex;
@@ -134,11 +160,43 @@
   background-color: var(--color-gray-150);
 }
 
+.editThumbnailArea {
+  padding: 0.7rem 1.3rem 1.3rem 1.3rem;
+  border-bottom: 1px solid var(--color-gray-500);
+
+  h3 {
+    margin-top: 0.3rem;
+  }
+}
+.editThumbnailParagraph {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    width: 3rem;
+    border: 1px dashed var(--color-gray-900);
+  }
+  label:hover {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+  }
+  img {
+    aspect-ratio: 1 / 1;
+    width: 3rem;
+  }
+}
+
 .editBtnArea {
   display: flex;
   justify-content: flex-end;
-  padding: 0.7rem 1.3rem;
+  padding: 1.3rem;
   gap: 0.7rem;
+  background-color: var(--color-gray-100);
 }
 
 .editor {

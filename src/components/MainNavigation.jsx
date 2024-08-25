@@ -6,8 +6,10 @@ import {
   MenuItem,
   Avatar,
   Divider,
+  ListItemText,
+  ListItemIcon,
 } from "@mui/material";
-import { RiChat4Line, RiNotification3Line } from "@remixicon/react";
+import { RiArticleLine, RiBookmarkLine, RiChat4Line, RiLogoutBoxLine, RiNotification3Line, RiUserLine } from "@remixicon/react";
 
 import classes from "./MainNavigation.module.css";
 import { useAuth } from "../provider/authProvider";
@@ -34,6 +36,12 @@ export default function MainNavigation() {
 
   const handleProfile = () => {
     navigate(`/p/${userID}`);
+  };
+  const handleArticle = () => {
+    navigate('/my-post');
+  };
+  const handleBookmark = () => {
+    navigate('/bookmark');
   };
   const handleLogout = () => {
     sendLogoutRequest(token).then(() => {
@@ -119,17 +127,17 @@ export default function MainNavigation() {
             <ul className={classes.buttonList}>
               <li>
                 <IconButton onClick={handleChatClick}>
-                  <RiChat4Line size={18} className={classes.navIcon} />
+                  <RiChat4Line size={20} className={classes.navIcon} />
                 </IconButton>
               </li>
               <li>
                 <IconButton>
-                  <RiNotification3Line size={18} className={classes.navIcon} />
+                  <RiNotification3Line size={20} className={classes.navIcon} />
                 </IconButton>
               </li>
               <li>
                 <IconButton onClick={handleClick}>
-                  <Avatar sx={{ width: 32, height: 32 }}></Avatar>
+                  <Avatar sx={{ width: 36, height: 36 }}></Avatar>
                 </IconButton>
                 <Menu
                   anchorEl={anchorEl}
@@ -138,10 +146,25 @@ export default function MainNavigation() {
                   onClick={handleClose}
                   transformOrigin={{ horizontal: "right", vertical: "top" }}
                   anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                  disableScrollLock={true}
                 >
-                  <MenuItem onClick={handleProfile}>프로필</MenuItem>
+                  <MenuItem sx={{minHeight: "32px"}} onClick={handleProfile}>
+                    <ListItemIcon><RiUserLine size={22}/></ListItemIcon>
+                    <ListItemText>프로필</ListItemText>
+                  </MenuItem>
+                  <MenuItem sx={{minHeight: "32px"}} onClick={handleArticle}>
+                    <ListItemIcon><RiArticleLine size={22}/></ListItemIcon>
+                    <ListItemText>My 게시글</ListItemText>
+                  </MenuItem>
+                  <MenuItem sx={{minHeight: "32px"}} onClick={handleBookmark}>
+                    <ListItemIcon><RiBookmarkLine size={22}/></ListItemIcon>
+                    <ListItemText>My 북마크</ListItemText>
+                  </MenuItem>
                   <Divider />
-                  <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
+                  <MenuItem sx={{minHeight: "32px"}} onClick={handleLogout}>
+                    <ListItemIcon><RiLogoutBoxLine size={22}/></ListItemIcon>
+                    <ListItemText>로그아웃</ListItemText>
+                  </MenuItem>
                 </Menu>
               </li>
             </ul>

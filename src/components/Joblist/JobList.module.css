@@ -10,21 +10,29 @@
   display: flex;
   gap: 0.3em;
 }
-.jobListSortBar button {
-  color: var(--color-gray-900);
-}
 
 .jobListCard {
+  display: flex;
+  flex-direction: row;
   padding: 1rem 1.2rem 1rem 1.2rem;
   border-bottom: 0.1rem solid var(--color-gray-500);
+  gap: 1rem;
+
+  img {
+    object-fit: cover;
+    min-width: 8rem; max-width: 8rem;
+    min-height: 6rem; max-height: 6rem;
+    border-radius: 0.8rem;
+  }
 }
 .jobListCard:hover {
   background-color: var(--color-gray-200);
 }
-.jobListCard h3 {
+
+.jobListCardText h3 {
   margin: 0 0.1rem 0 0.1rem;
 }
-.jobListCard h5 {
+.jobListCardText h5 {
   font-weight: 500;
   margin: 0.2rem 0.1rem 0.5rem 0.1rem;
 }

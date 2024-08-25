@@ -1,0 +1,9 @@
+.bookmarkTab {
+  p {
+    margin: 1.3rem;
+  }
+}
+
+.bookmarkTabList {
+  border-bottom: 1px solid var(--color-gray-500);
+}

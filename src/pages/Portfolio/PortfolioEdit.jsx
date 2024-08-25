@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useParams,
   useNavigate,
@@ -21,15 +21,17 @@ import TagSelector from "../../components/Tag/TagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
 import { tagElementLoader, tagLoader } from "../../components/Tag/TagLoader";
 import { removePortfolioPost } from "../../components/Portfolio/PortfolioGrid";
-import apiInstance from "../../provider/networkProvider";
-import { Toast } from "../../components/Toast";
 import { EditorMenuBar, editorExtensions } from "../../components/Editor";
+import { Toast } from "../../components/Toast";
+import { useAuth } from "../../provider/authProvider";
+import apiInstance from "../../provider/networkProvider";
 import classes from "./Portfolio.module.css";
 
 export default function PortfolioEditPage() {
   const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { userID } = useAuth();
   const [data, setData] = useState(useRouteLoaderData("portfolio-page-edit"));
   // Portfolio Description in JSON type
   const [ptfDesc, setPtfDesc] = useState(JSON.parse(data.description) || "");
@@ -103,9 +105,9 @@ export default function PortfolioEditPage() {
   }, [tagElementData]);
 
   const handleDeleteImg = (index) => {
-    console.log("REMOVE IMAGE!!");
-    console.log(index);
-    console.log(data.portfolioImageResponseDtoList[index].portfolioImageId);
+    //console.log("REMOVE IMAGE!!");
+    //console.log(index);
+    //console.log(data.portfolioImageResponseDtoList[index].portfolioImageId);
     // If delete target is newly added image
     if(data.portfolioImageResponseDtoList[index].portfolioImageId == null) {
       const newImgIndex = index + uploadedImgArray.length - data.portfolioImageResponseDtoList.length;
@@ -199,7 +201,7 @@ export default function PortfolioEditPage() {
       .then((res) => {
         // Success
         if (res && res.status === 200) {
-          navigate("../");
+          navigate(`/p/${userID}`, { relative: "path" });
         }
       })
       .catch((error) => {
@@ -292,11 +294,6 @@ export default function PortfolioEditPage() {
 
 // 포트폴리오 데이터 수정 요청 함수
 async function portfolioEditAction(formData) {
-  
-  for (let [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-  
   try {
     const response = await apiInstance({
       method: "put",

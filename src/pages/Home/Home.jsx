@@ -7,14 +7,14 @@ import HomeRecruitList from "../../components/Home/HomeRecruitList";
 import HomeJobList from "../../components/Home/HomeJobList";
 
 export default function HomePage() {
-    return <>
+    return <div className={classes.homePage}>
       <HomeBanner />
       <div className={classes.homePostArea}>
-        <HomePostCard />
-        <HomePostCard />
+        <HomePostCard title="최신 글"/>
+        <HomePostCard title="최신 글 2" />
       </div>
       <HomeCategoryList />
       <HomeRecruitList />
       <HomeJobList />
-    </>
+    </div>
 }

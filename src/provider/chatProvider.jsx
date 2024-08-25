@@ -85,7 +85,7 @@ export function useChatConnection(roomId, onMessageReceived) {
           }
         }
       );
-    } catch {
+    } catch (error) {
       console.error('CHAT Subscription Error:', error);
       setConnectionStatus('error');
     }

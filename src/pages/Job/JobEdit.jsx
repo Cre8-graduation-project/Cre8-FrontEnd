@@ -1,23 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation, useRouteLoaderData } from "react-router-dom";
 import {
-  useParams,
-  useNavigate,
-  useLocation,
-  useRouteLoaderData,
-} from "react-router-dom";
-import {
-  ImageList,
-  ImageListItem,
-  IconButton,
   Backdrop,
   CircularProgress,
   TextField,
-  Chip,
   Divider,
   Button,
   Grid,
 } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
+import { RiAddFill } from "@remixicon/react";
 
 import TitleBar from "../../components/TitleBar";
 import TagSelector from "../../components/Tag/TagSelector";
@@ -36,13 +28,19 @@ export default function JobEditPage() {
   const location = useLocation();
   const { memberCode } = useAuth();
   const [data, setData] = useState(
-    location.state.isCreation
+    location.state?.isCreation == null || location.state?.isCreation
       ? INITIAL_JOB_VALUE
       : useRouteLoaderData("job-page-edit")
   );
+  const [imageData, setImageData] = useState({
+    imgFile: null,
+    imgURL: null,
+  });
   // Job Description in JSON type
   const [postContent, setPostContent] = useState(
-    location.state.isCreation ? "" : JSON.parse(data.contents)
+    location.state?.isCreation == null || location.state?.isCreation
+      ? ""
+      : JSON.parse(data.contents)
   );
   // Tag Data
   const [tagData, setTagData] = useState();
@@ -128,39 +126,60 @@ export default function JobEditPage() {
     });
   };
 
+  const handleAddImg = (e) => {
+    //console.log("ADD IMAGE!!");
+    setIsUploading(true);
+    if (e.target.type === "file" && e.target.files && e.target.files[0]) {
+      // Fetch Preview Image
+      const uploadedImg = e.target.files[0];
+      const uploadedImgURL = window.URL.createObjectURL(uploadedImg);
+      setImageData({
+        imgFile: uploadedImg,
+        imgURL: uploadedImgURL,
+      });
+    }
+    setIsUploading(false);
+  }
+
   const handleCancelEdit = () => {
-    navigate("../");
+    navigate(-1);
   };
 
   const handleSaveEdit = (e) => {
     e.preventDefault();
 
-    if (isEmpty(memberCode) || isEmpty(data.title) || isEmpty(postContent)) {
+    if (
+      isEmpty(data.employeePostId) ||
+      isEmpty(data.title) ||
+      isEmpty(postContent) ||
+      isEmpty(data.contact)
+    ) {
       Toast.error("입력되지 않은 내용이 있습니다.");
       return;
     }
-
     setIsUploading(true);
 
-    var inputData = {
-      employeePostId: memberCode,
-      title: data.title,
-      workFieldId: selectedTag,
-      workFieldChildTagId: [...selectedElement],
-      paymentMethod: data.paymentMethod,
-      paymentAmount: data.paymentAmount,
-      careerYear: data.careerYear,
-      contents: JSON.stringify(postContent),
-      contact: data.contact,
-    };
+    const formData = new FormData();
+    formData.append("employeePostId", data.employeePostId);
+    formData.append("title", data.title);
+    formData.append("workFieldId", selectedTag);
+    selectedElement.forEach((element) => {
+      if (element) {
+        formData.append("workFieldChildTagId", element);
+      }
+    });
+    formData.append("paymentMethod", data.paymentMethod);
+    formData.append("paymentAmount", data.paymentAmount);
+    formData.append("careerYear", data.careerYear);
+    formData.append("contents", JSON.stringify(postContent));
+    formData.append("contact", data.contact);
+    formData.append("multipartFile", imageData.imgFile);
 
-    //console.log(inputData);
-
-    jobPostEditAction(inputData, location.state.isCreation)
+    jobPostEditAction(formData, location.state.isCreation)
       .then((res) => {
         // Success
-        if (res && res.status === 200) {
-          navigate("..", { relative: "path" });
+        if (res && (res.status === 200 || res.status === 201)) {
+          navigate(-1);
         }
       })
       .catch((error) => {
@@ -205,7 +224,7 @@ export default function JobEditPage() {
         />
       </div>
       <div className={classes.editTagArea}>
-        <h3>구인 태그 설정 *</h3>
+        <h3>구인 태그 설정</h3>
         <TagSelector
           title="작업 분야"
           tagList={tagData}
@@ -233,8 +252,8 @@ export default function JobEditPage() {
           }}
           justifyContent="space-between"
         >
-          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
-            <h3>급여 정보 *</h3>
+          <Grid item xs={2} sm={15} sx={{ paddingTop: "0.6rem !important" }}>
+            <h3>급여 정보</h3>
             <div className={classes.jobPostInfoAreaRow}>
               <p>지급 방식</p>
               <SubTagSelector
@@ -259,9 +278,13 @@ export default function JobEditPage() {
               <b>원</b>
             </div>
           </Grid>
-          <Divider orientation="vertical" flexItem sx={{ mr: "-1px", paddingLeft: "16px"}} />
-          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
-            <h3>추가 정보 *</h3>
+          <Divider
+            orientation="vertical"
+            flexItem
+            sx={{ mr: "-1px", paddingLeft: "16px" }}
+          />
+          <Grid item xs={2} sm={15} sx={{ paddingTop: "0.6rem !important" }}>
+            <h3>추가 정보</h3>
             <div className={classes.jobPostInfoAreaRow}>
               <p>작업 경력</p>
               <input
@@ -282,6 +305,25 @@ export default function JobEditPage() {
           setPostContent={setPostContent}
         />
       </div>
+      <div className={classes.editThumbnailArea}>
+        <h3>대표 이미지</h3>
+        <div className={classes.editThumbnailParagraph}>
+          <label htmlFor="jobThumbnailUploadBtn">
+            {imageData.imgURL == null && <RiAddFill />}
+            {imageData.imgURL != null && (
+              <img src={imageData.imgURL} alt="postThumbnail" />
+            )}
+            <input
+              id="jobThumbnailUploadBtn"
+              style={{ display: "none" }}
+              type="file"
+              accept="image/jpeg, image/png"
+              onChange={handleAddImg}
+            />
+          </label>
+          <p>대표 이미지는 게시글 목록에 노출됩니다.</p>
+        </div>
+      </div>
       <div className={classes.editBtnArea}>
         <Button variant="outlined" onClick={handleCancelEdit}>
           취소
@@ -295,7 +337,7 @@ export default function JobEditPage() {
 }
 
 // 포트폴리오 데이터 수정 요청 함수
-async function jobPostEditAction(inputData, isCreation = true) {
+async function jobPostEditAction(formData, isCreation = true) {
   /*
   for (let [key, value] of formData.entries()) {
     console.log(key, value);
@@ -305,11 +347,18 @@ async function jobPostEditAction(inputData, isCreation = true) {
     const response = await apiInstance({
       method: isCreation ? "post" : "put",
       url: "/api/v1/employee/posts",
-      data: inputData,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     if (response.status === 200) {
       // 저장 성공
       Toast.success("변경사항들을 저장했습니다.");
+      return response;
+    } else if (response.status === 201) {
+      // 생성 성공
+      Toast.success("성공적으로 게시글을 업로드했습니다.");
       return response;
     }
   } catch (error) {

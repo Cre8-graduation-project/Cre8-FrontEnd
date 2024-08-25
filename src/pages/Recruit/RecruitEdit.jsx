@@ -10,6 +10,7 @@ import {
   Grid,
 } from "@mui/material";
 import { useEditor, EditorContent } from "@tiptap/react";
+import { RiAddFill } from "@remixicon/react";
 
 import TitleBar from "../../components/TitleBar";
 import TagSelector from "../../components/Tag/TagSelector";
@@ -28,13 +29,19 @@ export default function RecruitEditPage() {
   const location = useLocation();
   const { memberCode } = useAuth();
   const [data, setData] = useState(
-    location.state.isCreation
+    location.state?.isCreation == null || location.state?.isCreation
       ? INITIAL_REC_VALUE
       : useRouteLoaderData("recruit-page-edit")
   );
+  const [imageData, setImageData] = useState({
+    imgFile: null,
+    imgURL: null,
+  })
   // Portfolio Description in JSON type
   const [postContent, setPostContent] = useState(
-    location.state.isCreation ? "" : JSON.parse(data.contents)
+    location.state?.isCreation == null || location.state?.isCreation
+      ? "" 
+      : JSON.parse(data.contents)
   );
   // Tag Data
   const [tagData, setTagData] = useState();
@@ -124,46 +131,63 @@ export default function RecruitEditPage() {
     });
   };
 
+  const handleAddImg = (e) => {
+    //console.log("ADD IMAGE!!");
+    setIsUploading(true);
+    if (e.target.type === "file" && e.target.files && e.target.files[0]) {
+      // Fetch Preview Image
+      const uploadedImg = e.target.files[0];
+      const uploadedImgURL = window.URL.createObjectURL(uploadedImg);
+      setImageData({
+        imgFile: uploadedImg,
+        imgURL: uploadedImgURL,
+      });
+    }
+    setIsUploading(false);
+  }
+
   const handleCancelEdit = () => {
-    navigate("../");
+    navigate(-1);
   };
 
   const handleSaveEdit = (e) => {
     e.preventDefault();
 
     if (
-      isEmpty(memberCode) ||
+      isEmpty(data.employerPostId) ||
       isEmpty(data.title) ||
       isEmpty(data.companyName) ||
+      isEmpty(data.contact) ||
       isEmpty(postContent)
     ) {
       Toast.error("입력되지 않은 내용이 있습니다.");
       return;
     }
-
     setIsUploading(true);
 
-    var inputData = {
-      employerPostId: memberCode,
-      title: data.title,
-      workFieldId: selectedTag,
-      workFieldChildTagId: [...selectedElement],
-      paymentMethod: data.paymentMethod,
-      paymentAmount: data.paymentAmount,
-      companyName: data.companyName,
-      numberOfEmployee: data.numberOfEmployee,
-      enrollDurationType: data.enrollDurationType,
-      deadLine: data.deadLine,
-      hopeCareerYear: isCareerNotRequired ? 0 : data.hopeCareerYear,
-      contents: JSON.stringify(postContent),
-      contact: data.contact,
-    };
+    const formData = new FormData();
+    formData.append("employerPostId", data.employerPostId);
+    formData.append("title", data.title);
+    formData.append("workFieldId", selectedTag);
+    selectedElement.forEach((element) => {
+      if(element) { formData.append("workFieldChildTagId", element) };
+    })
+    formData.append("paymentMethod", data.paymentMethod);
+    formData.append("paymentAmount", data.paymentAmount);
+    formData.append("companyName", data.companyName);
+    formData.append("numberOfEmployee", data.numberOfEmployee);
+    formData.append("enrollDurationType", data.enrollDurationType);
+    formData.append("deadLine", data.deadLine);
+    formData.append("hopeCareerYear", isCareerNotRequired ? 0 : data.hopeCareerYear);
+    formData.append("contents", JSON.stringify(postContent));
+    formData.append("contact", data.contact);
+    formData.append("multipartFile", imageData.imgFile);
 
-    recPostEditAction(inputData, location.state.isCreation)
+    recPostEditAction(formData, location.state.isCreation)
       .then((res) => {
         // Success
-        if (res && res.status === 200) {
-          navigate("..", { relative: "path" });
+        if (res && (res.status === 200 || res.status === 201)) {
+          navigate(-1);
         }
       })
       .catch((error) => {
@@ -218,7 +242,7 @@ export default function RecruitEditPage() {
         />
       </div>
       <div className={classes.editTagArea}>
-        <h3>구인 태그 설정 *</h3>
+        <h3>구인 태그 설정</h3>
         <TagSelector
           title="작업 분야"
           tagList={tagData}
@@ -247,7 +271,7 @@ export default function RecruitEditPage() {
           justifyContent="space-between"
         >
           <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
-            <h3>급여 정보 *</h3>
+            <h3>급여 정보</h3>
             <div className={classes.recPostInfoAreaRow}>
               <p>지급 방식</p>
               <SubTagSelector
@@ -278,7 +302,7 @@ export default function RecruitEditPage() {
             sx={{ mr: "-1px", paddingLeft: "16px" }}
           />
           <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
-            <h3>모집 조건 *</h3>
+            <h3>모집 조건</h3>
             <div className={classes.recPostInfoAreaRow}>
               <p>모집 인원</p>
               <input
@@ -345,6 +369,27 @@ export default function RecruitEditPage() {
           setPostContent={setPostContent}
         />
       </div>
+      <div className={classes.editThumbnailArea}>
+        <h3>대표 이미지</h3>
+        <div className={classes.editThumbnailParagraph}>
+          <label htmlFor="recThumbnailUploadBtn">
+            {imageData.imgURL == null && 
+              <RiAddFill />
+            }
+            {imageData.imgURL != null && 
+              <img src={imageData.imgURL} alt="postThumbnail"/>
+            }
+            <input
+              id="recThumbnailUploadBtn"
+              style={{ display: "none" }}
+              type="file"
+              accept="image/jpeg, image/png"
+              onChange={handleAddImg}
+            />
+          </label>
+          <p>대표 이미지는 게시글 목록에 노출됩니다.</p>
+        </div>
+      </div>
       <div className={classes.editBtnArea}>
         <Button variant="outlined" onClick={handleCancelEdit}>
           취소
@@ -358,16 +403,24 @@ export default function RecruitEditPage() {
 }
 
 // 구인 게시글 수정 요청 함수
-async function recPostEditAction(inputData, isCreation = true) {
+async function recPostEditAction(formData, isCreation = true) {
   try {
     const response = await apiInstance({
       method: isCreation ? "post" : "put",
       url: "/api/v1/employer/posts",
-      data: inputData,
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     if (response.status === 200) {
       // 저장 성공
       Toast.success("변경사항들을 저장했습니다.");
+      return response;
+    }
+    else if (response.status === 201) {
+      // 생성 성공
+      Toast.success("성공적으로 게시글을 업로드했습니다.");
       return response;
     }
   } catch (error) {

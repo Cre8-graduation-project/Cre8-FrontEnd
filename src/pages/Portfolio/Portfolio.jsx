@@ -15,7 +15,7 @@ export default function PortfolioPage({ isFromJobPost = false }) {
     
   return (
     <>
-      <TitleBar backBtnTarget={!isFromJobPost ? "..?tab=2" : ".."} title="포트폴리오" />
+      <TitleBar backBtnTarget={-1} title="포트폴리오" />
       {!data ? (
         <PageContent>
           <p>포트폴리오를 불러오는 중 오류가 발생했습니다.</p>
@@ -23,7 +23,7 @@ export default function PortfolioPage({ isFromJobPost = false }) {
       ) : (
         <>
           <div className={classes.ptfDescArea}>
-            <ReadOnlyEditor content={JSON.parse(data.description)} />
+            <ReadOnlyEditor content={data.description} />
           </div>
           <div className={classes.ptfTagArea}>
             <TagList tagList={data.tagName} />

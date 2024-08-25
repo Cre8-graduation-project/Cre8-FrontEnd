@@ -112,13 +112,30 @@ export const EditorMenuBar = ({ editor }) => {
 };
 
 export const ReadOnlyEditor = ({ content }) => {
+  let contentData;
+  try {
+    contentData = JSON.parse(content);
+  } catch (e) {
+    contentData = [
+      {
+        type: 'paragraph',
+        content: [
+          {
+            type: 'text',
+            text: `${content}`,
+          },
+        ],
+      },
+    ]
+  }
+
   const editor = useEditor({
     editable: false,
     extensions: editorExtensions,
     content: content
       ? {
           type: "doc",
-          content: content,
+          content: contentData,
         }
       : "",
     editorProps: {

@@ -6,6 +6,17 @@ export const debounce = (func, delay) => {
   };
 };
 
+export const throttle = (func, delay) => {
+  let waiting = false;
+  return (...args) => {
+    if(!waiting) {
+      func(...args);
+      waiting = true;
+      setTimeout(() => { waiting = false }, delay);
+    }
+  }
+}
+
 export const isEmpty = (input) => {
   if (
        typeof input === "undefined" ||

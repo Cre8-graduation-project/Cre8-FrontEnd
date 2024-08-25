@@ -47,9 +47,7 @@ export default function ProfileEditPage() {
     if (uploadedPFP) {
       formData.append("multipartFile", uploadedPFP);
     }
-    if (profileData.uNickName != data.userNickName) {
-      formData.append("userNickName", profileData.uNickName);
-    }
+    formData.append("userNickName", profileData.uNickName);
     formData.append("youtubeLink", getExternalLink(profileData.uLinkYoutube));
     formData.append("twitterLink", getExternalLink(profileData.uLinkTwitter));
     formData.append("personalLink", getExternalLink(profileData.uLinkWebpage));
@@ -58,7 +56,7 @@ export default function ProfileEditPage() {
     profileEditAction(formData).then((res) => {
       // Success
       if (res && res.status === 200) {
-        navigate("..");
+        navigate(-1);
       }
       // TODO: error handling
     });

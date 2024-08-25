@@ -5,12 +5,13 @@ import { ProtectedRoute } from "./ProtectedRoute";
 
 import RootLayout from "../pages/RootLayout.jsx";
 import HomePage from "../pages/Home/Home.jsx";
-import RecruitPage from "../pages/Recruit/Recruit.jsx";
 import RecruitPostPage, { recruitPostLoader } from "../pages/Recruit/RecruitPost.jsx";
 import RecruitEditPage from "../pages/Recruit/RecruitEdit.jsx";
-import JobPage from "../pages/Job/Job.jsx";
+import JobRecruitListPage from "../pages/Job/JobRecruitList.jsx";
 import JobPostPage, { jobPostLoader } from "../pages/Job/JobPost.jsx";
 import JobEditPage from "../pages/Job/JobEdit.jsx";
+import BookmarkPage from "../pages/Bookmark/Bookmark.jsx";
+import MyPostPage from "../pages/MyPost/MyPost.jsx";
 import CommunityPage from "../pages/Community/Community.jsx";
 import ChatPage, { chatListLoader } from "../pages/Chat/Chat.jsx";
 import LoginPage from "../pages/UserAuth/Login.jsx";
@@ -42,7 +43,7 @@ const Routes = () => {
       children: [
         {
           index: true,
-          element: <RecruitPage />,
+          element: <JobRecruitListPage pageType="recruit"/>,
         },
         {
           path: ":recruitPostID",
@@ -59,7 +60,7 @@ const Routes = () => {
       children: [
         {
           index: true,
-          element: <JobPage />,
+          element: <JobRecruitListPage pageType="job"/>,
         },
         {
           path: ":jobPostID",
@@ -158,6 +159,14 @@ const Routes = () => {
               element: <JobEditPage />,
             }
           ]
+        },
+        {
+          path: "bookmark",
+          element: <BookmarkPage />
+        },
+        {
+          path: "my-post",
+          element: <MyPostPage />
         },
         {
           path: "chat",

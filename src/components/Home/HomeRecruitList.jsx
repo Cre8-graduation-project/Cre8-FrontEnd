@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import apiInstance from "../../provider/networkProvider";
 import TagList from "../Tag/TagList";
+import { isEmpty } from "../../provider/utilityProvider";
 
 export default function HomeRecruitList() {
   const navigate = useNavigate();
@@ -13,33 +14,34 @@ export default function HomeRecruitList() {
     fetchHomeRecruitList().then((res) => {
       setData(res);
       //console.log(data);
-    })
-  }, [])
+    });
+  }, []);
 
   const handleCardClick = (postID) => {
     navigate(`/recruit/${postID}`);
   };
 
   return (
-    <div className={classes.homeCategoryArea}>
+    <div className={classes.homePostArea}>
       <h3>새로운 크리에이터 구인 공고</h3>
       <Grid container columns={{ xs: 2, sm: 4 }} spacing={{ xs: 2, sm: 2 }}>
-        {data && data.employerPostSearchResponseDtoList.map((item, index) => (
-          <Grid item key={index} xs={2} sm={2}>
-            <Card
-              elevation={3}
-              className={classes.homeJobPostCard}
-              onClick={() => {
-                handleCardClick(item.employerPostId);
-              }}
-            >
-              <h3>{item.title}</h3>
-              <TagList tagList={item.tagNameList}/>
-            </Card>
-          </Grid>
-        ))}
-        {!data && <p>구인 공고를 불러오지 못했습니다.</p>}
+        {!isEmpty(data) &&
+          data?.employerPostSearchResponseDtoList?.map((item, index) => (
+            <Grid item key={index} xs={2} sm={2}>
+              <Card
+                elevation={2}
+                className={classes.homeJobPostCard}
+                onClick={() => {
+                  handleCardClick(item.employerPostId);
+                }}
+              >
+                <h3>{item.title}</h3>
+                <TagList tagList={item.tagNameList} />
+              </Card>
+            </Grid>
+          ))}
       </Grid>
+      {isEmpty(data) && <p>구인 공고를 불러오지 못했습니다.</p>}
     </div>
   );
 }
@@ -50,6 +52,8 @@ async function fetchHomeRecruitList() {
     const response = await apiInstance.get("/api/v1/employer-posts/search", {
       params: {
         size: 4,
+        direction: "desc",
+        sort: ["createdAt"],
       },
     });
     if (response.status === 200) {

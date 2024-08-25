@@ -1,14 +1,14 @@
 import { Card, Link } from "@mui/material";
 import classes from "./HomeComponent.module.css";
 
-export default function HomePostCard() {
+export default function HomePostCard({title, source}) {
   const data = dummyData;
 
   return (
     <div className={classes.homePostCardArea}>
-      <h3>최신 글</h3>
+      <h3>{title}</h3>
       <Card
-        elevation={3} 
+        elevation={2} 
         className={classes.homePostCard}
       >  
         {data.map((item, index) => (
