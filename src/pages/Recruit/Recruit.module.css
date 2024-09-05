@@ -1,15 +1,20 @@
 .recPostTitleArea {
   padding: 1.3rem;
-  border-bottom: 1px solid var(--color-gray-500);
+  padding-bottom: 1rem;
 
-  h2, h4 {
-    margin-top: 0;
-    margin-bottom: 1rem;
+  h2, h3, h4 {
+    margin: 0;
   }
   h3 {
-    margin-top: 0;
+    margin-top: 0.7rem;
     margin-bottom: 0.7rem;
   }
+}
+
+.recTagListArea {
+  padding: 1.3rem;
+  padding-top: 0;
+  border-bottom: 1px solid var(--color-gray-400);
 }
 
 .recPostInfoArea {
@@ -28,7 +33,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.3rem 0 0.3rem 0;
+  height: 2rem;
   font-size: 0.9rem;
 
   input {
@@ -49,7 +54,7 @@
   flex-grow: 1;
   margin-top: 0.7rem;
   margin-bottom: 4rem;
-  border-top: 1px solid var(--color-gray-500);
+  border-top: 1px solid var(--color-gray-400);
 }
 
 .recPostBtnArea {
@@ -58,7 +63,7 @@
   padding: 1rem;
   position: fixed;
   bottom: 0;
-  border-bottom: 1px solid var(--color-gray-500);
+  border-bottom: 1px solid var(--color-gray-400);
 }
 
 .recPostFAB {
@@ -88,14 +93,14 @@
 .editTagArea h3 {
   padding: 1.3rem 1.3rem 0.3rem 1.3rem;
   margin: 0;
-  border-top: 1px solid var(--color-gray-500);
+  border-top: 1px solid var(--color-gray-400);
 }
 
 .editDescArea {
   display: flex;
   flex-direction: column;
   margin-top: 0.7rem;
-  border-top: 1px solid var(--color-gray-500);
+  border-top: 1px solid var(--color-gray-400);
 }
 .editDescArea h3 {
   margin: 1.3rem 1.3rem 0.9rem 1.3rem;
@@ -112,7 +117,7 @@
 
 .editThumbnailArea {
   padding: 0.7rem 1.3rem 1.3rem 1.3rem;
-  border-bottom: 1px solid var(--color-gray-500);
+  border-bottom: 1px solid var(--color-gray-400);
 
   h3 {
     margin-top: 0.3rem;
@@ -146,11 +151,10 @@
   justify-content: flex-end;
   padding: 1.3rem;
   gap: 0.7rem;
-  background-color: var(--color-gray-100);
 }
 
 .editor {
   margin: 0.7rem 1.3rem;
-  border: 1px solid var(--color-gray-500);
+  border: 1px solid var(--color-gray-400);
   min-height: 20rem;
 }

@@ -1,5 +1,5 @@
 import { useRouteLoaderData } from "react-router-dom";
-import { ImageList, ImageListItem } from "@mui/material";
+import { ImageList, ImageListItem, useTheme, useMediaQuery, Card } from "@mui/material";
 
 import PageContent from "../../components/PageContent";
 import TitleBar from "../../components/TitleBar";
@@ -12,9 +12,11 @@ export default function PortfolioPage({ isFromJobPost = false }) {
   const data = !isFromJobPost
     ? useRouteLoaderData("portfolio-page")
     : useRouteLoaderData("portfolio-in-jobPost");
+  const theme = useTheme();
+  const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
     
   return (
-    <>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <TitleBar backBtnTarget={-1} title="포트폴리오" />
       {!data ? (
         <PageContent>
@@ -29,7 +31,7 @@ export default function PortfolioPage({ isFromJobPost = false }) {
             <TagList tagList={data.tagName} />
           </div>
           <ImageList
-            cols={1}
+            cols={matchDownMd ? 2 : 4}
             gap={20}
             sx={{ padding: "0 1.3rem 1.3rem 1.3rem" }}
           >
@@ -41,7 +43,7 @@ export default function PortfolioPage({ isFromJobPost = false }) {
           </ImageList>
         </>
       )}
-    </>
+    </Card>
   );
 }
 

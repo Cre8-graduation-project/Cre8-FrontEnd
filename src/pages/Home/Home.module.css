@@ -1,8 +1,9 @@
 .homePage {
   display: flex;
   flex-direction: column;
-  margin: 1.3rem;
+  margin: 1.3rem 0;
   gap: 1.3rem;
+  transition: all 0.25s ease;
 
   h3 {
     margin: 1.5rem 0;
@@ -15,4 +16,11 @@
   flex-direction: row;
   margin: 0;
   gap: 1.3rem;
+}
+
+@media (max-width: 1050px) {
+  .homePage {
+    margin: 1.3rem;
+    transition: all 0.25s ease;
+  }
 }

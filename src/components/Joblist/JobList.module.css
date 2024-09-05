@@ -3,8 +3,8 @@
   padding: 0.7em;
   color: var(--color-gray-200);
   gap: 0.3em;
-  background-color: var(--color-gray-150);
-  border-bottom: 0.1rem solid var(--color-gray-500);
+  background-color: var(--color-gray-100);
+  border-bottom: 0.1rem solid var(--color-gray-400);
 }
 .jobListSortBar li {
   display: flex;
@@ -15,7 +15,7 @@
   display: flex;
   flex-direction: row;
   padding: 1rem 1.2rem 1rem 1.2rem;
-  border-bottom: 0.1rem solid var(--color-gray-500);
+  border-bottom: 0.1rem solid var(--color-gray-400);
   gap: 1rem;
 
   img {
@@ -26,13 +26,18 @@
   }
 }
 .jobListCard:hover {
-  background-color: var(--color-gray-200);
+  background-color: var(--color-gray-150);
 }
 
+.jobListCardText {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 .jobListCardText h3 {
   margin: 0 0.1rem 0 0.1rem;
 }
 .jobListCardText h5 {
-  font-weight: 500;
-  margin: 0.2rem 0.1rem 0.5rem 0.1rem;
+  font-weight: 400;
+  margin: 0 0.1rem 0.7rem 0.1rem;
 }

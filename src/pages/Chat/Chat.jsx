@@ -8,6 +8,7 @@ import {
   DialogContentText,
   TextField,
   DialogActions,
+  Card,
 } from "@mui/material";
 import TitleBar from "../../components/TitleBar";
 import ChatListCard from "../../components/Chat/ChatListCard";
@@ -22,7 +23,8 @@ import apiInstance from "../../provider/networkProvider";
 import classes from "./Chat.module.css";
 
 export default function ChatPage() {
-  const [data, setData] = useState(useRouteLoaderData("chat-page"));
+  const loadedData = useRouteLoaderData("chat-page");
+  const [data, setData] = useState(loadedData);
   const [newChatDialogOpen, setNewChatDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState({
     roomId: -1,
@@ -121,7 +123,7 @@ export default function ChatPage() {
   }
 
   return (
-    <>
+    <Card className={classes.chatPage} >
       <TitleBar title="채팅">
         <Button
           variant="contained"
@@ -158,7 +160,7 @@ export default function ChatPage() {
           </DialogActions>
         </Dialog>
       </TitleBar>
-      <div className={classes.chatPage}>
+      <div className={classes.chatMain}>
         <div className={classes.chatList}>
           {data != null &&
             data.map((item, index) => (
@@ -173,8 +175,8 @@ export default function ChatPage() {
             ))}
         </div>
         <div className={classes.chatContent}>
-          {selectedRoom.roomId == -1 && RenderConnectionStatus}
-          {selectedRoom.roomId > -1 && (
+          {selectedRoom.roomId == -1 && <RenderConnectionStatus />}
+          {selectedRoom.roomId > -1 && 
             <>
               <ChatTopBar name={selectedRoom.nickName} />
               <ChatContent
@@ -184,10 +186,10 @@ export default function ChatPage() {
               />
               <ChatInputBar handleChatSend={handleChatSend} />
             </>
-          )}
+          }
         </div>
       </div>
-    </>
+    </Card>
   );
 }
 

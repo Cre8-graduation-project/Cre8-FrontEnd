@@ -13,6 +13,8 @@ import {
   DialogContentText,
   DialogActions,
   Button,
+  useTheme, 
+  useMediaQuery,
 } from "@mui/material";
 import { RiMoreFill, RiAddFill } from "@remixicon/react";
 
@@ -21,6 +23,8 @@ import classes from "./PortfolioGrid.module.css";
 
 export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   const [ptfGridData, setPtfGridData] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
   // States for Menu
@@ -100,7 +104,7 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
       )}
       {!loadingData && (
         <>
-          <ImageList cols={3} gap={10}>
+          <ImageList cols={matchDownMd ? 3 : 4} gap={10} >
             {ptfGridData &&
               ptfGridData.map((item) => (
                 <ImageListItem

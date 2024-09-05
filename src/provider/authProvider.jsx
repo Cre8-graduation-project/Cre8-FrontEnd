@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, useEffect, useState, useCallback } from "react";
-const apiAddress = import.meta.env.VITE_API_SERVER;
+import apiInstance from "./networkProvider";
+import { Toast } from "../components/Toast";
+
 const TOKEN_REISSUE_INTERVAL = 5 * 60 * 1000 // 5 minutes
 
 let logoutFunction = null;
@@ -18,24 +20,18 @@ export const AuthProvider = ({ children }) => {
   const reissueToken = useCallback(async () => {
     if (!token) return; // Don't attempt to reissue if there's no token
 
-    const url = `${apiAddress}/api/v1/auth/reissue`;
-    //console.log("Reissuing Token");
     try {
-      const response = await fetch(url, {
-        method: "POST",
+      const response = await apiInstance.post("/api/v1/auth/reissue", null, {
         headers: {
           accessToken: token,
-        },
-        credentials: "include",
+        }
       });
       if (response.status === 200) {
-        const json = await response.json();
-        setToken(json.data.accessToken);
-        //console.log("Token reissued successfully");
+        setToken(response.data.data.accessToken);
       }
       else {
         // refreshToken deprecated
-        //logout();
+        logout();
       }
     } catch (error) {
       //console.error("Error reissuing token:", error);
@@ -67,15 +63,29 @@ export const AuthProvider = ({ children }) => {
   onLoginFunction = onLogin;
 
   // Logout Feature
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     console.log("Logging out!")
+
+    try {
+      const response = await apiInstance.post("/api/v1/auth/logout", null, {
+        headers: {
+          accessToken: token,
+        }
+      });
+      if (response.status === 200) {
+        Toast.success("로그아웃되었습니다.");
+      }
+    } catch (error) {
+      Toast.error("로그아웃 도중 오류가 발생했습니다.");
+    }
+
     setToken("");
     setUserID("");
     setMemberCode("");
     localStorage.removeItem("token");
     localStorage.removeItem("userID");
     localStorage.removeItem("memberCode");
-  }, []);
+  }, [token]);
   logoutFunction = logout;
 
   const contextValue = useMemo(

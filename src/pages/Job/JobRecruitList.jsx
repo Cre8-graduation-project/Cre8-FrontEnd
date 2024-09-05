@@ -1,10 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useNavigate, useRouteLoaderData, useLocation } from "react-router-dom";
 import {
-  useNavigate,
-  useRouteLoaderData,
-  useLocation,
-} from "react-router-dom";
-import {
+  Card,
   Tooltip,
   IconButton,
   Pagination,
@@ -12,7 +9,6 @@ import {
   MenuItem,
   Divider,
   TextField,
-  Backdrop,
   CircularProgress,
 } from "@mui/material";
 import {
@@ -23,16 +19,15 @@ import {
 } from "@remixicon/react";
 
 import TitleBar from "../../components/TitleBar";
-import TagSelector from "../../components/Tag/TagSelector";
-import TagChildSelector from "../../components/Tag/TagChildSelector";
+import TagAccordion from "../../components/Tag/TagAccordion";
+import ExpTagSelector from "../../components/Tag/ExpTagSelector";
 import JobListSortBar from "../../components/Joblist/JobListSortBar";
 import { JobListCard } from "../../components/Joblist/JobListCard";
 import { RecruitListCard } from "../../components/Joblist/JobListCard";
-import { tagElementLoader } from "../../components/Tag/TagLoader";
 import apiInstance from "../../provider/networkProvider";
 import { debounce } from "../../provider/utilityProvider";
 import { useAuth } from "../../provider/authProvider";
-import { isEmpty } from "../../provider/utilityProvider";
+import { isEmpty, areArraysEqual } from "../../provider/utilityProvider";
 import classes from "./Job.module.css";
 
 export default function JobRecruitListPage({ pageType }) {
@@ -40,146 +35,130 @@ export default function JobRecruitListPage({ pageType }) {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  // Page Data
-  const pageIndex = searchParams.get("page") || 1;
-  // Tag Data
-  const tagData = useRouteLoaderData(
-    pageType == "job" ? "job-page" : "recruit-page"
-  );
-  const [tagElementData, setTagElementData] = useState();
-  // User selected tag
-  const requestedTagID = location?.state?.tagID ?? "";
-  const [selectedTag, setSelectedTag] = useState(requestedTagID);
-  const [selectedElement, setSelectedElement] = useState(new Set());
-  // Job Post Data
-  const [jobPostData, setJobPostData] = useState();
-  const [jobSearchObj, setJobSearchObj] = useState({});
-  const [jobPageObj, setJobPageObj] = useState({
-    size: 10,
-    direction: "desc",
-    sort: ["createdAt"],
-    page: 0,
+
+  const [state, setState] = useState({
+    pageIndex: parseInt(searchParams.get("page") || "1", 10),
+    selectedTag: location?.state?.tagID ?? "",
+    selectedElement: [],
+    selectedExpTag: null,
+    jobPostData: null,
+    jobSearchObj: { workFieldId: location?.state?.tagID ?? "" },
+    jobPageObj: { size: 10, sort: ["createdAt,desc"], page: 0 },
+    anchorEl: null,
+    isSearchBarOpen: false,
+    searchKeyword: "",
+    isLoading: true,
   });
-  // Menu Button
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  // Search Data
-  const [isSearchBarOpen, setIsSearchBarOpen] = useState(false);
-  const [searchData, setSearchData] = useState("");
-  // isLoading State
-  const [isLoading, setIsLoading] = useState(false);
+  const updateState = useCallback((newState) => {
+    setState((prevState) => ({ ...prevState, ...newState }));
+  }, []);
+  const updateElement = useCallback((newElement) => {
+    setState((prevState) => {
+      if (areArraysEqual(prevState.selectedElement, newElement)) {
+        return prevState;
+      }
+      return {
+        ...prevState,
+        selectedElement: newElement,
+      };
+    });
+  }, []);
+  const open = Boolean(state.anchorEl);
 
   // Debounced Search Callback
   const debouncedSearchJobPost = useCallback(
     debounce((searchObj, pageObj) => {
       searchJobPost(pageType, searchObj, pageObj).then((data) => {
-        //console.log(data)
-        setJobPostData(data);
-        setIsLoading(false);
+        updateState({
+          jobPostData: data,
+          isLoading: false,
+        });
+      });
+    }, 300),
+    [pageType]
+  );
+  
+  // Debounced Keyword Search Callback
+  const debouncedSearchJobPostwithKeyword = useCallback(
+    debounce((pageObj) => {
+      searchJobPostwithKeyword(pageType, pageObj).then((data) => {
+        updateState({
+          jobPostData: data,
+          isLoading: false,
+        });
       });
     }, 300),
     [pageType]
   );
 
-  // on Main Tag Change
+  // Reset Search Objects on Page Change (Job / Recruit)
   useEffect(() => {
-    // Update Tag Child
-    if (selectedTag) {
-      tagElementLoader(selectedTag).then((res) => {
-        setTagElementData(res);
-      });
-    } else {
-      setTagElementData();
-    }
-    // Update Search Key Object
-    setJobSearchObj({
-      ...jobSearchObj,
-      workFieldId: selectedTag,
+    updateState({
+      selectedTag: location?.state?.tagID ?? "",
+      selectedElement: [],
+      selectedExpTag: null,
+      jobSearchObj: { workFieldId: location?.state?.tagID ?? "" },
+      jobPageObj: { size: 10, sort: ["createdAt,desc"], page: 0 },
     });
-  }, [selectedTag]);
-
-  // on Tag Child Change
-  useEffect(() => {
-    // Update Search Key Object
-    if (selectedElement) {
-      setJobSearchObj({
-        ...jobSearchObj,
-        workFieldChildTagId: [...selectedElement],
-      });
-    }
-  }, [selectedElement]);
+  }, [pageType]);
 
   // on Search Key and Page Key Change
   useEffect(() => {
-    setIsLoading(true);
-    // re-search and fetch Post Data
-    debouncedSearchJobPost(jobSearchObj, jobPageObj);
-  }, [jobSearchObj, jobPageObj]);
-
-  // Reset Search Objects on Update
-  useEffect(() => {
-    setJobSearchObj({});
-    setJobPageObj({
-      size: 10,
-      direction: "desc",
-      sort: ["createdAt"],
-      page: 0,
-    })
-  }, [pageType]);
+    if(state.isLoading && !state.isSearchBarOpen) {
+      debouncedSearchJobPost(state.jobSearchObj, state.jobPageObj);
+    } else if(state.isLoading && state.isSearchBarOpen) {
+      debouncedSearchJobPostwithKeyword(state.jobPageObj);
+    }
+  }, [state.jobSearchObj, state.jobPageObj]);
 
   // Update Search Object on Page Change
   useEffect(() => {
-    setJobPageObj({
-      ...jobPageObj,
-      page: pageIndex - 1,
-    })
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }, [location.search]);
+    updateState({
+      jobPageObj: {
+        ...state.jobPageObj,
+        page: state.pageIndex - 1,
+      },
+      isLoading: true,
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [state.pageIndex]);
 
   const onPageChange = (event, value) => {
     searchParams.set("page", value);
     navigate(`?${searchParams.toString()}`);
+    updateState({ pageIndex: value });
   };
 
   const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    updateState({ anchorEl: event.currentTarget });
   };
   const handleMenuClose = () => {
-    setAnchorEl(null);
+    updateState({ anchorEl: null });
   };
   const handleMenuBookmark = () => {
     navigate(`/bookmark?tab=${pageType}`);
-  }
+  };
   const handleMenuMyPost = () => {
     navigate(`/my-post?tab=${pageType}`);
-  }
+  };
 
   const toggleSearchBar = () => {
-    setIsSearchBarOpen(!isSearchBarOpen);
+    updateState({
+      isSearchBarOpen: !state.isSearchBarOpen,
+    });
   };
   const handleSearchFieldChange = (e) => {
-    setSearchData(e.currentTarget.value);
+    updateState({ searchKeyword: e.currentTarget.value });
   };
   const handleSearchClick = (e) => {
     e.preventDefault();
-    // reset Search Object
-    //setJobSearchObj({});
-    // send keyword search request
-    searchJobPostwithKeyword(pageType, searchData, jobPageObj).then((data) => {
-      setJobPostData(() => {
-        let totalCount;
-        if(pageType == 'job') {
-          totalCount = Object.keys(data.employeePostSearchResponseDtoList).length;
-        } else {
-          totalCount = Object.keys(data.employerPostSearchResponseDtoList).length;
-        }
-
-        return {
-          ...data,
-          // TODO: FIX TEMP SOLUTION
-          totalCount: totalCount,
-        };
-      });
+    updateState({
+      jobPageObj: {
+        ...state.jobPageObj,
+        keyword: state.searchKeyword,
+        page: 0,
+      },
+      isLoading: true,
     });
   };
 
@@ -191,8 +170,65 @@ export default function JobRecruitListPage({ pageType }) {
     navigate(`./${postID}`);
   };
 
+  const handleTagChange = useCallback(() => {
+    updateElement([]);
+    updateState({
+      jobSearchObj: {
+        ...state.jobSearchObj,
+        workFieldId: state.selectedTag,
+      },
+      isLoading: true,
+    });
+  }, [state.jobSearchObj, state.selectedTag, updateState, updateElement]);
+
+  const handleElementChange = useCallback(() => {
+    updateState({
+      jobSearchObj: {
+        ...state.jobSearchObj,
+        workFieldChildTagId: state.selectedElement,
+      },
+      isLoading: true,
+    });
+  }, [state.jobSearchObj, state.selectedElement, updateState]);
+
+  const renderJobCards = useMemo(() => {
+    if (state.isLoading || isEmpty(state.jobPostData)) {
+      return (
+        <center>
+          <CircularProgress sx={{ padding: "1rem" }} />
+        </center>
+      );
+    }
+
+    if (state.jobPostData?.error) {
+      return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
+    }
+
+    if (state.jobPostData?.totalCount === 0) {
+      return <p>표시할 내용이 없습니다.</p>;
+    }
+
+    const CardComponent = pageType === "job" ? JobListCard : RecruitListCard;
+    const dataList =
+      pageType === "job"
+        ? state.jobPostData?.employeePostSearchResponseDtoList
+        : state.jobPostData?.employerPostSearchResponseDtoList;
+
+    return dataList?.map((item, index) => (
+      <CardComponent
+        key={index}
+        itemData={item}
+        onClick={() =>
+          handleCardClick(
+            pageType === "job" ? item["employeePostId"] : item["employerPostId"]
+          )
+        }
+      />
+    ));
+  }, [state.jobPostData, state.isLoading, pageType]);
+
   return (
-    <>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <TitleBar title={pageType == "job" ? "구직" : "구인"}>
         <>
           <Tooltip
@@ -201,10 +237,10 @@ export default function JobRecruitListPage({ pageType }) {
             slotProps={appbarTooltipOffsetProp}
           >
             <IconButton
-              color={isSearchBarOpen ? "primary" : ""}
+              color={state.isSearchBarOpen ? "primary" : ""}
               onClick={toggleSearchBar}
             >
-              {isSearchBarOpen ? <RiSearchFill /> : <RiSearchLine />}
+              {state.isSearchBarOpen ? <RiSearchFill /> : <RiSearchLine />}
             </IconButton>
           </Tooltip>
           {isLoggedIn && (
@@ -228,7 +264,7 @@ export default function JobRecruitListPage({ pageType }) {
                 </IconButton>
               </Tooltip>
               <Menu
-                anchorEl={anchorEl}
+                anchorEl={state.anchorEl}
                 open={open}
                 onClose={handleMenuClose}
                 onClick={handleMenuClose}
@@ -236,22 +272,29 @@ export default function JobRecruitListPage({ pageType }) {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
                 disableScrollLock={true}
               >
-                <MenuItem sx={{minHeight: "32px"}} onClick={handleMenuBookmark}>내 북마크 조회</MenuItem>
+                <MenuItem
+                  sx={{ minHeight: "32px" }}
+                  onClick={handleMenuBookmark}
+                >
+                  내 북마크 조회
+                </MenuItem>
                 <Divider />
-                <MenuItem sx={{minHeight: "32px"}} onClick={handleMenuMyPost}>내 작성글 조회</MenuItem>
+                <MenuItem sx={{ minHeight: "32px" }} onClick={handleMenuMyPost}>
+                  내 작성글 조회
+                </MenuItem>
               </Menu>
             </>
           )}
         </>
       </TitleBar>
-      {isSearchBarOpen && (
+      {state.isSearchBarOpen && (
         <div className={classes.jobSearchArea}>
           <TextField
             size="small"
-            value={searchData}
+            value={state.searchKeyword}
             fullWidth
             onKeyDown={(e) => {
-              if(e.key === "Enter") {
+              if (e.key === "Enter") {
                 handleSearchClick(e);
               }
             }}
@@ -262,77 +305,52 @@ export default function JobRecruitListPage({ pageType }) {
           </IconButton>
         </div>
       )}
-      {!isSearchBarOpen && (
+      {!state.isSearchBarOpen && (
         <div className={classes.jobTagArea}>
-          <TagSelector
-            title="작업 분야"
-            tagList={tagData}
-            selectedTag={selectedTag}
-            setTag={setSelectedTag}
-            toggle={true}
+          <TagAccordion
+            selectedTag={state.selectedTag}
+            selectedElement={state.selectedElement}
+            setTag={(tag) => updateState({ selectedTag: tag })}
+            setElement={updateElement}
+            onTagChange={handleTagChange}
+            onElementChange={handleElementChange}
           />
-          {tagElementData &&
-            tagElementData.map((subTag, index) => (
-              <TagChildSelector
-                key={index}
-                title={subTag.subCategoryName}
-                tagList={subTag.workFieldChildTagResponseDtoList}
-                selectedElement={selectedElement}
-                setElement={setSelectedElement}
-              />
-            ))}
+          <ExpTagSelector
+            selectedExp={state.selectedExpTag}
+            setExpTag={updateState}
+            updateObj={(obj) =>
+              updateState({
+                jobSearchObj: { ...state.jobSearchObj, ...obj },
+                isLoading: true,
+              })
+            }
+          />
         </div>
       )}
-      <JobListSortBar setObj={setJobPageObj} />
-      <div className={classes.jobPostArea}>
-        {isLoading && <Backdrop open={isLoading}>
-          <CircularProgress  sx={{ color: "#fff" }}/>  
-        </Backdrop>}
-        {isEmpty(jobPostData) && <p>불러오는 중</p>}
-        {!isEmpty(jobPostData) && jobPostData.error && (
-          <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
-        )}
-        {!isEmpty(jobPostData) && jobPostData.totalCount == 0 && (
-          <p>표시할 내용이 없습니다.</p>
-        )}
-        {!isEmpty(jobPostData) &&
-          jobPostData.totalCount > 0 &&
-          pageType == "job" &&
-          jobPostData?.employeePostSearchResponseDtoList?.map((item, index) => (
-            <JobListCard
-              key={index}
-              itemData={item}
-              onClick={() => {
-                handleCardClick(item.employeePostId);
-              }}
-            />
-          ))}
-        {!isEmpty(jobPostData) &&
-          jobPostData.totalCount > 0 &&
-          pageType == "recruit" &&
-          jobPostData?.employerPostSearchResponseDtoList?.map((item, index) => (
-            <RecruitListCard
-              key={index}
-              itemData={item}
-              onClick={() => {
-                handleCardClick(item.employerPostId);
-              }}
-            />
-          ))}
-      </div>
+      <JobListSortBar
+        pageType={pageType}
+        pageObj={state.jobPageObj}
+        setObj={(obj) => {
+          updateState({ jobPageObj: obj, isLoading: true });
+        }}
+      />
+      <div className={classes.jobPostArea}>{renderJobCards}</div>
       <div className={classes.jobPageArea}>
         <Pagination
-          count={jobPostData?.totalPages || 1}
-          page={jobPageObj.page + 1 || 1}
+          count={state.jobPostData?.totalPages || 1}
+          page={state.jobPageObj.page + 1 || 1}
           onChange={onPageChange}
         />
       </div>
-    </>
+    </Card>
   );
 }
 
 // 구직 게시글 검색 함수
 async function searchJobPost(pageType, jobSearchObj, jobPageObj) {
+  //console.log("NORMAL SEARCH");
+  //console.log(jobSearchObj);
+  //console.log(jobPageObj);
   let apiAddress;
   if (pageType == "job") {
     apiAddress = "/api/v1/employee-posts/search";
@@ -360,20 +378,19 @@ async function searchJobPost(pageType, jobSearchObj, jobPageObj) {
 }
 
 // 구직 게시글 검색 함수
-async function searchJobPostwithKeyword(pageType, keywordData, jobPageObj) {
+async function searchJobPostwithKeyword(pageType, jobPageObj) {
+  //console.log("Keyword SEARCH");
+  //console.log(jobPageObj);
   let apiAddress;
   if (pageType == "job") {
     apiAddress = "/api/v1/employee-posts/search/keyword";
-  } else if (pageType = "recruit") {
+  } else if ((pageType = "recruit")) {
     apiAddress = "/api/v1/employer-posts/search/keyword";
   }
 
   try {
     const response = await apiInstance.get(apiAddress, {
-      params: {
-        keyword: keywordData,
-        ...jobPageObj,
-      },
+      params: jobPageObj,
     });
     if (response.status === 200) {
       // 조회 성공

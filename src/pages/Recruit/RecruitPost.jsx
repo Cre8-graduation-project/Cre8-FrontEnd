@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useMatch, useRouteLoaderData } from "react-router-dom";
-import { Divider, Chip, Fab, Grid, Tooltip } from "@mui/material";
+import { Divider, Chip, Fab, Grid, Tooltip, Card } from "@mui/material";
 import { RiChat1Fill, RiStarFill, RiStarLine, RiPencilLine } from "@remixicon/react";
 
 import PageContent from "../../components/PageContent";
@@ -55,7 +55,7 @@ export default function RecruitPostPage() {
   }
 
   return (
-    <>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <TitleBar backBtnTarget={-1} title="구인 게시글" />
       {!data ? (
         <PageContent>
@@ -67,6 +67,8 @@ export default function RecruitPostPage() {
             <h2>{data.title}</h2>
             <h3>{data.companyName}</h3>
             <h4>{data.contact}</h4>
+          </div>
+          <div className={classes.recTagListArea}>
             <TagList tagList={tagDataList} />
           </div>
           <div className={classes.recPostInfoArea}>
@@ -167,7 +169,7 @@ export default function RecruitPostPage() {
           </Tooltip>
         </>
       )}
-    </>
+    </Card>
   );
 }
 

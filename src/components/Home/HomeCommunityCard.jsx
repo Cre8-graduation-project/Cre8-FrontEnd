@@ -1,18 +1,18 @@
 import { Card, Link } from "@mui/material";
 import classes from "./HomeComponent.module.css";
 
-export default function HomePostCard({title, source}) {
+export default function HomeCommunityCard({title, source}) {
   const data = dummyData;
 
   return (
-    <div className={classes.homePostCardArea}>
+    <div className={classes.homeCommunityCardArea}>
       <h3>{title}</h3>
       <Card
         elevation={2} 
-        className={classes.homePostCard}
+        className={classes.homeCommunityCard}
       >  
         {data.map((item, index) => (
-          <Link key={index} color="inherit" underline="none" className={classes.homePostLink}>
+          <Link key={index} color="inherit" underline="none" className={classes.homeCommunityCardLink}>
             <span className={classes.titleCategory}>[{item.type}] </span>
             <span className={classes.titleName}>{item.title} </span>
             <span className={classes.titleComment}>[{item.comment}]</span>

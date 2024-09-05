@@ -71,7 +71,7 @@ export default function LoginPage() {
           </li>
         </ul>
         <div className={classes.authLabel}>
-          <label htmlFor="userID">아이디</label>
+          <label htmlFor="userID">아이디 *</label>
           <input
             id="userID"
             name="userID"
@@ -86,7 +86,7 @@ export default function LoginPage() {
           )}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="password">비밀번호</label>
+          <label htmlFor="password">비밀번호 *</label>
           <input
             id="password"
             name="password"

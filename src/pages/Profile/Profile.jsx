@@ -3,7 +3,7 @@ import {
   useRouteLoaderData,
   useLocation,
 } from "react-router-dom";
-import { Avatar, Link, Tab, Button, Divider } from "@mui/material";
+import { Avatar, Link, Tab, Button, Divider, Card } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 import classes from "./Profile.module.css";
@@ -43,7 +43,7 @@ export default function ProfilePage() {
 
   // !!! 프로필 수정 버튼 = 임시 조치
   return (
-    <>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <div className={classes.content}>
         <Avatar
           alt={profileData.uNickName}
@@ -77,6 +77,7 @@ export default function ProfilePage() {
                   href={profileData.uLinkTwitter}
                   color="inherit"
                   rel="noopener noreferrer"
+                  sx={{marginBottom: "0.1rem"}}
                 >
                   {profileData.uLinkTwitter}
                 </Link>
@@ -93,6 +94,7 @@ export default function ProfilePage() {
                   href={profileData.uLinkYoutube}
                   color="inherit"
                   rel="noopener noreferrer"
+                  sx={{marginBottom: "0.1rem"}}
                 >
                   {profileData.uLinkYoutube}
                 </Link>
@@ -109,6 +111,7 @@ export default function ProfilePage() {
                   href={profileData.uLinkWebpage}
                   color="inherit"
                   rel="noopener noreferrer"
+                  sx={{marginBottom: "0.1rem"}}
                 >
                   {profileData.uLinkWebpage}
                 </Link>
@@ -132,7 +135,7 @@ export default function ProfilePage() {
           </TabPanel>
         </TabContext>
       </div>
-    </>
+    </Card>
   );
 }
 

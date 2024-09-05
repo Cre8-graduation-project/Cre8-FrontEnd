@@ -3,7 +3,7 @@ import { TextField, Button } from "@mui/material";
 import { RiImage2Fill } from "@remixicon/react";
 import classes from "./ChatComponent.module.css";
 
-export default function ChatInputBar({handleChatSend}) {
+export default function ChatInputBar({ handleChatSend }) {
   const [chatInput, setChatInput] = useState("");
   
   const handleSend = (e) => {

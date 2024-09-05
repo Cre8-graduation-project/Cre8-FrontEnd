@@ -8,6 +8,9 @@ import {
   Fab,
   Grid,
   Tooltip,
+  useMediaQuery,
+  useTheme,
+  Card,
 } from "@mui/material";
 import { RiChat1Fill, RiStarFill, RiStarLine, RiPencilLine } from "@remixicon/react";
 
@@ -27,8 +30,8 @@ export default function JobPostPage() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const memberCode = localStorage.getItem("memberCode");
-  //console.log(data);
-  //const data = dummyPageData;
+  const theme = useTheme();
+  const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   // Tag List
   const [tagDataList, setTagDataList] = useState([]);
   // Bookmark Button State
@@ -70,7 +73,7 @@ export default function JobPostPage() {
   }
 
   return (
-    <>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <TitleBar backBtnTarget={-1} title="구직 게시글" />
       {!data ? (
         <PageContent>
@@ -85,11 +88,13 @@ export default function JobPostPage() {
               년생
             </h3>
             <h4>{data.contact}</h4>
+          </div>
+          <div className={classes.jobTagListArea}>
             <TagList tagList={tagDataList} />
           </div>
           <div className={classes.jobPostPtfArea}>
             <h3>작성자 포트폴리오</h3>
-            <ImageList cols={3} gap={10}>
+            <ImageList cols={matchDownMd ? 3 : 5 } gap={10}>
               {data.portfolioSimpleResponseDtoList.length > 0 &&
                 data.portfolioSimpleResponseDtoList.map((item) => (
                   <ImageListItem
@@ -191,7 +196,7 @@ export default function JobPostPage() {
           </Tooltip>
         </>
       )}
-    </>
+    </Card>
   );
 }
 

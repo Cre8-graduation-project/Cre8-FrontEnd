@@ -9,7 +9,7 @@
   align-items: center;
   padding: 0.8rem 1.3rem;
   gap: 0.5rem;
-  border-bottom: 1px var(--color-gray-500) solid;
+  border-bottom: 1px var(--color-gray-400) solid;
 }  
 .tagSelector h4 {
   margin: 0;
@@ -24,4 +24,8 @@
 
 .tagChildSelector {
   background-color: var(--color-gray-100);
+}
+
+.tagAccordion {
+  transition: all 0.5s ease;
 }

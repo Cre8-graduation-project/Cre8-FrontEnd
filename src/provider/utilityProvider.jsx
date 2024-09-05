@@ -31,3 +31,7 @@ export const isEmpty = (input) => {
   }
   else return false;
 }
+
+export const areArraysEqual = (a, b) => {
+  a.length === b.length && a.every((value, index) => value === b[index]);
+}

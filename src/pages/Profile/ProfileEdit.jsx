@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import { useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
-import { Avatar, Tab, IconButton, Button } from "@mui/material";
+import { Avatar, Tab, IconButton, Button, Card } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 
@@ -92,7 +92,7 @@ export default function ProfileEditPage() {
 
   // !!! 프로필 수정 완료 버튼 = 임시 조치
   return (
-    <>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <div className={classes.content}>
         <IconButton
           component="label"
@@ -197,7 +197,7 @@ export default function ProfileEditPage() {
           </TabPanel>
         </TabContext>
       </div>
-    </>
+    </Card>
   );
 }
 

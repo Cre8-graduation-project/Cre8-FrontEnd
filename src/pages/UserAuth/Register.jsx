@@ -114,7 +114,7 @@ export default function RegisterPage() {
           </li>
         </ul>
         <div className={classes.authLabel}>
-          <label htmlFor="loginId">아이디</label>
+          <label htmlFor="loginId">아이디 *</label>
           <input
             id="loginId"
             name="loginId"
@@ -129,7 +129,7 @@ export default function RegisterPage() {
           )}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="password">비밀번호</label>
+          <label htmlFor="password">비밀번호 *</label>
           <input
             id="password"
             name="password"
@@ -144,7 +144,7 @@ export default function RegisterPage() {
           )}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="confirmPassword">비밀번호 확인</label>
+          <label htmlFor="confirmPassword">비밀번호 확인 *</label>
           <input
             id="confirmPassword"
             name="confirmPassword"
@@ -159,7 +159,7 @@ export default function RegisterPage() {
           )}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="email">이메일</label>
+          <label htmlFor="email">이메일 *</label>
           <input
             id="email"
             name="email"
@@ -174,7 +174,7 @@ export default function RegisterPage() {
           )}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="nickName">별명</label>
+          <label htmlFor="nickName">별명 *</label>
           <input
             id="nickName"
             name="nickName"
@@ -189,7 +189,7 @@ export default function RegisterPage() {
           )}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="name">이름</label>
+          <label htmlFor="name">이름 *</label>
           <input
             id="name"
             name="name"
@@ -204,7 +204,7 @@ export default function RegisterPage() {
           )}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="sex">성별</label>
+          <label htmlFor="sex">성별 *</label>
           <Select
             id="sex"
             name="sex"
@@ -223,7 +223,7 @@ export default function RegisterPage() {
           {registerError.sex && focus.sex && <span>{registerError.sex}</span>}
         </div>
         <div className={classes.authLabel}>
-          <label htmlFor="birthDay">생년월일</label>
+          <label htmlFor="birthDay">생년월일 *</label>
           <input
             id="birthDay"
             name="birthDay"
@@ -239,7 +239,7 @@ export default function RegisterPage() {
           )}
         </div>
         <div style={{ display: isCodeSent ? undefined : "none" }} className={classes.authLabel}>
-          <label htmlFor="authCode">확인 코드</label>
+          <label htmlFor="authCode">확인 코드 *</label>
           <input
             id="authCode"
             name="authCode"

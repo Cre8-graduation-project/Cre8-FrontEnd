@@ -33,15 +33,14 @@ apiInstance.interceptors.request.use(
 // After response
 apiInstance.interceptors.response.use(
   (response) => {
-    
     return response;
   },
   (error) => {
     if (error.response && error.response.status === 401) {
       // Access Token Deprecated
       // Logout
-      console.log("requesting Logout");
-      requestLogout();
+      //console.log("requesting Logout");
+      //requestLogout();
     }
     return Promise.reject(error);
   }

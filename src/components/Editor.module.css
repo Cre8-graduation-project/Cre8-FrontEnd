@@ -8,7 +8,7 @@
   padding: 0.3em;
   gap: 0.3em;
   color: var(--color-gray-200);
-  border-bottom: 0.1rem solid var(--color-gray-500);
+  border-bottom: 0.1rem solid var(--color-gray-400);
 }
 .editorMenuBar button {
   display: flex;
@@ -23,6 +23,6 @@
 }
 .editorMenuBar button:hover {
   background-color: var(--color-gray-200);
-  border: 0.1rem solid var(--color-gray-500);
+  border: 0.1rem solid var(--color-gray-400);
   border-radius: 0.4rem;
 }

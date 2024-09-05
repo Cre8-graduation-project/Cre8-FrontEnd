@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Divider, Tab } from "@mui/material";
+import { Card, Divider, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 import TitleBar from "../../components/TitleBar";
@@ -93,7 +93,7 @@ export default function MyPostPage() {
   }, [location.search]);
 
   return (
-    <>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <TitleBar backBtnTarget={-1} title="My 게시글" />
       <div className={classes.bookmarkTab}>
         <TabContext value={tabType}>
@@ -129,7 +129,7 @@ export default function MyPostPage() {
           </TabPanel>
         </TabContext>
       </div>
-    </>
+    </Card>
   );
 }
 

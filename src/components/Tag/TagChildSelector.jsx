@@ -1,18 +1,15 @@
 import { Chip } from "@mui/material";
-import { IconButton } from "@mui/material";
-import { RiArrowLeftLine } from "@remixicon/react";
 import classes from "./Tag.module.css";
 
 export default function TagChildSelector({ title, tagList, selectedElement, setElement }) {
   const handleClick = (tagID) => {
-    if(selectedElement.has(tagID)) {
+    if(selectedElement.includes(tagID)) {
       //console.log("deleting tag")
-      selectedElement.delete(tagID);
+      setElement(selectedElement.filter(id => id !== tagID));
     } else {
       //console.log("adding tag")
-      selectedElement.add(tagID)
+      setElement([...selectedElement, tagID]);
     }
-    setElement(new Set(selectedElement));
   };
 
   return (
@@ -24,7 +21,7 @@ export default function TagChildSelector({ title, tagList, selectedElement, setE
             <li className={classes.chip} key={index}>
               <Chip
                 label={tag.name}
-                color={(selectedElement.has(tag.workFieldChildTagId)) ? "primary" : "default"}
+                color={(selectedElement.includes(tag.workFieldChildTagId)) ? "primary" : "default"}
                 onClick={() => {
                   handleClick(tag.workFieldChildTagId);
                 }}

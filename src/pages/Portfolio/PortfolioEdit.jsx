@@ -12,11 +12,13 @@ import {
   Backdrop,
   CircularProgress,
   Button,
+  Card,
 } from "@mui/material";
 import { RiAddFill, RiDeleteBinLine } from "@remixicon/react";
 import { useEditor, EditorContent } from "@tiptap/react";
 
 import TitleBar from "../../components/TitleBar";
+import TagAccordion from "../../components/Tag/TagAccordion";
 import TagSelector from "../../components/Tag/TagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
 import { tagElementLoader, tagLoader } from "../../components/Tag/TagLoader";
@@ -44,7 +46,7 @@ export default function PortfolioEditPage() {
   const [tagElementData, setTagElementData] = useState();
   // User selected tag
   const [selectedTag, setSelectedTag] = useState();
-  const [selectedElement, setSelectedElement] = useState(new Set());
+  const [selectedElement, setSelectedElement] = useState([]);
   // Uploading Status
   const [isUploading, setIsUploading] = useState(false);
 
@@ -53,7 +55,6 @@ export default function PortfolioEditPage() {
     // on Initial Load...
     // Load Main Tag
     if (!tagData) {
-      //console.log("Loading Main Tag");
       tagLoader().then((res) => {
         setTagData(res);
       });
@@ -75,10 +76,8 @@ export default function PortfolioEditPage() {
     // on Main Tag Change...
     // Load Tag Child
     if (selectedTag) {
-      //console.log("Loading Tag Child");
       tagElementLoader(selectedTag).then((res) => {
         setTagElementData(res);
-        //console.log(tagElementData);
       });
     }
   }, [selectedTag]);
@@ -86,38 +85,32 @@ export default function PortfolioEditPage() {
     // After Tag Element loaded...
     // load portfolio data as initial value
     const tempData = [...data.tagName];
-    const tempElement = new Set();
+    const tempElement = [];
     // Remove first tag (non-element)
     tempData.shift();
     if (tagElementData && tempData) {
       tagElementData.map((elementItem) => {
         elementItem.workFieldChildTagResponseDtoList.map((childItem) => {
-          if (tempData.length == 0) {
-            setSelectedElement(new Set(tempElement));
-          }
           if (tempData[0] == childItem.name) {
-            tempElement.add(childItem.workFieldChildTagId);
+            tempElement.push(childItem.workFieldChildTagId);
             tempData.shift();
           }
         });
       });
+      if (tempData.length == 0) {
+        setSelectedElement(tempElement);
+      }
     }
   }, [tagElementData]);
 
   const handleDeleteImg = (index) => {
-    //console.log("REMOVE IMAGE!!");
-    //console.log(index);
-    //console.log(data.portfolioImageResponseDtoList[index].portfolioImageId);
     // If delete target is newly added image
     if(data.portfolioImageResponseDtoList[index].portfolioImageId == null) {
       const newImgIndex = index + uploadedImgArray.length - data.portfolioImageResponseDtoList.length;
-      console.log(newImgIndex)
-      console.log(uploadedImgArray)
       setUploadedImgArray((prevArray) => {
         prevArray.splice(newImgIndex, 1);
         return prevArray;
       });
-      console.log(uploadedImgArray)
     } 
     // If delete target is already uploaded image
     else {
@@ -138,7 +131,6 @@ export default function PortfolioEditPage() {
   };
 
   const handleAddImg = (e) => {
-    //console.log("ADD IMAGE!!");
     setIsUploading(true);
     if (e.target.type === "file" && e.target.files && e.target.files[0]) {
       // Fetch Preview Image
@@ -210,7 +202,7 @@ export default function PortfolioEditPage() {
   };
 
   return (
-    <div className={classes.ptfEditPage}>
+    <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }} className={classes.ptfEditPage}>
       <Backdrop open={isUploading}>
         <CircularProgress />
       </Backdrop>
@@ -288,7 +280,7 @@ export default function PortfolioEditPage() {
           저장
         </Button>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -310,7 +302,6 @@ async function portfolioEditAction(formData) {
     }
   } catch (error) {
     // 로그인 실패
-    console.log(error.message);
     if (error.response && error.response.status === 400) {
       Toast.error("인증과정에서 오류가 발생했습니다.");
     } else if (error.response && error.response.status === 404) {
