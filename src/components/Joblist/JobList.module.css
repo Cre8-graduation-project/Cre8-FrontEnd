@@ -11,10 +11,18 @@
   gap: 0.3em;
 }
 
+.jobListSortSelect {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  background-color: var(--color-gray-100);
+  border-bottom: 0.1rem solid var(--color-gray-400);
+}
+
 .jobListCard {
   display: flex;
   flex-direction: row;
-  padding: 1rem 1.2rem 1rem 1.2rem;
+  padding: 1rem 1.2rem;
   border-bottom: 0.1rem solid var(--color-gray-400);
   gap: 1rem;
 
@@ -29,15 +37,36 @@
   background-color: var(--color-gray-150);
 }
 
+.jobListCardSm {
+  flex-direction: column;
+}
+.jobListCardContentSm {
+  display: flex;
+  flex-direction: row;
+  gap: 0.7rem;
+
+  img {
+    min-width: 4rem; max-width: 4rem;
+    min-height: 3rem; max-height: 3rem;
+  }
+}
+
 .jobListCardText {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 .jobListCardText h3 {
-  margin: 0 0.1rem 0 0.1rem;
+  margin: 0 0.1rem;
 }
 .jobListCardText h5 {
   font-weight: 400;
-  margin: 0 0.1rem 0.7rem 0.1rem;
+  margin: 0.5rem 0.1rem 0.8rem 0.1rem;
+}
+
+.jobListCardTextSm {
+  justify-content: start;
+  h5 {
+    margin: 0.5rem 0.1rem 0 0.1rem;
+  }
 }

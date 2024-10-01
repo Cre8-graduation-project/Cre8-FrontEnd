@@ -1,0 +1,87 @@
+.communityPostLink {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.3rem;
+  border-bottom: 1px solid var(--color-gray-400);
+  cursor: pointer;
+  h4 {
+    margin: 0;
+  }
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+  span {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3rem;
+  }
+}
+.communityPostLink:hover {
+  background-color: var(--color-gray-150);
+}
+
+.communityComment {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem 1.3rem;
+  gap: 0.7rem;
+  border-top: 1px solid var(--color-gray-400);
+  position: relative;
+}
+
+.communityCommentMoreButton {
+  position: absolute;
+  top: -0.4rem;
+  right: -0.7rem;
+  width: 2rem;
+  height: 2rem;
+}
+
+.communityCommentButtonArea {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+  width: 100%;
+  gap: 0.4rem;
+}
+
+.communityCommentContent {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.4rem;
+  align-items: flex-start;
+
+  h4, p {
+    margin: 0;
+  }
+}
+
+.communityCommentNameTitle {
+  display: flex;
+  flex-direction: row;
+}
+
+.communityCommentTextField {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.8rem;
+  padding: 1.3rem;
+  border-top: 1px solid var(--color-gray-400);
+}
+
+.communityReply {
+  padding-left: 2.4rem;
+  background-color: var(--color-gray-100);
+}
+
+.cmNavBtnList {
+  margin: 0.7rem;
+}
+.cmNavBtnList button {
+  border-radius: 0.4rem;
+  justify-content: flex-start;
+}

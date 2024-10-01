@@ -4,7 +4,6 @@ import {
   Backdrop,
   CircularProgress,
   TextField,
-  Chip,
   Divider,
   Button,
   Grid,
@@ -13,47 +12,43 @@ import {
 import { useEditor, EditorContent } from "@tiptap/react";
 import { RiAddFill } from "@remixicon/react";
 
-import TitleBar from "../../components/TitleBar";
+import TitleBar from "../../components/Common/TitleBar";
 import TagSelector from "../../components/Tag/TagSelector";
 import SubTagSelector from "../../components/Tag/SubTagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
-import { tagElementLoader, tagLoader } from "../../components/Tag/TagLoader";
+import { TagElementLoader, TagLoader } from "../../components/Tag/TagLoader";
 import apiInstance from "../../provider/networkProvider";
-import { Toast } from "../../components/Toast";
-import { EditorMenuBar, editorExtensions } from "../../components/Editor";
-import classes from "./Recruit.module.css";
+import { Toast } from "../../components/Common/Toast";
+import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import classes from "./Job.module.css";
 import { useAuth } from "../../provider/authProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 
-export default function RecruitEditPage() {
+export default function JobEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState(
     location.state?.isCreation == null || location.state?.isCreation
-      ? INITIAL_REC_VALUE
-      : useRouteLoaderData("recruit-page-edit")
+      ? INITIAL_JOB_VALUE
+      : useRouteLoaderData("job-page-edit")
   );
   const [imageData, setImageData] = useState({
     imgFile: null,
     imgURL: null,
-  })
-  // Portfolio Description in JSON type
+  });
+  // Job Description in JSON type
   const [postContent, setPostContent] = useState(
     location.state?.isCreation == null || location.state?.isCreation
-      ? "" 
+      ? ""
       : JSON.parse(data.contents)
   );
   // Tag Data
   const [tagData, setTagData] = useState();
   const [tagElementData, setTagElementData] = useState();
   const payType = ["작업물 건 당 지급", "작업물 분 당 지급", "월급", "기타"];
-  const durationType = ["채용 시 마감", "마감일 지정", "상시 채용"];
   // User selected tag
-  const [selectedTag, setSelectedTag] = useState();
+  const [selectedTag, setSelectedTag] = useState(null);
   const [selectedElement, setSelectedElement] = useState([]);
-  const [isCareerNotRequired, setIsCareerNotRequired] = useState(
-    data.hopeCareerYear == null || data.hopeCareerYear == 0
-  );
   // Uploading Status
   const [isUploading, setIsUploading] = useState(false);
 
@@ -63,7 +58,7 @@ export default function RecruitEditPage() {
     // Load Main Tag
     if (!tagData) {
       //console.log("Loading Main Tag");
-      tagLoader().then((res) => {
+      TagLoader().then((res) => {
         setTagData(res);
       });
     }
@@ -84,7 +79,7 @@ export default function RecruitEditPage() {
     // Load Tag Child
     if (selectedTag) {
       //console.log("Loading Tag Child");
-      tagElementLoader(selectedTag).then((res) => {
+      TagElementLoader(selectedTag).then((res) => {
         setTagElementData(res);
         //console.log(tagElementData);
       });
@@ -155,7 +150,6 @@ export default function RecruitEditPage() {
 
     if (
       isEmpty(data.title) ||
-      isEmpty(data.companyName) ||
       isEmpty(data.contact) ||
       isEmpty(postContent)
     ) {
@@ -166,29 +160,37 @@ export default function RecruitEditPage() {
 
     const formData = new FormData();
     if(!location.state?.isCreation) {
-      formData.append("employerPostId", data.employerPostId)
+      formData.append("employeePostId", data.employeePostId)
     };
     formData.append("title", data.title);
-    formData.append("workFieldId", selectedTag);
-    selectedElement.forEach((element) => {
-      if(element) { formData.append("workFieldChildTagId", element) };
-    })
-    formData.append("paymentMethod", data.paymentMethod);
-    formData.append("paymentAmount", data.paymentAmount);
-    formData.append("companyName", data.companyName);
-    formData.append("numberOfEmployee", data.numberOfEmployee);
-    formData.append("enrollDurationType", data.enrollDurationType);
-    if(!isEmpty(data.deadLine)) {
-      formData.append("deadLine", data.deadLine);
-    }
-    formData.append("hopeCareerYear", isCareerNotRequired ? 0 : data.hopeCareerYear);
-    formData.append("contents", JSON.stringify(postContent));
     formData.append("contact", data.contact);
+    formData.append("contents", JSON.stringify(postContent));
+    if(!isEmpty(selectedTag)) {
+      formData.append("workFieldId", selectedTag);
+    }
+    if(!isEmpty(selectedElement)) {
+      selectedElement.forEach((element) => {
+        if(element) {
+          formData.append("workFieldChildTagId", element)
+        };
+      })
+    } else {
+      formData.append("workFieldChildTagId", "") 
+    }
+    if(!isEmpty(data.paymentMethod)) {
+      formData.append("paymentMethod", data.paymentMethod);
+    }
+    if(!isEmpty(data.paymentAmount)) {
+      formData.append("paymentAmount", data.paymentAmount);
+    }
+    if(!isEmpty(data.careerYear)) {
+      formData.append("careerYear", data.careerYear);
+    }
     if(imageData.imgFile !== null) {
       formData.append("multipartFile", imageData.imgFile);
     }
 
-    recPostEditAction(formData, location.state.isCreation)
+    jobPostEditAction(formData, location.state.isCreation)
       .then((res) => {
         // Success
         if (res && (res.status === 200 || res.status === 201)) {
@@ -210,9 +212,9 @@ export default function RecruitEditPage() {
       </Backdrop>
       <TitleBar
         title={
-          location.state.isCreation ? "구인 게시글 작성" : "구인 게시글 수정"
+          location.state.isCreation ? "구직 게시글 작성" : "구직 게시글 수정"
         }
-      />
+      ></TitleBar>
       <div className={classes.editTitleArea}>
         <h3>게시글 정보 *</h3>
         <TextField
@@ -222,16 +224,6 @@ export default function RecruitEditPage() {
           variant="outlined"
           name="title"
           value={data.title}
-          onChange={handleInputChange}
-          required
-        />
-        <TextField
-          size="small"
-          fullWidth
-          label="모집 주체"
-          variant="outlined"
-          name="companyName"
-          value={data.companyName}
           onChange={handleInputChange}
           required
         />
@@ -265,7 +257,7 @@ export default function RecruitEditPage() {
             />
           ))}
       </div>
-      <div className={classes.recPostInfoArea}>
+      <div className={classes.jobPostInfoArea}>
         <Grid
           container
           columns={{ xs: 2, sm: 31 }}
@@ -275,9 +267,9 @@ export default function RecruitEditPage() {
           }}
           justifyContent="space-between"
         >
-          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+          <Grid item xs={2} sm={15} sx={{ paddingTop: "0.6rem !important" }}>
             <h3>급여 정보</h3>
-            <div className={classes.recPostInfoAreaRow}>
+            <div className={classes.jobPostInfoAreaRow}>
               <p>지급 방식</p>
               <SubTagSelector
                 tagList={payType}
@@ -290,7 +282,7 @@ export default function RecruitEditPage() {
                 }}
               />
             </div>
-            <div className={classes.recPostInfoAreaRow}>
+            <div className={classes.jobPostInfoAreaRow}>
               <p>희망 급여</p>
               <input
                 type="number"
@@ -306,63 +298,17 @@ export default function RecruitEditPage() {
             flexItem
             sx={{ mr: "-1px", paddingLeft: "16px" }}
           />
-          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
-            <h3>모집 조건</h3>
-            <div className={classes.recPostInfoAreaRow}>
-              <p>모집 인원</p>
+          <Grid item xs={2} sm={15} sx={{ paddingTop: "0.6rem !important" }}>
+            <h3>추가 정보</h3>
+            <div className={classes.jobPostInfoAreaRow}>
+              <p>작업 경력</p>
               <input
                 type="number"
-                name="numberOfEmployee"
-                value={data.numberOfEmployee}
+                name="careerYear"
+                value={data.careerYear}
                 onChange={handleInputChange}
               />
-              <b>명</b>
-            </div>
-            <div className={classes.recPostInfoAreaRow}>
-              <p>모집 기간</p>
-              <SubTagSelector
-                tagList={durationType}
-                selectedTag={data.enrollDurationType}
-                setTag={(input) => {
-                  setData({
-                    ...data,
-                    enrollDurationType: input,
-                  });
-                }}
-              />
-            </div>
-            {data.enrollDurationType == "마감일 지정" && (
-              <div className={classes.recPostInfoAreaRow}>
-                <p>모집 기간</p>
-                <input
-                  type="date"
-                  name="deadLine"
-                  max="9999-12-31"
-                  value={data.deadLine}
-                  onChange={handleInputChange}
-                />
-              </div>
-            )}
-            <div className={classes.recPostInfoAreaRow}>
-              <p>요구 경력</p>
-              <Chip
-                label="경력 무관"
-                color={isCareerNotRequired ? "primary" : "default"}
-                onClick={() => {
-                  setIsCareerNotRequired(!isCareerNotRequired);
-                }}
-              />
-              {!isCareerNotRequired && (
-                <>
-                  <input
-                    type="number"
-                    name="hopeCareerYear"
-                    value={data.hopeCareerYear}
-                    onChange={handleInputChange}
-                  />
-                  <b>명</b>
-                </>
-              )}
+              <b>년</b>
             </div>
           </Grid>
         </Grid>
@@ -377,15 +323,13 @@ export default function RecruitEditPage() {
       <div className={classes.editThumbnailArea}>
         <h3>대표 이미지</h3>
         <div className={classes.editThumbnailParagraph}>
-          <label htmlFor="recThumbnailUploadBtn">
-            {imageData.imgURL == null && 
-              <RiAddFill />
-            }
-            {imageData.imgURL != null && 
-              <img src={imageData.imgURL} alt="postThumbnail"/>
-            }
+          <label htmlFor="jobThumbnailUploadBtn">
+            {imageData.imgURL == null && <RiAddFill />}
+            {imageData.imgURL != null && (
+              <img src={imageData.imgURL} alt="postThumbnail" />
+            )}
             <input
-              id="recThumbnailUploadBtn"
+              id="jobThumbnailUploadBtn"
               style={{ display: "none" }}
               type="file"
               accept="image/jpeg, image/png"
@@ -407,12 +351,12 @@ export default function RecruitEditPage() {
   );
 }
 
-// 구인 게시글 수정 요청 함수
-async function recPostEditAction(formData, isCreation = true) {
+// 포트폴리오 데이터 수정 요청 함수
+async function jobPostEditAction(formData, isCreation = true) {
   try {
     const response = await apiInstance({
       method: isCreation ? "post" : "put",
-      url: "/api/v1/employer/posts",
+      url: "/api/v1/employee/posts",
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
@@ -422,19 +366,19 @@ async function recPostEditAction(formData, isCreation = true) {
       // 저장 성공
       Toast.success("변경사항들을 저장했습니다.");
       return response;
-    }
-    else if (response.status === 201) {
+    } else if (response.status === 201) {
       // 생성 성공
       Toast.success("성공적으로 게시글을 업로드했습니다.");
       return response;
     }
   } catch (error) {
     // 로그인 실패
-    console.log(error.message);
     if (error.response && error.response.status === 400) {
       Toast.error("태그 데이터를 다루는 도중 오류가 발생했습니다.");
     } else if (error.response && error.response.status === 404) {
       Toast.error("잘못된 데이터가 입력되었습니다.");
+    } else if (error.response && error.response.status === 413) {
+      Toast.error("이미지의 용량이 너무 큽니다.");
     } else {
       Toast.error("알 수 없는 오류가 발생했습니다.");
     }
@@ -442,7 +386,7 @@ async function recPostEditAction(formData, isCreation = true) {
   return null;
 }
 
-// 구인 게시글 에디터
+// 포트폴리오 에디터
 const RecPostEditor = ({ postContent, setPostContent }) => {
   const editor = useEditor({
     extensions: editorExtensions,
@@ -472,21 +416,18 @@ const RecPostEditor = ({ postContent, setPostContent }) => {
   );
 };
 
-const INITIAL_REC_VALUE = {
+const INITIAL_JOB_VALUE = {
   title: "",
-  companyName: "",
+  name: "",
+  sex: "",
+  birthYear: "",
   tagPostResponseDto: {
     workFieldTagName: "",
     subCategoryWithChildTagResponseDtoList: [],
   },
   paymentMethod: "",
   paymentAmount: "",
-  numberOfEmployee: "",
-  enrollDurationType: "",
-  deadLine: "",
-  hopeCareerYear: "",
+  careerYear: "",
   contents: "",
   contact: "",
-  writerId: "",
-  writerAccessUrl: "",
 };

@@ -8,7 +8,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 import classes from "./Profile.module.css";
 
-import { ReadOnlyEditor } from "../../components/Editor";
+import { ReadOnlyEditor } from "../../components/Common/Editor";
 import { PortfolioGrid } from "../../components/Portfolio/PortfolioGrid";
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider";
@@ -48,7 +48,11 @@ export default function ProfilePage() {
         <Avatar
           alt={profileData.uNickName}
           src={profileData.uProfileImage}
-          sx={{ width: "7rem", height: "7rem" }}
+          sx={{ 
+            width: "20dvw", height: "20dvw",
+            minWidth: "4rem", minHeight: "4rem",
+            maxWidth: "7rem", maxHeight: "7rem" 
+          }}
         />
         <ul className={classes.contextButtonList}>
           <li>
@@ -140,7 +144,7 @@ export default function ProfilePage() {
 }
 
 // 프로필 데이터 요청 함수
-export async function profileLoader({ request, params }) {
+export async function ProfileLoader({ request, params }) {
   const uID = params.userID;
 
   try {
@@ -167,12 +171,12 @@ export async function profileLoader({ request, params }) {
           return profileData;
         }
       } catch (error) {
-        console.log(error.message);
+        //console.log(error.message);
         return null;
       }
     }
   } catch (error) {
-    console.log(error.message);
+    //console.log(error.message);
     return null;
   }
 }

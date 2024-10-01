@@ -4,6 +4,7 @@ import {
   Backdrop,
   CircularProgress,
   TextField,
+  Chip,
   Divider,
   Button,
   Grid,
@@ -12,43 +13,47 @@ import {
 import { useEditor, EditorContent } from "@tiptap/react";
 import { RiAddFill } from "@remixicon/react";
 
-import TitleBar from "../../components/TitleBar";
+import TitleBar from "../../components/Common/TitleBar";
 import TagSelector from "../../components/Tag/TagSelector";
 import SubTagSelector from "../../components/Tag/SubTagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
-import { tagElementLoader, tagLoader } from "../../components/Tag/TagLoader";
+import { TagElementLoader, TagLoader } from "../../components/Tag/TagLoader";
 import apiInstance from "../../provider/networkProvider";
-import { Toast } from "../../components/Toast";
-import { EditorMenuBar, editorExtensions } from "../../components/Editor";
+import { Toast } from "../../components/Common/Toast";
+import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
 import classes from "./Job.module.css";
 import { useAuth } from "../../provider/authProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 
-export default function JobEditPage() {
+export default function RecruitEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [data, setData] = useState(
     location.state?.isCreation == null || location.state?.isCreation
-      ? INITIAL_JOB_VALUE
-      : useRouteLoaderData("job-page-edit")
+      ? INITIAL_REC_VALUE
+      : useRouteLoaderData("recruit-page-edit")
   );
   const [imageData, setImageData] = useState({
     imgFile: null,
     imgURL: null,
-  });
-  // Job Description in JSON type
+  })
+  // Portfolio Description in JSON type
   const [postContent, setPostContent] = useState(
     location.state?.isCreation == null || location.state?.isCreation
-      ? ""
+      ? "" 
       : JSON.parse(data.contents)
   );
   // Tag Data
   const [tagData, setTagData] = useState();
   const [tagElementData, setTagElementData] = useState();
   const payType = ["작업물 건 당 지급", "작업물 분 당 지급", "월급", "기타"];
+  const durationType = ["채용 시 마감", "마감일 지정", "상시 채용"];
   // User selected tag
-  const [selectedTag, setSelectedTag] = useState();
+  const [selectedTag, setSelectedTag] = useState(null);
   const [selectedElement, setSelectedElement] = useState([]);
+  const [isCareerNotRequired, setIsCareerNotRequired] = useState(
+    data.hopeCareerYear == null || data.hopeCareerYear == 0
+  );
   // Uploading Status
   const [isUploading, setIsUploading] = useState(false);
 
@@ -58,7 +63,7 @@ export default function JobEditPage() {
     // Load Main Tag
     if (!tagData) {
       //console.log("Loading Main Tag");
-      tagLoader().then((res) => {
+      TagLoader().then((res) => {
         setTagData(res);
       });
     }
@@ -79,7 +84,7 @@ export default function JobEditPage() {
     // Load Tag Child
     if (selectedTag) {
       //console.log("Loading Tag Child");
-      tagElementLoader(selectedTag).then((res) => {
+      TagElementLoader(selectedTag).then((res) => {
         setTagElementData(res);
         //console.log(tagElementData);
       });
@@ -150,8 +155,9 @@ export default function JobEditPage() {
 
     if (
       isEmpty(data.title) ||
-      isEmpty(postContent) ||
-      isEmpty(data.contact)
+      isEmpty(data.companyName) ||
+      isEmpty(data.contact) ||
+      isEmpty(postContent)
     ) {
       Toast.error("입력되지 않은 내용이 있습니다.");
       return;
@@ -159,26 +165,52 @@ export default function JobEditPage() {
     setIsUploading(true);
 
     const formData = new FormData();
-    if(!location.state?.isCreation) {
-      formData.append("employeePostId", data.employeePostId)
-    };
     formData.append("title", data.title);
-    formData.append("workFieldId", selectedTag);
-    selectedElement.forEach((element) => {
-      if (element) {
-        formData.append("workFieldChildTagId", element);
-      }
-    });
-    formData.append("paymentMethod", data.paymentMethod);
-    formData.append("paymentAmount", data.paymentAmount);
-    formData.append("careerYear", data.careerYear);
-    formData.append("contents", JSON.stringify(postContent));
+    formData.append("companyName", data.companyName);
     formData.append("contact", data.contact);
+    formData.append("contents", JSON.stringify(postContent));
+    if(!location.state?.isCreation) {
+      formData.append("employerPostId", data.employerPostId)
+    };
+    if(!isEmpty(selectedTag)) {
+      formData.append("workFieldId", selectedTag);
+    }
+    if(!isEmpty(selectedElement)) {
+      selectedElement.forEach((element) => {
+        if(element) {
+          formData.append("workFieldChildTagId", element)
+        };
+      })
+    } else {
+      formData.append("workFieldChildTagId", "") 
+    }
+    selectedElement.forEach((element) => {
+      if(element) { 
+        formData.append("workFieldChildTagId", element) 
+      } else {
+      };
+    })
+    if(!isEmpty(data.paymentMethod)) {
+      formData.append("paymentMethod", data.paymentMethod);
+    }
+    if(!isEmpty(data.paymentAmount)) {
+      formData.append("paymentAmount", data.paymentAmount);
+    }
+    if(!isEmpty(data.numberOfEmployee)) {
+      formData.append("numberOfEmployee", data.numberOfEmployee);
+    }
+    if(!isEmpty(data.enrollDurationType)) {
+      formData.append("enrollDurationType", data.enrollDurationType);
+    }
+    if(!isEmpty(data.deadLine)) {
+      formData.append("deadLine", data.deadLine);
+    }
+    formData.append("hopeCareerYear", isCareerNotRequired ? 0 : data.hopeCareerYear);
     if(imageData.imgFile !== null) {
       formData.append("multipartFile", imageData.imgFile);
     }
 
-    jobPostEditAction(formData, location.state.isCreation)
+    recPostEditAction(formData, location.state.isCreation)
       .then((res) => {
         // Success
         if (res && (res.status === 200 || res.status === 201)) {
@@ -200,9 +232,9 @@ export default function JobEditPage() {
       </Backdrop>
       <TitleBar
         title={
-          location.state.isCreation ? "구직 게시글 작성" : "구직 게시글 수정"
+          location.state.isCreation ? "구인 게시글 작성" : "구인 게시글 수정"
         }
-      ></TitleBar>
+      />
       <div className={classes.editTitleArea}>
         <h3>게시글 정보 *</h3>
         <TextField
@@ -212,6 +244,16 @@ export default function JobEditPage() {
           variant="outlined"
           name="title"
           value={data.title}
+          onChange={handleInputChange}
+          required
+        />
+        <TextField
+          size="small"
+          fullWidth
+          label="모집 주체"
+          variant="outlined"
+          name="companyName"
+          value={data.companyName}
           onChange={handleInputChange}
           required
         />
@@ -255,7 +297,7 @@ export default function JobEditPage() {
           }}
           justifyContent="space-between"
         >
-          <Grid item xs={2} sm={15} sx={{ paddingTop: "0.6rem !important" }}>
+          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
             <h3>급여 정보</h3>
             <div className={classes.jobPostInfoAreaRow}>
               <p>지급 방식</p>
@@ -286,17 +328,63 @@ export default function JobEditPage() {
             flexItem
             sx={{ mr: "-1px", paddingLeft: "16px" }}
           />
-          <Grid item xs={2} sm={15} sx={{ paddingTop: "0.6rem !important" }}>
-            <h3>추가 정보</h3>
+          <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+            <h3>모집 조건</h3>
             <div className={classes.jobPostInfoAreaRow}>
-              <p>작업 경력</p>
+              <p>모집 인원</p>
               <input
                 type="number"
-                name="careerYear"
-                value={data.careerYear}
+                name="numberOfEmployee"
+                value={data.numberOfEmployee}
                 onChange={handleInputChange}
               />
-              <b>년</b>
+              <b>명</b>
+            </div>
+            <div className={classes.jobPostInfoAreaRow}>
+              <p>모집 기간</p>
+              <SubTagSelector
+                tagList={durationType}
+                selectedTag={data.enrollDurationType}
+                setTag={(input) => {
+                  setData({
+                    ...data,
+                    enrollDurationType: input,
+                  });
+                }}
+              />
+            </div>
+            {data.enrollDurationType == "마감일 지정" && (
+              <div className={classes.jobPostInfoAreaRow}>
+                <p>모집 기간</p>
+                <input
+                  type="date"
+                  name="deadLine"
+                  max="9999-12-31"
+                  value={data.deadLine}
+                  onChange={handleInputChange}
+                />
+              </div>
+            )}
+            <div className={classes.jobPostInfoAreaRow}>
+              <p>요구 경력</p>
+              <Chip
+                label="경력 무관"
+                color={isCareerNotRequired ? "primary" : "default"}
+                onClick={() => {
+                  setIsCareerNotRequired(!isCareerNotRequired);
+                }}
+              />
+              {!isCareerNotRequired && (
+                <>
+                  <input
+                    type="number"
+                    name="hopeCareerYear"
+                    value={data.hopeCareerYear}
+                    onChange={handleInputChange}
+                  />
+                  <b>명</b>
+                </>
+              )}
             </div>
           </Grid>
         </Grid>
@@ -311,13 +399,15 @@ export default function JobEditPage() {
       <div className={classes.editThumbnailArea}>
         <h3>대표 이미지</h3>
         <div className={classes.editThumbnailParagraph}>
-          <label htmlFor="jobThumbnailUploadBtn">
-            {imageData.imgURL == null && <RiAddFill />}
-            {imageData.imgURL != null && (
-              <img src={imageData.imgURL} alt="postThumbnail" />
-            )}
+          <label htmlFor="recThumbnailUploadBtn">
+            {imageData.imgURL == null && 
+              <RiAddFill />
+            }
+            {imageData.imgURL != null && 
+              <img src={imageData.imgURL} alt="postThumbnail"/>
+            }
             <input
-              id="jobThumbnailUploadBtn"
+              id="recThumbnailUploadBtn"
               style={{ display: "none" }}
               type="file"
               accept="image/jpeg, image/png"
@@ -339,17 +429,12 @@ export default function JobEditPage() {
   );
 }
 
-// 포트폴리오 데이터 수정 요청 함수
-async function jobPostEditAction(formData, isCreation = true) {
-  /*
-  for (let [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-  */
+// 구인 게시글 수정 요청 함수
+async function recPostEditAction(formData, isCreation = true) {
   try {
     const response = await apiInstance({
       method: isCreation ? "post" : "put",
-      url: "/api/v1/employee/posts",
+      url: "/api/v1/employer/posts",
       data: formData,
       headers: {
         "Content-Type": "multipart/form-data",
@@ -359,18 +444,20 @@ async function jobPostEditAction(formData, isCreation = true) {
       // 저장 성공
       Toast.success("변경사항들을 저장했습니다.");
       return response;
-    } else if (response.status === 201) {
+    }
+    else if (response.status === 201) {
       // 생성 성공
       Toast.success("성공적으로 게시글을 업로드했습니다.");
       return response;
     }
   } catch (error) {
     // 로그인 실패
-    console.log(error.message);
     if (error.response && error.response.status === 400) {
       Toast.error("태그 데이터를 다루는 도중 오류가 발생했습니다.");
     } else if (error.response && error.response.status === 404) {
       Toast.error("잘못된 데이터가 입력되었습니다.");
+    } else if (error.response && error.response.status === 413) {
+      Toast.error("이미지의 용량이 너무 큽니다.");
     } else {
       Toast.error("알 수 없는 오류가 발생했습니다.");
     }
@@ -378,7 +465,7 @@ async function jobPostEditAction(formData, isCreation = true) {
   return null;
 }
 
-// 포트폴리오 에디터
+// 구인 게시글 에디터
 const RecPostEditor = ({ postContent, setPostContent }) => {
   const editor = useEditor({
     extensions: editorExtensions,
@@ -408,18 +495,21 @@ const RecPostEditor = ({ postContent, setPostContent }) => {
   );
 };
 
-const INITIAL_JOB_VALUE = {
+const INITIAL_REC_VALUE = {
   title: "",
-  name: "",
-  sex: "",
-  birthYear: "",
+  companyName: "",
   tagPostResponseDto: {
     workFieldTagName: "",
     subCategoryWithChildTagResponseDtoList: [],
   },
   paymentMethod: "",
   paymentAmount: "",
-  careerYear: "",
+  numberOfEmployee: "",
+  enrollDurationType: "",
+  deadLine: "",
+  hopeCareerYear: "",
   contents: "",
   contact: "",
+  writerId: "",
+  writerAccessUrl: "",
 };

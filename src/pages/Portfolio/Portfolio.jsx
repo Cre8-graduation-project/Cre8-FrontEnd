@@ -1,11 +1,19 @@
+import { useState } from "react";
 import { useRouteLoaderData } from "react-router-dom";
-import { ImageList, ImageListItem, useTheme, useMediaQuery, Card } from "@mui/material";
+import {
+  ImageList,
+  ImageListItem,
+  useTheme,
+  useMediaQuery,
+  Card,
+} from "@mui/material";
 
-import PageContent from "../../components/PageContent";
-import TitleBar from "../../components/TitleBar";
+import PageContent from "../../components/Common/PageContent";
+import TitleBar from "../../components/Common/TitleBar";
 import TagList from "../../components/Tag/TagList";
+import ImagePopUp from "../../components/Common/ImagePopUp";
 import apiInstance from "../../provider/networkProvider";
-import { ReadOnlyEditor } from "../../components/Editor";
+import { ReadOnlyEditor } from "../../components/Common/Editor";
 import classes from "./Portfolio.module.css";
 
 export default function PortfolioPage({ isFromJobPost = false }) {
@@ -13,8 +21,17 @@ export default function PortfolioPage({ isFromJobPost = false }) {
     ? useRouteLoaderData("portfolio-page")
     : useRouteLoaderData("portfolio-in-jobPost");
   const theme = useTheme();
-  const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
-    
+  const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const [imgPopUpData, setImgPopUpData] = useState(null);
+
+  const handleImgClick = (imgURL) => {
+    setImgPopUpData(imgURL);
+  };
+  const closeImgPopUp = (e) => {
+    e.preventDefault();
+    setImgPopUpData(null);
+  };
+
   return (
     <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}>
       <TitleBar backBtnTarget={-1} title="포트폴리오" />
@@ -31,16 +48,27 @@ export default function PortfolioPage({ isFromJobPost = false }) {
             <TagList tagList={data.tagName} />
           </div>
           <ImageList
-            cols={matchDownMd ? 2 : 4}
-            gap={20}
+            cols={matchDownSm ? 1 : 2}
+            gap={10}
+            variant="mansory"
             sx={{ padding: "0 1.3rem 1.3rem 1.3rem" }}
           >
             {data.portfolioImageResponseDtoList.map((item, index) => (
               <ImageListItem key={`IMG_${index}`}>
-                <img src={`${item.portfolioImageAccessUrl}`} alt={`IMG_${index}`} />
+                <img
+                  src={`${item.portfolioImageAccessUrl}`}
+                  alt={`IMG_${index}`}
+                  onClick={() => handleImgClick(item.portfolioImageAccessUrl)}
+                />
               </ImageListItem>
             ))}
           </ImageList>
+          {imgPopUpData !== null && (
+            <ImagePopUp
+              imgPopUpData={imgPopUpData}
+              closeImgPopUp={closeImgPopUp}
+            />
+          )}
         </>
       )}
     </Card>
@@ -48,7 +76,7 @@ export default function PortfolioPage({ isFromJobPost = false }) {
 }
 
 // 포트폴리오 데이터 요청 함수
-export async function portfolioLoader({ request, params }) {
+export async function PortfolioLoader({ request, params }) {
   const pID = params.portfolioID;
   try {
     const response = await apiInstance.get(`/api/v1/portfolios/${pID}`);
@@ -58,7 +86,7 @@ export async function portfolioLoader({ request, params }) {
     }
   } catch (error) {
     // 조회 실패
-    console.error(error.message);
+    //console.error(error.message);
   }
   return null;
 }

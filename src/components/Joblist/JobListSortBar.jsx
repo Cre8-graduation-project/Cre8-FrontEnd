@@ -1,8 +1,19 @@
 import { useState } from "react";
-import { Button, Divider } from "@mui/material";
+import {
+  useTheme,
+  useMediaQuery,
+  Button,
+  Divider,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
 import classes from "./JobList.module.css";
 
 export default function JobListSortBar({ pageType, pageObj, setObj }) {
+  const theme = useTheme();
+  const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
   const recSortObj = [
     {
       name: "최신 등록 순",
@@ -10,15 +21,15 @@ export default function JobListSortBar({ pageType, pageObj, setObj }) {
     },
     {
       name: "마감일 순",
-      sort: ["deadline,asc"],
+      sort: ["deadLine,asc"],
     },
     {
       name: "요구 경력 낮은 순",
-      sort: ["hopeCareer,asc"],
+      sort: ["hopeCareerYear,asc"],
     },
     {
       name: "요구 경력 높은 순",
-      sort: ["hopeCareer,desc"],
+      sort: ["hopeCareerYear,desc"],
     },
   ];
   const jobSortObj = [
@@ -34,9 +45,8 @@ export default function JobListSortBar({ pageType, pageObj, setObj }) {
       name: "경력 높은 순",
       sort: ["careerYear,desc"],
     },
-  ]
+  ];
   const sortObj = pageType === "recruit" ? recSortObj : jobSortObj;
-
   const [selectedItemIndex, setSelectedItemIndex] = useState(0);
 
   const handleBtnClick = (index) => {
@@ -47,33 +57,60 @@ export default function JobListSortBar({ pageType, pageObj, setObj }) {
     });
   };
 
+  const handleSelectChange = (event) => {
+    setSelectedItemIndex(event.target.value);
+    setObj({
+      ...pageObj,
+      sort: sortObj[event.target.value].sort,
+    });
+  }
+
   return (
-    <ul className={classes.jobListSortBar}>
-      {sortObj.map((menu, index) => (
-        <li key={`btn${index}`}>
-          <Button
-            onClick={() => {
-              handleBtnClick(index);
-            }}
-            sx={
-              selectedItemIndex == index
-                ? { color: "#512DA8" }
-                : { color: "#1f1d1b" }
-            }
-            disabled={false}
-          >
-            {menu.name}
-          </Button>
-          {!(index == sortObj.length - 1) && (
-            <Divider
-              orientation="vertical"
-              variant="middle"
-              flexItem
-              sx={{ borderColor: "#aeaba7" }}
-            />
-          )}
-        </li>
-      ))}
-    </ul>
+    <>
+      {!matchDownSm && (
+        <ul className={classes.jobListSortBar}>
+          {sortObj.map((menu, index) => (
+            <li key={`btn${index}`}>
+              <Button
+                onClick={() => handleBtnClick(index)}
+                sx={
+                  selectedItemIndex == index
+                    ? { color: "#512DA8" }
+                    : { color: "#1f1d1b" }
+                }
+                disabled={false}
+              >
+                {menu.name}
+              </Button>
+              {!(index == sortObj.length - 1) && (
+                <Divider
+                  orientation="vertical"
+                  variant="middle"
+                  flexItem
+                  sx={{ borderColor: "#aeaba7" }}
+                />
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+      {matchDownSm && (
+        <div className={classes.jobListSortSelect}>
+          <FormControl size="small">
+            <InputLabel id="job-sort-select-label">정렬 설정</InputLabel>
+            <Select
+              labelId="job-sort-select-label"
+              value={selectedItemIndex}
+              label="정렬 설정"
+              onChange={handleSelectChange}
+            >
+              {sortObj.map((menu, index) => (
+                <MenuItem value={index} key={`SORT_SELECT_${index}`}>{menu.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+      )}
+    </>
   );
 }

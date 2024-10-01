@@ -1,7 +1,4 @@
-import { useState, useEffect } from "react";
-
-import TestContent from "./TestContent.jsx";
-import { fetchTestData, addTestData } from "../../http.js";
+import { useState } from "react";
 import { useAuth } from "../../provider/authProvider.jsx";
 
 const apiAddress = import.meta.env.VITE_API_SERVER;

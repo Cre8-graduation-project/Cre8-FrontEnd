@@ -7,6 +7,10 @@
   color: var(--color-gray-300);
   background-color: var(--color-gray-700);
 }
+.footerMd {
+  height: 10rem;
+  margin-top: 1rem;
+}
 
 .footerContent {
   display: flex;
@@ -23,11 +27,21 @@
     transition: all 0.25s ease;
   }
 }
+.footerContentMd {
+  flex-direction: column;
+  align-items: start;
+  gap: 1rem;
+  margin: 1.3rem;
+  h1 {
+    margin: 0;
+  }
+}
 
 .footerText {
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-left: 0.1rem;
 
   p {
     margin: 0;
@@ -42,12 +56,20 @@
     cursor: pointer;
   }
 }
+.footerTextMd {
+  a {
+    margin-top: 0.7rem;
+  }
+}
 
 .footerTopArea {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
+}
+.footerTopAreaMd {
+  flex-direction: column;
 }
 
 .footerLinkRow {

@@ -12,16 +12,17 @@ import {
   useTheme,
   Card,
 } from "@mui/material";
-import { RiChat1Fill, RiStarFill, RiStarLine, RiPencilLine } from "@remixicon/react";
+import { RiChat1Fill, RiStarFill, RiStarLine, RiPencilLine, RiDeleteBinLine } from "@remixicon/react";
 
-import PageContent from "../../components/PageContent";
-import TitleBar from "../../components/TitleBar";
+import PageContent from "../../components/Common/PageContent";
+import TitleBar from "../../components/Common/TitleBar";
 import TagList from "../../components/Tag/TagList";
+import DeleteDialog from "../../components/Dialog/DeleteDialog";
+import { Toast } from "../../components/Common/Toast";
+import { ReadOnlyEditor } from "../../components/Common/Editor";
 import apiInstance from "../../provider/networkProvider";
-import { useAuth } from "../../provider/authProvider";
-import { Toast } from "../../components/Toast";
-import { ReadOnlyEditor } from "../../components/Editor";
 import { isEmpty } from "../../provider/utilityProvider";
+import { useAuth } from "../../provider/authProvider";
 import classes from "./Job.module.css";
 
 export default function JobPostPage() {
@@ -36,6 +37,8 @@ export default function JobPostPage() {
   const [tagDataList, setTagDataList] = useState([]);
   // Bookmark Button State
   const [bookmarkBtnState, setBookmarkBtnState] = useState(!isEmpty(data.bookMarked) ? data.bookMarked : false);
+  // Delete Post Dialog State
+  const [isDelDialogOpen, setIsDelDialogOpen] = useState(false);
 
   useEffect(() => {
     let tempList = [data.tagPostResponseDto.workFieldTagName];
@@ -62,9 +65,15 @@ export default function JobPostPage() {
       state: { isCreation: false }
     })
   }
+  const handleDeleteClick = (e) => {
+    setIsDelDialogOpen(true);
+  }
+  const handleDeleteDialogClose = () => {
+    setIsDelDialogOpen(false);
+  }
   const handleBookmarkClick = () => {
     setBookmarkBtnState(!bookmarkBtnState);
-    jobAddBookmarkRequest(match.params.lastPart).then((status) => {
+    JobAddBookmarkRequest(match.params.lastPart).then((status) => {
       if(status != 200) {
         Toast.error("북마크에 추가하는 과정에서 오류가 발생했습니다.");
         setBookmarkBtnState(!bookmarkBtnState);
@@ -123,7 +132,7 @@ export default function JobPostPage() {
               }}
               justifyContent="space-between"
             >
-              <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+              <Grid item xs={2} sm={15} className={classes.jobPostInfoBox}>
                 <h3>역량</h3>
                 {data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
                   (item, itemIndex) => (
@@ -145,7 +154,7 @@ export default function JobPostPage() {
                 flexItem
                 sx={{ mr: "-1px", paddingLeft: "16px" }}
               />
-              <Grid item xs={2} sm={15} sx={{paddingTop: "0.6rem !important"}}>
+              <Grid item xs={2} sm={15} className={classes.jobPostInfoBox}>
                 <h3>작성자 정보</h3>
                 <div className={classes.jobPostInfoAreaRow}>
                   <p>희망 급여</p>
@@ -161,47 +170,65 @@ export default function JobPostPage() {
           </div>
           <div className={classes.jobPostDescArea}>
             <ReadOnlyEditor content={data.contents} />
+            <Tooltip title={!isLoggedIn ? "해당 기능들을 사용하려면 로그인하세요." : ""} placement="top">
+              <div className={classes.jobPostFABParent}>
+                <div className={classes.jobPostFAB}>
+                  {data.writerId == memberCode && <>
+                    <Fab
+                      color="secondary"
+                      variant="extended"
+                      sx={{ gap: "0.5rem" }}
+                      disabled={!isLoggedIn}
+                      onClick={handleEditClick}
+                    >
+                      <RiPencilLine/>
+                      게시글 수정
+                    </Fab>
+                    <Fab
+                      size="medium"
+                      sx={{ gap: "0.5rem" }}
+                      disabled={!isLoggedIn}
+                      onClick={handleDeleteClick}
+                    >
+                      <RiDeleteBinLine />
+                    </Fab>
+                  </>}
+                  {data.writerId != memberCode && <Fab
+                    color="primary"
+                    variant="extended"
+                    sx={{ gap: "0.5rem" }}
+                    disabled={!isLoggedIn}
+                    onClick={handleChatClick}
+                  >
+                    <RiChat1Fill/>
+                    채팅 시작하기
+                  </Fab>}
+                  <Fab
+                    size="medium"
+                    sx={{ gap: "0.5rem" }}
+                    disabled={!isLoggedIn}
+                    onClick={handleBookmarkClick}
+                  >
+                    {bookmarkBtnState ? <RiStarFill color="#F9A602"/> : <RiStarLine />}
+                  </Fab>
+                </div>
+              </div>
+            </Tooltip>
           </div>
-          <Tooltip title={!isLoggedIn ? "해당 기능들을 사용하려면 로그인하세요." : ""} placement="top">
-            <div className={classes.jobPostFAB}>
-              {data.writerId == memberCode && <Fab
-                color="secondary"
-                variant="extended"
-                sx={{ gap: "0.5rem" }}
-                disabled={!isLoggedIn}
-                onClick={handleEditClick}
-              >
-                <RiPencilLine/>
-                게시글 수정
-              </Fab>}
-              {data.writerId != memberCode && <Fab
-                color="primary"
-                variant="extended"
-                sx={{ gap: "0.5rem" }}
-                disabled={!isLoggedIn}
-                onClick={handleChatClick}
-              >
-                <RiChat1Fill/>
-                채팅 시작하기
-              </Fab>}
-              <Fab
-                size="medium"
-                sx={{ gap: "0.5rem" }}
-                disabled={!isLoggedIn}
-                onClick={handleBookmarkClick}
-              >
-                {bookmarkBtnState ? <RiStarFill /> : <RiStarLine />}
-              </Fab>
-            </div>
-          </Tooltip>
         </>
       )}
+      <DeleteDialog 
+        isOpen={isDelDialogOpen} 
+        onClose={handleDeleteDialogClose} 
+        onCancel={handleDeleteDialogClose} 
+        deleteAPIURL={`/api/v1/employee/posts/${match.params.lastPart}`} 
+      />
     </Card>
   );
 }
 
 // 구직 게시글 데이터 요청 함수
-export async function jobPostLoader({ request, params }) {
+export async function JobPostLoader({ request, params }) {
   const rpID = params.jobPostID;
   try {
     const response = await apiInstance.get(`/api/v1/employee/posts/${rpID}`);
@@ -211,20 +238,20 @@ export async function jobPostLoader({ request, params }) {
     }
   } catch (error) {
     // 조회 실패
-    console.error(error.message);
+    //console.error(error.message);
   }
   return null;
 }
 
 // 구직 게시글 북마크 추가 요청 함수
-export async function jobAddBookmarkRequest(postId) {
+async function JobAddBookmarkRequest(postId) {
   try {
     const response = await apiInstance.post(`/api/v1/bookmark/employee-post/${postId}`);
     // 추가 성공
     return response.status;
   } catch (error) {
     // 추가 실패
-    console.error(error.message);
+    //console.error(error.message);
   }
   return 0;
 }

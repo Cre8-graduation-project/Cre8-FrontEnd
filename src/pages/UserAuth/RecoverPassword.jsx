@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Form, useNavigation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { Toast } from "../../components/Toast";
+import { Toast } from "../../components/Common/Toast";
 import classes from "./UserAuth.module.css";
 
 const apiAddress = import.meta.env.VITE_API_SERVER;

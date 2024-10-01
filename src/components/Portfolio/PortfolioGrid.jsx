@@ -24,6 +24,7 @@ import classes from "./PortfolioGrid.module.css";
 export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const matchDownSm = useMediaQuery(theme.breakpoints.down('sm'));
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
   const [ptfGridData, setPtfGridData] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
@@ -46,7 +47,6 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
     fetchPortfolioGrid(memberCode)
       .then((data) => {
         // Load Portfolio(PTF) Grid Data
-        //console.log(data);
         setPtfGridData(data);
       })
       .catch((e) => {
@@ -75,7 +75,7 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
     navigate(`./${portfolioID}`, { state: { isCreation: false }});
   };
   const handleRemove = (e, portfolioID) => {
-    removePortfolioPost(portfolioID).then(() => {
+    RemovePortfolioPost(portfolioID).then(() => {
       reloadGridData();
     });
   };
@@ -104,7 +104,7 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
       )}
       {!loadingData && (
         <>
-          <ImageList cols={matchDownMd ? 3 : 4} gap={10} >
+          <ImageList cols={matchDownSm ? 2 : (matchDownMd ? 3 : 4)} gap={10} >
             {ptfGridData &&
               ptfGridData.map((item) => (
                 <ImageListItem
@@ -210,7 +210,7 @@ async function fetchPortfolioGrid(memberCode) {
     }
   } catch (error) {
     // 조회 실패
-    console.error(error.message);
+    //console.error(error.message);
   }
   return null;
 }
@@ -225,13 +225,13 @@ async function createPortfolioPost() {
     }
   } catch (error) {
     // 조회 실패
-    console.log(error.message);
+    //console.log(error.message);
   }
   return null;
 }
 
 // 포트폴리오 삭제 함수
-export async function removePortfolioPost(portfolioID) {
+export async function RemovePortfolioPost(portfolioID) {
   try {
     const response = await apiInstance.delete(`/api/v1/portfolios/${portfolioID}`);
     if (response.status === 200) {
@@ -240,7 +240,7 @@ export async function removePortfolioPost(portfolioID) {
     }
   } catch (error) {
     // 조회 실패
-    console.log(error.message);
+    //console.log(error.message);
   }
   return null;
 }

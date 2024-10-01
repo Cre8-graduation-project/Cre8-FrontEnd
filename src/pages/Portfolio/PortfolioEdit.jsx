@@ -17,14 +17,14 @@ import {
 import { RiAddFill, RiDeleteBinLine } from "@remixicon/react";
 import { useEditor, EditorContent } from "@tiptap/react";
 
-import TitleBar from "../../components/TitleBar";
+import TitleBar from "../../components/Common/TitleBar";
 import TagAccordion from "../../components/Tag/TagAccordion";
 import TagSelector from "../../components/Tag/TagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
-import { tagElementLoader, tagLoader } from "../../components/Tag/TagLoader";
-import { removePortfolioPost } from "../../components/Portfolio/PortfolioGrid";
-import { EditorMenuBar, editorExtensions } from "../../components/Editor";
-import { Toast } from "../../components/Toast";
+import { TagElementLoader, TagLoader } from "../../components/Tag/TagLoader";
+import { RemovePortfolioPost } from "../../components/Portfolio/PortfolioGrid";
+import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import { Toast } from "../../components/Common/Toast";
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider";
 import classes from "./Portfolio.module.css";
@@ -55,7 +55,7 @@ export default function PortfolioEditPage() {
     // on Initial Load...
     // Load Main Tag
     if (!tagData) {
-      tagLoader().then((res) => {
+      TagLoader().then((res) => {
         setTagData(res);
       });
     }
@@ -76,7 +76,7 @@ export default function PortfolioEditPage() {
     // on Main Tag Change...
     // Load Tag Child
     if (selectedTag) {
-      tagElementLoader(selectedTag).then((res) => {
+      TagElementLoader(selectedTag).then((res) => {
         setTagElementData(res);
       });
     }
@@ -158,7 +158,7 @@ export default function PortfolioEditPage() {
 
   const handleCancelEdit = () => {
     if (location.state?.isCreation) {
-      removePortfolioPost(params.portfolioID);
+      RemovePortfolioPost(params.portfolioID);
     }
     navigate("../");
   };
@@ -306,6 +306,8 @@ async function portfolioEditAction(formData) {
       Toast.error("인증과정에서 오류가 발생했습니다.");
     } else if (error.response && error.response.status === 404) {
       Toast.error("태그를 다루는 도중 오류가 발생했습니다.");
+    } else if (error.response && error.response.status === 413) {
+      Toast.error("이미지의 용량이 너무 큽니다.");
     } else {
       Toast.error("알 수 없는 오류가 발생했습니다.");
     }

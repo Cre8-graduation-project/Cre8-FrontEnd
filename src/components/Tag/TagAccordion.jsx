@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import TagSelector from "./TagSelector";
 import TagChildSelector from "./TagChildSelector";
-import { tagLoader, tagElementLoader } from "./TagLoader";
+import { TagLoader, TagElementLoader } from "./TagLoader";
 import { isEmpty } from "../../provider/utilityProvider";
 import classes from "./Tag.module.css";
 
@@ -18,7 +18,7 @@ function TagAccordion({
 
   // Load Tag Data on initial build
   useEffect(() => {
-    tagLoader().then((data) => {
+    TagLoader().then((data) => {
       setTagData(data);
     });
   }, []);
@@ -26,7 +26,7 @@ function TagAccordion({
   const loadTagElements = useCallback(() => {
     // Update Tag Child
     if (selectedTag) {
-      tagElementLoader(selectedTag).then(setTagElementData);
+      TagElementLoader(selectedTag).then(setTagElementData);
     } else {
       setTagElementData([]);
     }

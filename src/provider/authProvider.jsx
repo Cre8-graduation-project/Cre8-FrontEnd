@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useEffect, useState, useCallback } from "react";
 import apiInstance from "./networkProvider";
-import { Toast } from "../components/Toast";
+import { Toast } from "../components/Common/Toast";
 
 const TOKEN_REISSUE_INTERVAL = 5 * 60 * 1000 // 5 minutes
 
@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [userID, setUserID] = useState(localStorage.getItem("userID"));
   const [memberCode, setMemberCode] = useState(localStorage.getItem("memberCode"));
+  const [userPFP, setUserPFP] = useState(localStorage.getItem("userPFP"));
 
   // Request new accessToken
   const reissueToken = useCallback(async () => {
@@ -53,12 +54,15 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   // Feature for Successful Login
-  const onLogin = useCallback(({ newToken, newUserID, newMemberCode }) => {
+  const onLogin = useCallback(({ newToken, newUserID, newMemberCode, newUserPFP }) => {
     setToken(newToken);
     setUserID(newUserID);
     setMemberCode(newMemberCode);
+    setUserPFP(newUserPFP);
+    
     localStorage.setItem("userID", newUserID);
     localStorage.setItem("memberCode", newMemberCode);
+    localStorage.setItem("userPFP", newUserPFP);
   }, []);
   onLoginFunction = onLogin;
 
@@ -82,9 +86,11 @@ export const AuthProvider = ({ children }) => {
     setToken("");
     setUserID("");
     setMemberCode("");
+    setUserPFP("");
     localStorage.removeItem("token");
     localStorage.removeItem("userID");
     localStorage.removeItem("memberCode");
+    localStorage.removeItem("userPFP");
   }, [token]);
   logoutFunction = logout;
 
@@ -93,13 +99,15 @@ export const AuthProvider = ({ children }) => {
       token,
       userID,
       memberCode,
+      userPFP,
       setToken,
+      setUserPFP,
       reissueToken,
       onLogin,
       logout,
       isLoggedIn: !!token,
     }),
-    [token]
+    [token, userPFP]
   );
 
   return (
@@ -113,7 +121,7 @@ export const useAuth = () => {
 
 // Exposed Feature sets
 export const requestLogout = () => logoutFunction && logoutFunction();
-export const onLogin = ({ newToken, newUserID, newMemberCode }) =>
-  onLoginFunction && onLoginFunction({ newToken, newUserID, newMemberCode });
+export const onLogin = ({ newToken, newUserID, newMemberCode, newUserPFP }) =>
+  onLoginFunction && onLoginFunction({ newToken, newUserID, newMemberCode, newUserPFP });
 
 export default AuthProvider;

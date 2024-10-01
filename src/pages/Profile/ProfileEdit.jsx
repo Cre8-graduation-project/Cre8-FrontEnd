@@ -11,9 +11,9 @@ import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider"
-import { EditorMenuBar, editorExtensions } from "../../components/Editor";
+import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
 import { PortfolioGrid } from "../../components/Portfolio/PortfolioGrid";
-import { Toast } from "../../components/Toast";
+import { Toast } from "../../components/Common/Toast";
 import classes from "./Profile.module.css";
 
 export default function ProfileEditPage() {
@@ -21,7 +21,7 @@ export default function ProfileEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const { memberCode } = useAuth();
+  const { memberCode, setUserPFP } = useAuth();
   // Tab Index
   const tabIndex = searchParams.get("tab") || "1";
   // Profile Data
@@ -43,6 +43,11 @@ export default function ProfileEditPage() {
   const handleSaveClick = (e) => {
     e.preventDefault();
 
+    // Update ProFile Picture
+    setUserPFP(profileData.uProfileImage);
+    localStorage.setItem("userPFP", profileData.uProfileImage);
+
+    // Upload Edited Profile
     const formData = new FormData();
     if (uploadedPFP) {
       formData.append("multipartFile", uploadedPFP);
@@ -228,11 +233,6 @@ const ProfileEditor = ({ profileAbout, setProfileAbout }) => {
 
 // 프로필 데이터 수정 요청 함수
 async function profileEditAction(formData) {
-  /*
-  for (let [key, value] of formData.entries()) {
-    console.log(key, value);
-  }
-  */
   try {
     const response = await apiInstance({
       method: "put",
@@ -249,14 +249,13 @@ async function profileEditAction(formData) {
     }
   } catch (error) {
     // 로그인 실패
-    console.log(error.message);
     if (error.response && error.response.status === 400) {
       Toast.error("이미 사용 중인 닉네임입니다.");
-    }
-    else if (error.response && error.response.status === 401) {
+    } else if (error.response && error.response.status === 401) {
       Toast.error("인증과정에서 오류가 발생했습니다.");
-    } 
-    else {
+    } else if (error.response && error.response.status === 413) {
+      Toast.error("이미지의 용량이 너무 큽니다.");
+    } else {
       Toast.error("알 수 없는 오류가 발생했습니다.");
     }
   } 

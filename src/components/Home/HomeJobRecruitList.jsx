@@ -85,7 +85,6 @@ async function fetchHomeJobRecruitList(dataType) {
     }
   } catch (error) {
     // 조회 실패
-    console.error(error.message);
   }
   return [];
 }

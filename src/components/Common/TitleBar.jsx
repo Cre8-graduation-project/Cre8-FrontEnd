@@ -14,14 +14,14 @@ export default function TitleBar({ backBtnTarget = null, title, children }) {
 
   return (
     <ul className={backBtnTarget ? classes.titleBar : classes.btnlessTitleBar}>
-      {backBtnTarget && (
-        <li>
+      <li>
+        {backBtnTarget && (
           <IconButton onClick={handleBackBtnClick}>
             <RiArrowLeftLine />
           </IconButton>
-        </li>
-      )}
-      <li><h2>{title}</h2></li>
+        )}
+        <h2>{title}</h2>
+      </li>
       <li>{children}</li>
     </ul>
   );

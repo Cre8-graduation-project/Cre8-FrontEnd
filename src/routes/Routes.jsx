@@ -5,25 +5,27 @@ import { ProtectedRoute } from "./ProtectedRoute";
 
 import RootLayout from "../pages/RootLayout.jsx";
 import HomePage from "../pages/Home/Home.jsx";
-import RecruitPostPage, { recruitPostLoader } from "../pages/Recruit/RecruitPost.jsx";
-import RecruitEditPage from "../pages/Recruit/RecruitEdit.jsx";
-import JobRecruitListPage from "../pages/Job/JobRecruitList.jsx";
-import JobPostPage, { jobPostLoader } from "../pages/Job/JobPost.jsx";
-import JobEditPage from "../pages/Job/JobEdit.jsx";
+import RecruitPostPage, { RecruitPostLoader } from "../pages/JobRecruit/RecruitPost.jsx";
+import RecruitEditPage from "../pages/JobRecruit/RecruitEdit.jsx";
+import JobRecruitListPage from "../pages/JobRecruit/JobRecruitList.jsx";
+import JobPostPage, { JobPostLoader } from "../pages/JobRecruit/JobPost.jsx";
+import JobEditPage from "../pages/JobRecruit/JobEdit.jsx";
 import BookmarkPage from "../pages/Bookmark/Bookmark.jsx";
 import MyPostPage from "../pages/MyPost/MyPost.jsx";
-import CommunityPage from "../pages/Community/Community.jsx";
-import ChatPage, { chatListLoader } from "../pages/Chat/Chat.jsx";
+import CommunityPage, { CommunityLoader } from "../pages/Community/Community.jsx";
+import CommunityEditPage, { CommunityEditLoader } from "../pages/Community/CommunityEdit.jsx";
+import CommunityPostPage, { CommunityPostLoader } from "../pages/Community/CommunityPost.jsx";
+import ChatPage, { ChatListLoader } from "../pages/Chat/Chat.jsx";
 import LoginPage from "../pages/UserAuth/Login.jsx";
-import RegisterPage, { action as registerAction } from "../pages/UserAuth/Register.jsx";
+import RegisterPage, { RegisterAction } from "../pages/UserAuth/Register.jsx";
 import RecoverPasswordPage from "../pages/UserAuth/RecoverPassword.jsx";
-import ProfilePage, { profileLoader } from "../pages/Profile/Profile.jsx";
+import ProfilePage, { ProfileLoader } from "../pages/Profile/Profile.jsx";
 import ProfileEditPage from "../pages/Profile/ProfileEdit.jsx";
-import PortfolioPage, { portfolioLoader } from "../pages/Portfolio/Portfolio.jsx";
+import PortfolioPage, { PortfolioLoader } from "../pages/Portfolio/Portfolio.jsx";
 import PortfolioEditPage from "../pages/Portfolio/PortfolioEdit.jsx";
 import ErrorPage from "../pages/Error.jsx";
 import TestPage from "../pages/Test.jsx";
-import { tagLoader } from "../components/Tag/TagLoader.jsx";
+import { TagLoader } from "../components/Tag/TagLoader.jsx";
 
 const Routes = () => {
   const { isLoggedIn, reissueToken } = useAuth();
@@ -39,7 +41,7 @@ const Routes = () => {
     {
       path: "recruit",
       id: "recruit-page",
-      loader: tagLoader,
+      loader: TagLoader,
       children: [
         {
           index: true,
@@ -48,7 +50,7 @@ const Routes = () => {
         {
           path: ":recruitPostID",
           id: "recruitPost-page",
-          loader: recruitPostLoader,
+          loader: RecruitPostLoader,
           element: <RecruitPostPage />,
         },
       ],
@@ -56,7 +58,7 @@ const Routes = () => {
     {
       path: "job",
       id: "job-page",
-      loader: tagLoader,
+      loader: TagLoader,
       children: [
         {
           index: true,
@@ -65,26 +67,38 @@ const Routes = () => {
         {
           path: ":jobPostID",
           id: "jobPost-page",
-          loader: jobPostLoader,
+          loader: JobPostLoader,
           element: <JobPostPage />,
         },
         {
           path: ":jobPostID/:portfolioID",
           id: "portfolio-in-jobPost",
-          loader: portfolioLoader,
+          loader: PortfolioLoader,
           element: <PortfolioPage isFromJobPost={true} />,
         },
       ],
     },
     {
-      path: "community",
-      element: <CommunityPage />,
-      children: [{}],
+      path: "c",
+      id: "community-page",
+      loader: CommunityLoader,
+      children: [
+        {
+          index: true,
+          element: <CommunityPage />,
+        },
+        {
+          path: ":communityPostID",
+          id: "communityPost-page",
+          loader: CommunityPostLoader,
+          element: <CommunityPostPage />,
+        },
+      ],
     },
     {
       path: "p/:userID",
       id: "profile-page",
-      loader: profileLoader,
+      loader: ProfileLoader,
       children: [
         {
           index: true,
@@ -93,12 +107,12 @@ const Routes = () => {
         {
           path: ":portfolioID",
           id: "portfolio-page",
-          loader: portfolioLoader,
+          loader: PortfolioLoader,
           element: <PortfolioPage />,
         },
       ],
     },
-    { path: "register", element: <RegisterPage />, action: registerAction },
+    { path: "register", element: <RegisterPage />, action: RegisterAction },
     { path: "test", element: <TestPage /> },
   ];
 
@@ -116,7 +130,7 @@ const Routes = () => {
         {
           path: "p/:userID",
           id: "profile-page-edit",
-          loader: profileLoader,
+          loader: ProfileLoader,
           children: [
             {
               path: "edit",
@@ -125,7 +139,7 @@ const Routes = () => {
             {
               path: "edit/:portfolioID",
               id: "portfolio-page-edit",
-              loader: portfolioLoader,
+              loader: PortfolioLoader,
               element: <PortfolioEditPage />,
             },
           ],
@@ -140,7 +154,7 @@ const Routes = () => {
             {
               path: ":recruitPostID",
               id: "recruit-page-edit",
-              loader: recruitPostLoader,
+              loader: RecruitPostLoader,
               element: <RecruitEditPage />,
             }
           ]
@@ -155,9 +169,24 @@ const Routes = () => {
             {
               path: ":jobPostID",
               id: "job-page-edit",
-              loader: jobPostLoader,
+              loader: JobPostLoader,
               element: <JobEditPage />,
             }
+          ]
+        },
+        {
+          path: "c/edit",
+          children: [
+            {
+              index: true,
+              element: <CommunityEditPage />,
+            },
+            {
+              path: ":communityPostID",
+              id: "community-page-edit",
+              loader: CommunityEditLoader,
+              element: <CommunityEditPage />,
+            },
           ]
         },
         {
@@ -174,7 +203,7 @@ const Routes = () => {
             {
               index: true,
               id: "chat-page",
-              loader: chatListLoader,
+              loader: ChatListLoader,
               element: <ChatPage />,
             }
           ]

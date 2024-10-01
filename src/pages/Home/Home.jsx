@@ -1,4 +1,4 @@
-import PageContent from "../../components/PageContent";
+import PageContent from "../../components/Common/PageContent";
 import HomeBanner from "../../components/Home/HomeBanner";
 import HomeCommunityCard from "../../components/Home/HomeCommunityCard";
 import classes from "./Home.module.css";
@@ -9,8 +9,8 @@ export default function HomePage() {
     return <div className={classes.homePage}>
       <HomeBanner />
       <div className={classes.homePostArea}>
-        <HomeCommunityCard title="최신 글"/>
-        <HomeCommunityCard title="최신 글 2" />
+        <HomeCommunityCard title="자유게시판" boardID={1}/>
+        <HomeCommunityCard title="자유게시판 2" boardID={1} />
       </div>
       <HomeCategoryList />
       <HomeJobRecruitList dataType="recruit" />

@@ -3,7 +3,7 @@ import { Form, useSubmit, useNavigation, redirect } from "react-router-dom";
 import { Link, Button, Select, MenuItem } from "@mui/material";
 
 import UserValidate from "../../provider/UserValidate";
-import { Toast } from "../../components/Toast";
+import { Toast } from "../../components/Common/Toast";
 import classes from "./UserAuth.module.css";
 
 const apiAddress = import.meta.env.VITE_API_SERVER;
@@ -358,7 +358,7 @@ async function checkVerifyCode(inputData) {
 }
 
 // 회원가입 요청 전송 함수
-export async function action({ request }) {
+export async function RegisterAction({ request }) {
   const data = await request.formData();
 
   const registerData = {

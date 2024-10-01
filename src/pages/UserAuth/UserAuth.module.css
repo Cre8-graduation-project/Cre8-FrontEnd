@@ -10,7 +10,7 @@
   max-width: 25rem;
   border: 0.1rem solid var(--color-gray-300);
   border-radius: 0.7rem;
-  background-color: var(--color-gray-150);
+  background-color: white;
 }
 .authForm ul {
   display: flex;

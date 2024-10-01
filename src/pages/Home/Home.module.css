@@ -18,6 +18,12 @@
   gap: 1.3rem;
 }
 
+@media (max-width: 500px) {
+  .homePostArea {
+    flex-direction: column;
+  }
+}
+
 @media (max-width: 1050px) {
   .homePage {
     margin: 1.3rem;

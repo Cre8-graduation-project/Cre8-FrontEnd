@@ -8,7 +8,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 500px;
+  min-width: 320px;
   min-height: 100dvh;
 
   color-scheme: light dark;
@@ -82,6 +82,26 @@ ul {
   align-items: center;
 }
 
+
+/* Basic editor styles */
+.tiptap {
+  /* Youtube embed */
+  div[data-youtube-video] {
+    cursor: move;
+
+    iframe {
+      border: 0.3rem solid black;
+      min-height: 200px;
+      min-width: 200px;
+      outline: 0px solid transparent;
+    }
+
+    &.ProseMirror-selectednode iframe {
+      outline: 0.3rem solid var(--color-primary-500);
+      transition: outline 0.15s;
+    }
+  }
+}
 .ProseMirror {
   outline: none;
   padding: 0.3rem 1rem;
@@ -95,6 +115,7 @@ ul {
   margin-block-start: 0.5em;
   margin-block-end: 0.5em;
 }
+
 .MuiTab-root {
   font-family: '';
 }

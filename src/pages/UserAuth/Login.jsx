@@ -4,7 +4,7 @@ import { Link, Button } from "@mui/material";
 
 import { onLogin } from "../../provider/authProvider";
 import UserValidate from "../../provider/UserValidate";
-import { Toast } from "../../components/Toast";
+import { Toast } from "../../components/Common/Toast";
 import apiInstance from "../../provider/networkProvider";
 import classes from "./UserAuth.module.css";
 
@@ -136,6 +136,7 @@ const sendLoginRequest = async (inputData) => {
         newToken: response.headers.authorization,
         newUserID: response.data.data.loginId,
         newMemberCode: response.data.data.memberId,
+        newUserPFP: response.data.data.memberAccessUrl,
       });
 
       Toast.loginSuccess(`${inputData.userID}님 환영합니다.`);

@@ -8,8 +8,10 @@
   border-radius: 0.7rem;
   height: 10rem;
 
-  h2 {
+  p {
     margin: 0.1rem 0;
+    font-size: 18px;
+    font-weight: 700;
   }
 }
 
@@ -33,9 +35,10 @@
   padding: 0.2rem 0.3rem;
   border-radius: 0.4rem;
   display: flex;
+  cursor: pointer;
 }
 .homeCommunityCardLink:hover {
-  background-color: var(--color-gray-150) !important;
+  background-color: var(--color-gray-100) !important;
 }
 .homeCommunityCardLink .titleCategory {
   color: #656360;
@@ -66,11 +69,13 @@
   padding: 1rem 1.3rem 0.5rem 1.3rem;
   border-radius: 0.7rem !important;
   border: 1px solid var(--color-gray-200);
+  cursor: pointer;
 
   img {
     width: 10dvw;
     min-width: 5rem;
     max-width: 6rem;
+    transition: all 0.25s ease;
   }
   p {
     font-size: medium;
@@ -80,7 +85,10 @@
   }
 }
 .homeCategoryCard:hover {
-  background-color: var(--color-gray-150) !important;
+  background-color: var(--color-gray-100) !important;
+  img {
+    transform: scale(1.05);
+  }
 }
 
 .homePostArea {
@@ -97,6 +105,7 @@
   background-color: white !important;
   border: 1px solid var(--color-gray-200);
   position: relative;
+  cursor: pointer;
 
   h3 {
     margin: 1.1rem 0 !important;
@@ -121,10 +130,11 @@
     overflow: hidden;
     position: relative;
     transform: scale(1);
+    transition: all 0.25s ease;
   }
 }
 .homeJobPostCard:hover {
-  background-color: var(--color-gray-150) !important;
+  background-color: var(--color-gray-100) !important;
   img {
     transform: scale(1.02);
   }
@@ -140,7 +150,7 @@
   pointer-events: none;
 }
 .homeJobPostCard:hover::after {
-  background: linear-gradient(to left, var(--color-gray-150) 30%, transparent 100%);
+  background: linear-gradient(to left, var(--color-gray-100) 30%, transparent 100%);
 }
 
 @media (max-width: 600px) {

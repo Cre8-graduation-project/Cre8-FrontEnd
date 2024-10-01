@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Card, Divider, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 
-import TitleBar from "../../components/TitleBar";
+import TitleBar from "../../components/Common/TitleBar";
 import {
   JobListCard,
   RecruitListCard,
@@ -166,7 +166,7 @@ async function searchMyPostwithKeyword(
     }
   } catch (error) {
     // 조회 실패
-    console.error(error.message);
+    //console.error(error.message);
   }
   return { error: true };
 }

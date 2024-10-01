@@ -17,28 +17,28 @@ export default function ChatInputBar({ handleChatSend }) {
   const onChatInput = (e) => {
     setChatInput(e.target.value ?? "");
   }
-  
+
+  const handleKeyPress = (e) => {
+    if(e.key === 'Enter' && !e.shiftKey) {
+      handleSend(e);
+    }
+  }
+
   return (
     <form onSubmit={handleSend} className={classes.chatInputBar}>
       <TextField
         name="chatInput"
         variant="outlined"
         size="small"
+        value={chatInput}
         multiline
         minRows={2}
         fullWidth
         sx={{ "& .MuiInputBase-root": { background: "var(--color-gray-100)" } }}
         onChange={onChatInput}
+        onKeyDown={handleKeyPress}
       />
       <div className={classes.chatInputBarButtonRow}>
-        <Button
-          size="small"
-          variant="contained"
-          color="inherit"
-          sx={{ minWidth: "35px", padding: "0", aspectRatio: "1/1" }}
-        >
-          <RiImage2Fill size={20} />
-        </Button>
         <Button type="submit" size="small" variant="contained" color="primary">
           전송
         </Button>

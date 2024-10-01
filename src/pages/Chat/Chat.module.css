@@ -13,16 +13,23 @@
 }
 
 .chatList {
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
-  max-width: 13rem;
-  border-right: 1px solid var(--color-gray-400);
+}
+
+.chatListSm {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .chatContent {
-  flex-grow: 3;
   display: flex;
   flex-direction: column;
+  flex-grow: 5;
   justify-content: space-between;
+  border-left: 1px solid var(--color-gray-400);
 }
 .chatContent p {
   display: flex;

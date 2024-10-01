@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
+import { Button } from "@mui/material";
 
-import PageContent from "../components/PageContent";
-import TestSection from "../components/Test/TestSection";
-import RedisTestSection from "../components/Test/RedisTestSection";
+import PageContent from "../components/Common/PageContent";
 import LoginTest from "../components/Test/LoginTest";
-import { EditorMenuBar, editorExtensions } from "../components/Editor";
+import { EditorMenuBar, editorExtensions } from "../components/Common/Editor";
 
 export default function TestPage() {
   const [count, setCount] = useState(0);
@@ -21,8 +20,6 @@ export default function TestPage() {
       <h3>Editor Test Section</h3>
       <TestEditor />
       <LoginTest />
-      <TestSection />
-      <RedisTestSection />
     </PageContent>
   );
 }
@@ -34,9 +31,23 @@ export const TestEditor = () => {
   });
 
   return (
-    <div style={{border: "1px solid gray"}}>
-      <EditorMenuBar editor={editor} />
-      <EditorContent editor={editor} />
-    </div>
+    <>
+      <div style={{ border: "1px solid gray" }}>
+        <EditorMenuBar editor={editor} />
+        <EditorContent editor={editor} />
+      </div>
+      <Button
+        type="button"
+        href={`data:text/json;charset=utf-8,${encodeURIComponent(
+          JSON.stringify(editor.getJSON().content)
+        )}`}
+        download="filename.json"
+        variant="contained"
+      >
+        Export JSON Data
+      </Button>
+    </>
+    
   );
 };
+

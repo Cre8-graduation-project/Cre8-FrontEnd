@@ -20,7 +20,7 @@ export default function HomeCategoryList() {
   return (
     <div className={classes.homeCategoryArea}>
       <h3>카테고리로 보는 구인 공고</h3>
-      <Grid container columns={{ xs: 6, md: 12 }} spacing={{ xs: 2, md: 2 }}>
+      <Grid container columns={{ xs: 4, sm: 6, md: 12 }} spacing={{ xs: 2 }}>
         {categoryData.map((item, index) => (
           <Grid item key={index} xs={2} md={2}>
             <Card
