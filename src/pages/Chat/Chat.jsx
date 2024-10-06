@@ -18,6 +18,7 @@ import ChatTopBar from "../../components/Chat/ChatTopBar";
 import ChatInputBar from "../../components/Chat/ChatInputBar";
 import { Toast } from "../../components/Common/Toast";
 import ChatContent from "../../components/Chat/ChatContent";
+import { useAuth } from "../../provider/authProvider";
 import { useChatConnection } from "../../provider/chatProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
@@ -28,11 +29,13 @@ export default function ChatPage() {
   const loadedData = useRouteLoaderData("chat-page");
   const theme = useTheme();
   const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const { memberCode } = useAuth(); 
   const [data, setData] = useState(loadedData);
   const [newChatDialogOpen, setNewChatDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState({
     roomId: -1,
     nickName: "",
+    accessUrl: "",
   });
   const [chatContent, setChatContent] = useState([]);
   const location = useLocation();
@@ -50,31 +53,50 @@ export default function ChatPage() {
   }, []);
 
   const onMsgReceived = useCallback((msg) => {
-    // update chat content
-    setChatContent((prevChat) => {
-      const updatedMessageList = [msg, ...(prevChat.messageResponseDtoList || [])];
-      return {
-        ...prevChat,
-        messageResponseDtoList: updatedMessageList,
-      };
-    });
-    // update chat list
-    setData((prevData) => {
-      const listIndex = prevData.findIndex(
-        (item) => item.roomId == selectedRoom.roomId
-      );
-      if (listIndex === -1) return prevData;
-      const updatedObj = {
-        ...prevData[listIndex],
-        latestMessage: msg.contents,
-      };
+    if(msg.messageType == "ENTER") {
+      // update read count to 0 in chatContent
+      setChatContent((prevChat) => {
+        const updatedMessageList = [...(prevChat.messageResponseDtoList || [])];
+        for (let i = updatedMessageList.length - 1; i >= 0; i--) {
+          if (updatedMessageList[i].senderId === memberCode && updatedMessageList[i].readCount === 1) {
+            updatedMessageList[i] = { ...updatedMessageList[i], readCount: 0 };
+          } else if (updatedMessageList[i].readCount === 0) {
+            break;
+          }
+        }
+        return {  
+          ...prevChat,
+          messageResponseDtoList: updatedMessageList,
+        };
+      });
+    }
+    else if(msg.messageType == "MESSAGE") {
+      // update chat content
+      setChatContent((prevChat) => {
+        const updatedMessageList = [msg, ...(prevChat.messageResponseDtoList || [])];
+        return {
+          ...prevChat,
+          messageResponseDtoList: updatedMessageList,
+        };
+      });
+      // update chat list
+      setData((prevData) => {
+        const listIndex = prevData.findIndex(
+          (item) => item.roomId == selectedRoom.roomId
+        );
+        if (listIndex === -1) return prevData;
+        const updatedObj = {
+          ...prevData[listIndex],
+          latestMessage: msg.contents,
+        };
 
-      return [
-        updatedObj,
-        ...prevData.slice(0, listIndex),
-        ...prevData.slice(listIndex + 1),
-      ];
-    });
+        return [
+          updatedObj,
+          ...prevData.slice(0, listIndex),
+          ...prevData.slice(listIndex + 1),
+        ];
+      });
+    }
   }, [selectedRoom.roomId]);
   
   const { sendMessage, connectionStatus } = useChatConnection(
@@ -186,6 +208,7 @@ export default function ChatPage() {
                   key={index}
                   name={item.nickName}
                   message={item.latestMessage}
+                  unReadCount={item.unReadMessage}
                   onClick={() => {
                     handleListClick(item.roomId, item.nickName);
                   }}
@@ -200,6 +223,7 @@ export default function ChatPage() {
               <>
                 <ChatTopBar
                   name={selectedRoom.nickName}
+                  accessUrl={selectedRoom.accessUrl}
                   backBtn={matchDownSm}
                   onBackClick={() => {
                     setSelectedRoom({roomId: -1, nickName: ""});
@@ -209,6 +233,9 @@ export default function ChatPage() {
                   roomId={selectedRoom.roomId}
                   chatContent={chatContent}
                   setChatContent={setChatContent}
+                  updateAvatar={(url) => {
+                    setSelectedRoom((prev) => ({ ...prev, accessUrl: url }));
+                  }}
                 />
                 <ChatInputBar handleChatSend={handleChatSend} />
               </>

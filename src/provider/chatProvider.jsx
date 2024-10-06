@@ -63,11 +63,11 @@ export function useChatConnection(roomId, onMessageReceived) {
         setSubscription(newSubscription);
       } catch (error) {
         if (attempt <= 3) {
-          console.warn(`Attempt ${attempt} failed, retrying...`);
+          //console.warn(`Attempt ${attempt} failed, retrying...`);
           await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
           await subscribe(attempt + 1);
         } else {
-          console.error("CHAT Subscription Error:", error);
+          //console.error("CHAT Subscription Error:", error);
           setConnectionStatus('error');
         }
       }
@@ -85,12 +85,12 @@ export function useChatConnection(roomId, onMessageReceived) {
   }, [subscription]);
 
   const handleDisconnect = useCallback(() => {
-    console.log("STOMP connection disconnected");
+    //console.log("STOMP connection disconnected");
     setConnectionStatus("disconnected");
   }, []);
 
   const handleReconnect = useCallback(() => {
-    console.log("STOMP connection re-established");
+    //console.log("STOMP connection re-established");
     setConnectionStatus("connected");
   }, []);
 
@@ -99,13 +99,13 @@ export function useChatConnection(roomId, onMessageReceived) {
     // Send Message if roomId is valid
     const publishMessage = async (attempt) => {
       if (!chatClient.connected) {
-        console.warn(
-          "STOMP connection not established. Attempting to reconnect..."
-        );
+        //console.warn(
+        //  "STOMP connection not established. Attempting to reconnect..."
+        //);
         try {
           await activateChatClient();
         } catch (error) {
-          console.error("Failed to reconnect:", error);
+          //console.error("Failed to reconnect:", error);
           setConnectionStatus("error");
           return;
         }
@@ -118,10 +118,10 @@ export function useChatConnection(roomId, onMessageReceived) {
         });
       } catch (error) {
         if (attempt <= 3) {
-          console.warn(`Attempt ${attempt} failed, retrying...`);
+          //console.warn(`Attempt ${attempt} failed, retrying...`);
           await publishMessage(attempt + 1);
         } else {
-          console.error("Send Message Error:", error);
+          //console.error("Send Message Error:", error);
           setConnectionStatus('error');
         }
       }
@@ -148,7 +148,7 @@ export function useChatConnection(roomId, onMessageReceived) {
         clearTimeout(timeoutID);
         setConnectionStatus('connected');
       } catch (error) {
-        console.error('Failed to connect:', error);
+        //console.error('Failed to connect:', error);
         setConnectionStatus('error');
       }
     }

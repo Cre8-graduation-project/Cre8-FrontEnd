@@ -54,6 +54,14 @@ export const dateTimeExtractor = (dateTimeString) => {
   }
 }
 
+export const getAMPMTime = (dateTimeString) => {
+  const hours = dateTimeExtractor(dateTimeString).hour;
+  const minutes = dateTimeExtractor(dateTimeString).minute;
+  const ampm = hours >= 12 ? '오후' : '오전';
+  const formattedHours = hours % 12 || 12;
+  return `${ampm} ${formattedHours}:${minutes.toString().padStart(2, '0')}`;
+}
+
 export const timeSince = (timestamp) => {
   return formatDistanceToNow(
     new Date(timestamp), 

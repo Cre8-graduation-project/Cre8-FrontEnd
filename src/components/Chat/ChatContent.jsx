@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { CircularProgress } from "@mui/material";
-import { throttle } from "../../provider/utilityProvider";
+import { throttle, getAMPMTime } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
 import { useAuth } from "../../provider/authProvider";
 import { Toast } from "../Common/Toast";
 import classes from "./ChatComponent.module.css";
 
-export default function ChatContent({ roomId, chatContent, setChatContent }) {
+export default function ChatContent({ roomId, chatContent, setChatContent, updateAvatar = () => {}  }) {
   const { memberCode } = useAuth();
   const [isFetching, setIsFetching] = useState(false);
   // Page Info
@@ -35,8 +35,9 @@ export default function ChatContent({ roomId, chatContent, setChatContent }) {
     chatContentLoader(roomId).then((res) => {
       isInitialLoad.current = true;
       setChatContent(res);
-      setIsFetching(false);
+      updateAvatar(res.opponentAccessUrl);
       setHasNextPage(res.hasNextPage);
+      setIsFetching(false);
     });
   }, [roomId]);
 
@@ -73,6 +74,7 @@ export default function ChatContent({ roomId, chatContent, setChatContent }) {
           ...prev,
           page: prev.page + 1,
         }));
+        updateAvatar(data.opponentAccessUrl);
         setHasNextPage(data.hasNextPage);
         setIsFetching(false);
         // Adjust scroll position after new content is rendered
@@ -111,12 +113,18 @@ export default function ChatContent({ roomId, chatContent, setChatContent }) {
     (item, index) => {
       const bubbleClass = memberCode == item.senderId ? classes.chatMyBubble : classes.chatOthersBubble;
       return (
-        <span
-          key={item.id || index}
-          className={`${classes.chatBubble} ${bubbleClass}`}
-        >
-          {item.contents}
-        </span>
+        <div className={`${classes.chatBubbleContainer} ${bubbleClass}`}>
+          <div className={classes.chatReadCount}>
+            {item.senderId == memberCode && <p>{item.readCount}</p>}
+            <p>{getAMPMTime(item.createdAt)}</p>
+          </div>
+          <span
+            key={item.id || index}
+            className={classes.chatBubble}
+          >
+            {item.contents}
+          </span>
+        </div>
       );
     }, [memberCode]
   );
