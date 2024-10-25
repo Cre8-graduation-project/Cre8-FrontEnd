@@ -27,7 +27,6 @@ import PortfolioEditPage from "../pages/Portfolio/PortfolioEdit.jsx";
 import SettingsPage from "../pages/Settings/Settings.jsx";
 import DeleteAccountPage from "../pages/UserAuth/DeleteAccount.jsx";
 import ErrorPage from "../pages/Error.jsx";
-import TestPage from "../pages/Test.jsx";
 import { TagLoader } from "../components/Tag/TagLoader.jsx";
 
 const Routes = () => {
@@ -115,7 +114,6 @@ const Routes = () => {
       ],
     },
     { path: "register", element: <RegisterPage />, action: RegisterAction },
-    { path: "test", element: <TestPage /> },
   ];
 
   // Accessible only to authenticated users

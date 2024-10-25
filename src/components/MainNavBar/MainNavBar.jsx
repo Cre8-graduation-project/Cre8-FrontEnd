@@ -52,7 +52,6 @@ export default function MainNavBar() {
     { name: "구인", link: "/recruit" },
     { name: "구직", link: "/job" },
     { name: "커뮤니티", link: "/c" },
-    { name: "테스트", link: "/test" },
   ];
 
   return (
