@@ -18,7 +18,6 @@ import { RiAddFill, RiDeleteBinLine } from "@remixicon/react";
 import { useEditor, EditorContent } from "@tiptap/react";
 
 import TitleBar from "../../components/Common/TitleBar";
-import TagAccordion from "../../components/Tag/TagAccordion";
 import TagSelector from "../../components/Tag/TagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
 import { TagElementLoader, TagLoader } from "../../components/Tag/TagLoader";
@@ -27,6 +26,7 @@ import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor"
 import { Toast } from "../../components/Common/Toast";
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider";
+import { isFileSizeUnderLimit } from "../../provider/utilityProvider";
 import classes from "./Portfolio.module.css";
 
 export default function PortfolioEditPage() {
@@ -133,6 +133,9 @@ export default function PortfolioEditPage() {
   const handleAddImg = (e) => {
     setIsUploading(true);
     if (e.target.type === "file" && e.target.files && e.target.files[0]) {
+      if (!isFileSizeUnderLimit(e.target.files[0])) {
+        Toast.error("1MB 이하의 이미지만 사용할 수 있습니다.");
+      }
       // Fetch Preview Image
       const uploadedImg = e.target.files[0];
       const imgURL = window.URL.createObjectURL(uploadedImg);

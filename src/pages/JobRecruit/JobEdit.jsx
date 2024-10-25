@@ -21,8 +21,7 @@ import apiInstance from "../../provider/networkProvider";
 import { Toast } from "../../components/Common/Toast";
 import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
 import classes from "./Job.module.css";
-import { useAuth } from "../../provider/authProvider";
-import { isEmpty } from "../../provider/utilityProvider";
+import { isEmpty, isFileSizeUnderLimit } from "../../provider/utilityProvider";
 
 export default function JobEditPage() {
   const navigate = useNavigate();
@@ -129,6 +128,9 @@ export default function JobEditPage() {
     //console.log("ADD IMAGE!!");
     setIsUploading(true);
     if (e.target.type === "file" && e.target.files && e.target.files[0]) {
+      if (!isFileSizeUnderLimit(e.target.files[0])) {
+        Toast.error("1MB 이하의 이미지만 사용할 수 있습니다.");
+      }
       // Fetch Preview Image
       const uploadedImg = e.target.files[0];
       const uploadedImgURL = window.URL.createObjectURL(uploadedImg);
