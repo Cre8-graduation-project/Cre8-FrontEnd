@@ -1,7 +1,11 @@
-import { Divider, Link } from "@mui/material";
+import { Divider, IconButton, Link } from "@mui/material";
 import classes from "./Footer.module.css";
+import { RiSunLine, RiMoonLine } from "@remixicon/react";
+import { useDarkMode } from "../../provider/darkModeProvider";
 
 export default function Footer() {
+  const { darkMode, toggleDarkMode } = useDarkMode();
+
   return (
     <footer className={classes.footer}>
       <div className={classes.footerContent}>
@@ -17,7 +21,9 @@ export default function Footer() {
           </div>
           <Divider />
           <div className={classes.footerBottomArea}>
-            
+            <IconButton onClick={toggleDarkMode}>
+              {darkMode == "dark" ? <RiMoonLine /> : <RiSunLine />}
+            </IconButton>
           </div>
         </div>
       </div>

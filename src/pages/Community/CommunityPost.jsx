@@ -9,7 +9,7 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
-import { RiHeartFill, RiMoreLine } from "@remixicon/react";
+import { RiHeartLine, RiHeartFill, RiMoreLine } from "@remixicon/react";
 
 import PageContent from "../../components/Common/PageContent";
 import TitleBar from "../../components/Common/TitleBar";
@@ -147,7 +147,7 @@ export default function CommunityPostPage() {
                   variant="contained"
                   size="small"
                   disabled={!isLoggedIn}
-                  startIcon={<RiHeartFill size="16" />}
+                  startIcon={isLikeClicked ? <RiHeartFill size="16"/> : <RiHeartLine size="16"/>}
                   onClick={handleLikeClick}
                 >
                   좋아요

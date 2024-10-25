@@ -82,7 +82,7 @@ export default function CommunityPage() {
 
   return (
     <div className={classes.communityContent}>
-      <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0", flexGrow: "3" }}>
+      <Card sx={{ borderRadius: "0.7rem", margin: "1.3rem 0", flexGrow: "4" }}>
         <TitleBar title={boardName}>
           {isLoggedIn && (
             <Button

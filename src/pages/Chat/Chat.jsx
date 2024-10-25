@@ -207,9 +207,9 @@ export default function ChatPage() {
               label="사용자 아이디"
             />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogClose}>취소</Button>
-            <Button type="submit">대화 시작</Button>
+          <DialogActions sx={{padding: "0 24px 24px 24px"}}>
+            <Button color="inherit" onClick={handleDialogClose}>취소</Button>
+            <Button variant="contained" type="submit">대화 시작</Button>
           </DialogActions>
         </Dialog>
       </TitleBar>

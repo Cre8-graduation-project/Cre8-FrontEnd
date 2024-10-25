@@ -1,7 +1,6 @@
 .jobListSortBar {
   display: flex;
   padding: 0.7em;
-  color: var(--color-gray-200);
   gap: 0.3em;
   background-color: var(--color-gray-100);
   border-bottom: 0.1rem solid var(--color-gray-400);
@@ -34,7 +33,7 @@
   }
 }
 .jobListCard:hover {
-  background-color: var(--color-gray-150);
+  background-color: var(--color-gray-200);
 }
 
 .jobListCardSm {
