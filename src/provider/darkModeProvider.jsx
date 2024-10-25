@@ -13,7 +13,7 @@ export const DarkModeProvider = ({ children }) => {
 
   const toggleDarkMode = () => {
     setDarkMode(darkMode == "light" ? "dark" : "light");
-    localStorage.setItem("theme", darkMode);
+    localStorage.setItem("theme", darkMode == "light" ? "dark" : "light");
   };
 
   useEffect(() => {
