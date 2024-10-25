@@ -126,7 +126,7 @@ export default function CommunityPostPage() {
           <div className={classes.communityPostTitle}>
             <h2>{data.title}</h2>
             <h4>{data.writerNickName}</h4>
-            <p>{dateTimeExtractor(data.createdAt).fullString}</p>
+            <p>{dateTimeExtractor(data.createdAt)?.fullString}</p>
           </div>
           <div className={classes.communityPostContentArea}>
             {!isEmpty(data.accessUrl) && (

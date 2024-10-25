@@ -35,11 +35,17 @@ export const isEmpty = (input) => {
   else return false;
 }
 
+export const isFileSizeUnderLimit = (file, limit = 1024 * 1024) => {
+  return file.size < limit;
+}
+
 export const areArraysEqual = (a, b) => {
   a.length === b.length && a.every((value, index) => value === b[index]);
 }
 
 export const dateTimeExtractor = (dateTimeString) => {
+  if(dateTimeString == null) return null;
+
   const regex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/;
   const match = dateTimeString.match(regex);
 
@@ -55,6 +61,8 @@ export const dateTimeExtractor = (dateTimeString) => {
 }
 
 export const getAMPMTime = (dateTimeString) => {
+  if(dateTimeString == null) return null;
+
   const hours = dateTimeExtractor(dateTimeString).hour;
   const minutes = dateTimeExtractor(dateTimeString).minute;
   const ampm = hours >= 12 ? '오후' : '오전';
@@ -63,11 +71,15 @@ export const getAMPMTime = (dateTimeString) => {
 }
 
 export const getDateString = (dateTimeString) => {
+  if(dateTimeString == null) return null;
+
   const dateTime = dateTimeExtractor(dateTimeString);
   return `${dateTime.year}년 ${dateTime.month}월 ${dateTime.day}일`;
 }
 
 export const timeSince = (timestamp) => {
+  if(timestamp == null) return null;
+
   return formatDistanceToNow(
     new Date(timestamp), 
     { addSuffix: true, locale: ko }
