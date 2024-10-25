@@ -24,7 +24,7 @@ export default function CommunityPage() {
   const [isFetching, setIsFetching] = useState(true);
   // Page Info
   const [pageObj, setPageObj] = useState({
-    size: 10,
+    size: 20,
     lastPostId: null,
   });
   const [hasNextPage, setHasNextPage] = useState(true);
@@ -36,7 +36,7 @@ export default function CommunityPage() {
           setData(prevData => [...prevData, ...res.communityPostSearchResponseDtoList]);
           setPageObj(prev => ({
             ...prev,
-            lastPostId: res.communityPostSearchResponseDtoList[res.communityPostSearchResponseDtoList.length - 1].communityPostId,
+            lastPostId: res.communityPostSearchResponseDtoList[20 - 1].communityPostId,
           }));
           setHasNextPage(res.hasNextPage);
         }
@@ -49,12 +49,13 @@ export default function CommunityPage() {
   // Add Scroll Event Listener
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollTop, offsetHeight } = document.documentElement;
-      if (window.innerHeight + scrollTop >= offsetHeight) {
-        setIsFetching(hasNextPage);
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const threshold = 300; // Adjust as needed
+      if (scrollTop + clientHeight >= scrollHeight - threshold) {
+        setIsFetching(true);
       }
     };
-    setIsFetching(true);
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
