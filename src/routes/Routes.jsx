@@ -12,7 +12,7 @@ import JobPostPage, { JobPostLoader } from "../pages/JobRecruit/JobPost.jsx";
 import JobEditPage from "../pages/JobRecruit/JobEdit.jsx";
 import BookmarkPage from "../pages/Bookmark/Bookmark.jsx";
 import MyPostPage from "../pages/MyPost/MyPost.jsx";
-import CommunityPage, { CommunityLoader } from "../pages/Community/Community.jsx";
+import CommunityPage from "../pages/Community/Community.jsx";
 import CommunityEditPage, { CommunityEditLoader } from "../pages/Community/CommunityEdit.jsx";
 import CommunityPostPage, { CommunityPostLoader } from "../pages/Community/CommunityPost.jsx";
 import ChatPage, { ChatListLoader } from "../pages/Chat/Chat.jsx";
@@ -84,7 +84,6 @@ const Routes = () => {
     {
       path: "c",
       id: "community-page",
-      loader: CommunityLoader,
       children: [
         {
           index: true,

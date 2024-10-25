@@ -4,7 +4,7 @@ import { useTheme, useMediaQuery, Card, Button, Divider } from "@mui/material";
 
 import TitleBar from "../../components/Common/TitleBar";
 import CommunityNavBar from "../../components/Community/CommunityNavBar";
-import { isEmpty, timeSince, throttle } from "../../provider/utilityProvider";
+import { isEmpty, throttle } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
 import classes from "./Community.module.css";
 import { useAuth } from "../../provider/authProvider";
@@ -20,39 +20,30 @@ export default function CommunityPage() {
   const boardId = searchParams.get("b") || 1;
   const boardName = location.state?.boardName || "자유게시판";
   // Community Post List Data
-  const initData = useRouteLoaderData("community-page");
-  const [data, setData] = useState({
-    postList: initData.communityPostSearchResponseDtoList,
-    hasNextPage: initData.hasNextPage,
-  });
+  const [data, setData] = useState([]);
+  const [isFetching, setIsFetching] = useState(true);
   // Page Info
   const [pageObj, setPageObj] = useState({
-    page: 0,
     size: 10,
-    sort: ["createdAt,desc"],
+    lastPostId: null,
   });
-  const [isFetching, setIsFetching] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(true);
 
   const fetchPage = useCallback(
     throttle(() => {
-      //console.log("FETCHING!");
-      CommunityLoader(boardId, pageObj).then((res) => {
-        //console.log(data);
-        // Update Data
-        setData({
-          postList: data.postList.concat(
-            res.communityPostSearchResponseDtoList
-          ),
-          hasNextPage: res.hasNextPage,
-        });
-        setPageObj({
-          ...pageObj,
-          page: pageObj.page + 1,
-        });
+      searchCommunityPost(boardId, pageObj).then((res) => {
+        if (res?.communityPostSearchResponseDtoList?.length) {
+          setData(prevData => [...prevData, ...res.communityPostSearchResponseDtoList]);
+          setPageObj(prev => ({
+            ...prev,
+            lastPostId: res.communityPostSearchResponseDtoList[res.communityPostSearchResponseDtoList.length - 1].communityPostId,
+          }));
+          setHasNextPage(res.hasNextPage);
+        }
         setIsFetching(false);
       });
     }, 500),
-    [boardId, pageObj]
+    [pageObj, boardId]
   );
 
   // Add Scroll Event Listener
@@ -60,7 +51,7 @@ export default function CommunityPage() {
     const handleScroll = () => {
       const { scrollTop, offsetHeight } = document.documentElement;
       if (window.innerHeight + scrollTop >= offsetHeight) {
-        setIsFetching(true);
+        setIsFetching(hasNextPage);
       }
     };
     setIsFetching(true);
@@ -70,8 +61,11 @@ export default function CommunityPage() {
 
   // Fetch Data when Needed
   useEffect(() => {
-    if (isFetching && data.hasNextPage) fetchPage();
-    else if (!data.hasNextPage) setIsFetching(false);
+    if (isFetching && hasNextPage) {
+      fetchPage();
+    } else if (!hasNextPage) {
+      setIsFetching(false);
+    }
   }, [isFetching]);
 
   const handleWriteBtnClick = (e) => {
@@ -100,19 +94,17 @@ export default function CommunityPage() {
           )}
         </TitleBar>
         <Divider />
+        {!isEmpty(data) && data?.map((item, index) => (
+          <CommunityPostCard
+            key={`POST_${index}`}
+            item={item}
+            onClick={() => handlePostClick(item.communityPostId)}
+          />
+        ))}
         {isFetching && <p>로딩 중</p>}
-        {!isFetching && isEmpty(data.postList) && (
+        {!isFetching && isEmpty(data) && (
           <p>표시할 내용이 없습니다.</p>
         )}
-        {!isFetching &&
-          !isEmpty(data.postList) &&
-          data.postList?.map((item, index) => (
-            <CommunityPostCard
-              key={`POST_${index}`}
-              item={item}
-              onClick={() => handlePostClick(item.communityPostId)}
-            />
-          ))}
       </Card>
       {!matchDownSm && (
         <Card
@@ -131,14 +123,12 @@ export default function CommunityPage() {
 }
 
 // 커뮤니티 게시글 목록 데이터 요청 함수
-export async function CommunityLoader({
+export async function searchCommunityPost(
   boardType = 1,
   pageObj = {
-    page: 0,
     size: 10,
-    sort: ["createdAt,desc"],
   },
-}) {
+) {
   try {
     const response = await apiInstance.get(
       `/api/v1/community/posts/search/${boardType}`,
