@@ -10,6 +10,7 @@ import { RiExternalLinkLine } from "@remixicon/react";
 
 import { isEmpty } from "../../provider/utilityProvider";
 import { useNotifications } from "../../provider/notificationProvider";
+import classes from "./MainNavBar.module.css";
 
 export default function MainNavBarNotiMenu({ anchorEl, open, handleClose }) {
   const navigate = useNavigate();
@@ -35,8 +36,9 @@ export default function MainNavBarNotiMenu({ anchorEl, open, handleClose }) {
           },
         },
       }}
+      className={classes.navNotiMenu}
     >
-      <MenuItem sx={{ height: "28px" }}>알림</MenuItem>
+      <h4>알림</h4>
       <Divider />
       {isEmpty(notificationContent) ? (
         <MenuItem>

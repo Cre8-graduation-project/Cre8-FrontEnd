@@ -53,6 +53,14 @@ export default function NotificationProvider({ children }) {
     }
   }, [isLoggedIn]);
 
+  useEffect(() => {
+    if (notificationContent.length > 0) {
+      setHasUnreadNotifications(true);
+    } else {
+      setHasUnreadNotifications(false);
+    }
+  }, [notificationContent]);
+
   return (
     <NotificationContext.Provider
       value={{ 

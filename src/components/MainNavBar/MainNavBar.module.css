@@ -94,3 +94,12 @@
 .navIcon {
   color: var(--color-gray-900)
 }
+
+.navNotiMenu {
+  ul {
+    padding: 0;
+  }
+  h4 {
+    margin: 0.8rem 1rem;
+  }
+}
