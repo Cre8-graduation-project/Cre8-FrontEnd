@@ -13,17 +13,17 @@ export default function Footer() {
         <div className={classes.footerText}>
           <div className={classes.footerTopArea}>
             <p>Copyright © Cre8 - All Rights Reserved.</p>
+            <IconButton onClick={toggleDarkMode}>
+              {darkMode == "dark" ? <RiMoonLine /> : <RiSunLine />}
+            </IconButton>
+          </div>
+          <Divider />
+          <div className={classes.footerBottomArea}>
             <div className={classes.footerLinkRow}>
               <Link color="inherit" underline="hover">Cre8 소개</Link>
               <Link color="inherit" underline="hover">이용약관</Link>
               <Link color="inherit" underline="hover">개인정보 처리방침</Link>
             </div>
-          </div>
-          <Divider />
-          <div className={classes.footerBottomArea}>
-            <IconButton onClick={toggleDarkMode}>
-              {darkMode == "dark" ? <RiMoonLine /> : <RiSunLine />}
-            </IconButton>
           </div>
         </div>
       </div>

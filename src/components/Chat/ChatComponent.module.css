@@ -59,6 +59,7 @@
   button {
     position: relative;
     right: 0.2rem;
+    color: var(--color-gray-900);
   }
 }
 
@@ -84,7 +85,6 @@
   overflow-y: scroll;
   position: relative;
 }
-
 .chatContent > div:last-child {
   margin-bottom: 0.6rem;
 }
