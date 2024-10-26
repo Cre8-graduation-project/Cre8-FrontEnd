@@ -17,7 +17,7 @@ const configureChatClient = () => {
     heartbeatOutgoing: 4000,
     
     debug: (msg) => {
-      console.log(new Date(), msg);
+      //console.log(new Date(), msg);
     }
   });
 };

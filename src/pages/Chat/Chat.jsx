@@ -24,12 +24,14 @@ import { isEmpty } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
 
 import classes from "./Chat.module.css";
+import { useNotifications } from "../../provider/notificationProvider";
 
 export default function ChatPage() {
   const loadedData = useRouteLoaderData("chat-page");
   const theme = useTheme();
   const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
   const { memberCode } = useAuth();
+  const { hasUnreadChat } = useNotifications();
   const [data, setData] = useState(loadedData);
   const [newChatDialogOpen, setNewChatDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState({
@@ -41,8 +43,8 @@ export default function ChatPage() {
   const location = useLocation();
   const chatQuery = location.state?.chatQuery ?? {};
 
+  // Immediately start chat upon request
   useEffect(() => {
-    // Immediately start chat upon request
     if (!isEmpty(chatQuery)) {
       chatRequestWithUserCode(chatQuery.targetCode).then((res) => {
         if (res != null) {
@@ -51,6 +53,13 @@ export default function ChatPage() {
       });
     }
   }, []);
+
+  // Update Chat list when new chat is received
+  useEffect(() => {
+    ChatListLoader({}).then((listRes) => {
+      setData(listRes);
+    })
+  }, [hasUnreadChat]);
 
   const onMsgReceived = useCallback(
     (msg) => {
@@ -137,7 +146,7 @@ export default function ChatPage() {
       chatRequest(userID).then((res) => {
         if (res != null) {
           setSelectedRoom({ roomId: res, nickName: userID });
-          ChatListLoader().then((listRes) => {
+          ChatListLoader({}).then((listRes) => {
             setData(listRes);
           });
         }
