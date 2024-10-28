@@ -377,7 +377,7 @@ export default function RecruitEditPage() {
                     value={data.hopeCareerYear}
                     onChange={handleInputChange}
                   />
-                  <b>명</b>
+                  <b>년</b>
                 </>
               )}
             </div>
