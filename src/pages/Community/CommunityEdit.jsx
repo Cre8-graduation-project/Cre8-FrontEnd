@@ -13,7 +13,10 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import { RiAddFill } from "@remixicon/react";
 
 import TitleBar from "../../components/Common/TitleBar";
-import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import {
+  EditorMenuBar,
+  editorExtensions,
+} from "../../components/Editor/Editor";
 import { isEmpty, isFileSizeUnderLimit } from "../../provider/utilityProvider";
 import { Toast } from "../../components/Common/Toast";
 import apiInstance from "../../provider/networkProvider";
@@ -64,7 +67,7 @@ export default function CommunityEditPage() {
       });
     }
     setIsUploading(false);
-  }
+  };
 
   const handleCancelEdit = () => {
     navigate(-1);
@@ -80,7 +83,7 @@ export default function CommunityEditPage() {
     setIsUploading(true);
 
     const formData = new FormData();
-    if(location.state.isCreation) {
+    if (location.state.isCreation) {
       formData.append("communityBoardId", location.state.boardId);
     } else {
       formData.append("communityPostId", location.state.postId);
@@ -212,16 +215,17 @@ const CommunityPostEditor = ({ postContent, setPostContent }) => {
       setPostContent(data);
     },
     editorProps: {
-      attributes: {
-        style: "min-height: 17rem;",
-      },
+      attributes: {},
     },
   });
 
   return (
-    <div className={classes.editor}>
-      <EditorMenuBar editor={editor} />
-      <EditorContent editor={editor} />
+    <div style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
+      <EditorMenuBar editor={editor} enableGemini={true} />
+      <EditorContent
+        editor={editor}
+        style={{ display: "flex", flexDirection: "column", flexGrow: 1 }}
+      />
     </div>
   );
 };

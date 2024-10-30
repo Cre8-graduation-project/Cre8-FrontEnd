@@ -13,7 +13,7 @@ import TitleBar from "../../components/Common/TitleBar";
 import TagList from "../../components/Tag/TagList";
 import ImagePopUp from "../../components/Common/ImagePopUp";
 import apiInstance from "../../provider/networkProvider";
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import classes from "./Portfolio.module.css";
 
 export default function PortfolioPage({ isFromJobPost = false }) {

@@ -17,7 +17,7 @@ import ImagePopUp from "../../components/Common/ImagePopUp";
 import apiInstance from "../../provider/networkProvider";
 import { useAuth } from "../../provider/authProvider";
 import { Toast } from "../../components/Common/Toast";
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import { dateTimeExtractor, isEmpty } from "../../provider/utilityProvider";
 import classes from "./Community.module.css";
 import CommunityComment from "../../components/Community/CommunityComment";

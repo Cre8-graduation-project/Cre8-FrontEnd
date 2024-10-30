@@ -22,7 +22,7 @@ import TagSelector from "../../components/Tag/TagSelector";
 import TagChildSelector from "../../components/Tag/TagChildSelector";
 import { TagElementLoader, TagLoader } from "../../components/Tag/TagLoader";
 import { RemovePortfolioPost } from "../../components/Portfolio/PortfolioGrid";
-import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import { EditorMenuBar, editorExtensions } from "../../components/Editor/Editor";
 import { Toast } from "../../components/Common/Toast";
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider";
@@ -342,7 +342,7 @@ const PortfolioEditor = ({ ptfDesc, setPtfDesc }) => {
 
   return (
     <div className={classes.editor}>
-      <EditorMenuBar editor={editor} />
+      <EditorMenuBar editor={editor} enableGemini={true} />
       <EditorContent editor={editor} />
     </div>
   );

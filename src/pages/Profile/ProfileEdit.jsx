@@ -12,7 +12,7 @@ import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider"
 import { isFileSizeUnderLimit } from "../../provider/utilityProvider";
-import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import { EditorMenuBar, editorExtensions } from "../../components/Editor/Editor";
 import { PortfolioGrid } from "../../components/Portfolio/PortfolioGrid";
 import { Toast } from "../../components/Common/Toast";
 import classes from "./Profile.module.css";
@@ -229,7 +229,7 @@ const ProfileEditor = ({ profileAbout, setProfileAbout }) => {
 
   return (
     <>
-      <EditorMenuBar editor={editor} />
+      <EditorMenuBar editor={editor} enableGemini={true} />
       <EditorContent editor={editor} />
     </>
   );

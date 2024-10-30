@@ -8,7 +8,7 @@ import TitleBar from "../../components/Common/TitleBar";
 import TagList from "../../components/Tag/TagList";
 import DeleteDialog from "../../components/Dialog/DeleteDialog";
 import { Toast } from "../../components/Common/Toast";
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import apiInstance from "../../provider/networkProvider";
 import { useAuth } from "../../provider/authProvider";
 import classes from "./Job.module.css";

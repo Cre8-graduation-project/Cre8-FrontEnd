@@ -19,7 +19,7 @@ import MuiAccordionSummary from "@mui/material/AccordionSummary";
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import { RiArrowDropDownLine } from "@remixicon/react";
 
-import { ReadOnlyEditor } from "../Common/Editor";
+import { ReadOnlyEditor } from "../Editor/Editor";
 import apiInstance from "../../provider/networkProvider";
 import classes from "./PortfolioAccordion.module.css";
 

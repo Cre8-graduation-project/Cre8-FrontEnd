@@ -20,7 +20,7 @@ import TagChildSelector from "../../components/Tag/TagChildSelector";
 import { TagElementLoader, TagLoader } from "../../components/Tag/TagLoader";
 import apiInstance from "../../provider/networkProvider";
 import { Toast } from "../../components/Common/Toast";
-import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import { EditorMenuBar, editorExtensions } from "../../components/Editor/Editor";
 import classes from "./Job.module.css";
 import { isEmpty, isFileSizeUnderLimit } from "../../provider/utilityProvider";
 
@@ -483,9 +483,9 @@ const RecPostEditor = ({ postContent, setPostContent }) => {
   });
 
   return (
-    <div className={classes.editor}>
-      <EditorMenuBar editor={editor} />
-      <EditorContent editor={editor} />
+    <div className={classes.editDescAreaEditor}>
+      <EditorMenuBar editor={editor} enableGemini={true} />
+      <EditorContent editor={editor} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }} />
     </div>
   );
 };

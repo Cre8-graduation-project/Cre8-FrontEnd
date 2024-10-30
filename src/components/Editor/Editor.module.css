@@ -1,0 +1,58 @@
+.editor {
+  display: flex;
+  flex-direction: column;
+}
+
+.editorMenuBar {
+  display: flex;
+  padding: 0.3em;
+  gap: 0.3em;
+  color: var(--color-gray-200);
+  border-bottom: 0.1rem solid var(--color-gray-400);
+}
+.editorMenuBar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-gray-900);
+  background-color: transparent;
+  width: 2em;
+  height: 2em;
+  border: 0;
+  padding: 0;
+}
+.editorMenuBar button:hover {
+  background-color: var(--color-gray-200);
+  border: 0.1rem solid var(--color-gray-400);
+  border-radius: 0.4rem;
+}
+
+.geminiDialogLoading {  
+  form {    
+    position: relative;
+    overflow-y: visible;
+  }  
+  form:before, form:after {    
+    content: "";    
+    position: absolute;    
+    left: -3px; /* Adjust for border width */    
+    top: -3px; /* Adjust for border width */    
+    border: 3px solid transparent;    
+    border-radius: 6px;
+    background: linear-gradient(45deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); /* Ensure the gradient loops back to start */    
+    background-size: 400% 400%;    
+    width: calc(100% + 6px); /* Adjust for border width */    
+    height: calc(100% + 6px); /* Adjust for border width */    
+    z-index: -1; /* Place behind form content */    
+    animation: gradientAnimation 5s ease infinite;  
+  }
+  form:after {
+    filter: blur(40px);
+  }
+}  
+
+@keyframes gradientAnimation {  
+  0% { background-position: 1% 50%; }  
+  50% { background-position: 99% 50%; }  
+  100% { background-position: 1% 50%; }
+}

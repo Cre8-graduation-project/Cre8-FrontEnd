@@ -20,7 +20,7 @@ import TagList from "../../components/Tag/TagList";
 import DeleteDialog from "../../components/Dialog/DeleteDialog";
 import PortfolioAccordion from "../../components/Portfolio/PortfolioAccordion";
 import { Toast } from "../../components/Common/Toast";
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import apiInstance from "../../provider/networkProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 import { useAuth } from "../../provider/authProvider";
