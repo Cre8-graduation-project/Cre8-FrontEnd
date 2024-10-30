@@ -15,7 +15,7 @@ import classes from "./Editor.module.css";
 export default function EditorGeminiDialog({ editor, open, onClose }) {
   const [isGeminiRunning, setIsGeminiRunning] = useState(false);
   const model = useMemo(() => {
-    const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+    const genAI = new GoogleGenerativeAI(import.meta.env.GEMINI_API_KEY);
     return genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   }, []);
 
