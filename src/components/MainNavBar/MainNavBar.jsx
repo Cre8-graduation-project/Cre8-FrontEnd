@@ -12,6 +12,7 @@ import {
   RiChat4Line,
   RiMenu2Line,
   RiNotification3Line,
+  RiBardFill,
 } from "@remixicon/react";
 
 import MainNavBarDrawer from "./MainNavBarDrawer";
@@ -24,7 +25,8 @@ import { useNotifications } from "../../provider/notificationProvider";
 export default function MainNavBar() {
   const navigate = useNavigate();
   const { userPFP, isLoggedIn } = useAuth();
-  const { hasUnreadChat, hasUnreadNotifications, setHasUnreadChat } = useNotifications();
+  const { hasUnreadChat, hasUnreadNotifications, setHasUnreadChat } =
+    useNotifications();
   const theme = useTheme();
   const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -52,6 +54,16 @@ export default function MainNavBar() {
     { name: "구인", link: "/recruit" },
     { name: "구직", link: "/job" },
     { name: "커뮤니티", link: "/c" },
+    {
+      name: "추천",
+      link: "/recommend",
+      icon: (
+        <RiBardFill
+          size={18}
+          style={{ marginLeft: "0.3rem", marginTop: "0.2rem" }}
+        />
+      ),
+    },
   ];
 
   return (
@@ -96,6 +108,7 @@ export default function MainNavBar() {
                     }
                   >
                     {item.name}
+                    {item.icon}
                   </NavLink>
                 </li>
               ))}
@@ -127,11 +140,13 @@ export default function MainNavBar() {
           ) : (
             <ul className={classes.buttonList}>
               <li>
-                <IconButton onClick={() => {
-                  navigate("/chat");
-                  setHasUnreadChat(false);
-                }}>
-                  <Badge 
+                <IconButton
+                  onClick={() => {
+                    navigate("/chat");
+                    setHasUnreadChat(false);
+                  }}
+                >
+                  <Badge
                     color="secondary"
                     variant="dot"
                     invisible={!hasUnreadChat}
@@ -142,12 +157,15 @@ export default function MainNavBar() {
               </li>
               <li>
                 <IconButton onClick={handleNotiMenuClick}>
-                  <Badge 
+                  <Badge
                     color="secondary"
                     variant="dot"
                     invisible={!hasUnreadNotifications}
                   >
-                    <RiNotification3Line size={20} className={classes.navIcon} />
+                    <RiNotification3Line
+                      size={20}
+                      className={classes.navIcon}
+                    />
                   </Badge>
                 </IconButton>
                 <MainNavBarNotiMenu

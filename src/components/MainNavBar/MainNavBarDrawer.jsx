@@ -11,14 +11,17 @@ import {
   Collapse,
 } from "@mui/material";
 import {
-  RiCloseLine, RiArrowDropDownLine, RiArrowDropUpLine
+  RiCloseLine,
+  RiArrowDropDownLine,
+  RiArrowDropUpLine,
+  RiBardFill,
 } from "@remixicon/react";
 
 import apiInstance from "../../provider/networkProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 import classes from "./MainNavBar.module.css";
 
-export default function MainNavBarDrawer({open, onClose}) {
+export default function MainNavBarDrawer({ open, onClose }) {
   const navigate = useNavigate();
   const [isCollapseOpen, setIsCollapseOpen] = useState(true);
   const [communityListData, setCommunityListData] = useState();
@@ -26,12 +29,22 @@ export default function MainNavBarDrawer({open, onClose}) {
   const navList = [
     { name: "구인", link: "/recruit" },
     { name: "구직", link: "/job" },
+    {
+      name: "추천",
+      link: "/recommend",
+      icon: (
+        <RiBardFill
+          size={18}
+          style={{ marginLeft: "0.3rem", position: "relative", top: "0.2rem" }}
+        />
+      ),
+    },
   ];
 
   useEffect(() => {
     communityListLoader().then((res) => {
       setCommunityListData(res);
-    })
+    });
   }, []);
 
   return (
@@ -52,7 +65,10 @@ export default function MainNavBarDrawer({open, onClose}) {
               onClose();
             }}
           >
-            <ListItemText>{item.name}</ListItemText>
+            <ListItemText>
+              {item.name}
+              {item.icon}
+            </ListItemText>
           </ListItemButton>
         ))}
         <ListItemButton
@@ -61,28 +77,25 @@ export default function MainNavBarDrawer({open, onClose}) {
           }}
         >
           <ListItemText>커뮤니티</ListItemText>
-          {isCollapseOpen ? <RiArrowDropUpLine/> : <RiArrowDropDownLine/>}
+          {isCollapseOpen ? <RiArrowDropUpLine /> : <RiArrowDropDownLine />}
         </ListItemButton>
-        <Collapse 
-          in={isCollapseOpen} 
-          timeout="auto" 
-          unmountOnExit
-        >
+        <Collapse in={isCollapseOpen} timeout="auto" unmountOnExit>
           <List disablePadding>
-            {!isEmpty(communityListData) && communityListData.map((subItem, index) => (
-              <ListItemButton 
-                sx={{ pl: 4 }} 
-                key={`NAV_DRAWER_COLLAPSE_LIST_${index}`}
-                onClick={() => {
-                  navigate(`/c?b=${subItem.communityBoardId}`, {
-                    state: {boardName: subItem.communityBoardName}
-                  });
-                  onClose();
-                }}
-              >
-                <ListItemText>{subItem.communityBoardName}</ListItemText>
-              </ListItemButton>
-            ))}
+            {!isEmpty(communityListData) &&
+              communityListData.map((subItem, index) => (
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  key={`NAV_DRAWER_COLLAPSE_LIST_${index}`}
+                  onClick={() => {
+                    navigate(`/c?b=${subItem.communityBoardId}`, {
+                      state: { boardName: subItem.communityBoardName },
+                    });
+                    onClose();
+                  }}
+                >
+                  <ListItemText>{subItem.communityBoardName}</ListItemText>
+                </ListItemButton>
+              ))}
           </List>
         </Collapse>
         <Divider sx={{ margin: "0.6rem 0" }} />

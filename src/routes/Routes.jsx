@@ -24,6 +24,7 @@ import ProfilePage, { ProfileLoader } from "../pages/Profile/Profile.jsx";
 import ProfileEditPage from "../pages/Profile/ProfileEdit.jsx";
 import PortfolioPage, { PortfolioLoader } from "../pages/Portfolio/Portfolio.jsx";
 import PortfolioEditPage from "../pages/Portfolio/PortfolioEdit.jsx";
+import RecommendPage from "../pages/Recommend/Recommend.jsx";
 import SettingsPage from "../pages/Settings/Settings.jsx";
 import DeleteAccountPage from "../pages/UserAuth/DeleteAccount.jsx";
 import ErrorPage from "../pages/Error.jsx";
@@ -74,9 +75,8 @@ const Routes = () => {
         },
         {
           path: ":jobPostID/:portfolioID",
-          id: "portfolio-in-jobPost",
           loader: PortfolioLoader,
-          element: <PortfolioPage isFromJobPost={true} />,
+          element: <PortfolioPage />,
         },
       ],
     },
@@ -107,7 +107,6 @@ const Routes = () => {
         },
         {
           path: ":portfolioID",
-          id: "portfolio-page",
           loader: PortfolioLoader,
           element: <PortfolioPage />,
         },
@@ -138,7 +137,6 @@ const Routes = () => {
             },
             {
               path: "edit/:portfolioID",
-              id: "portfolio-page-edit",
               loader: PortfolioLoader,
               element: <PortfolioEditPage />,
             },
@@ -208,6 +206,17 @@ const Routes = () => {
             }
           ]
         },
+        { path: "recommend", children: [
+          {
+            index: true,
+            element: <RecommendPage />,
+          },
+          {
+            path: ":portfolioID",
+            loader: PortfolioLoader,
+            element: <PortfolioPage />,
+          },
+        ], },
         { path: "settings", element: <SettingsPage /> },
         { path: "changePassword", element: <ChangePasswordPage /> },
         { path: "deleteAcc", element: <DeleteAccountPage /> },

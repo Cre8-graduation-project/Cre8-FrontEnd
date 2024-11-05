@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouteLoaderData } from "react-router-dom";
+import { useRouteLoaderData, useLoaderData } from "react-router-dom";
 import {
   ImageList,
   ImageListItem,
@@ -16,10 +16,8 @@ import apiInstance from "../../provider/networkProvider";
 import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import classes from "./Portfolio.module.css";
 
-export default function PortfolioPage({ isFromJobPost = false }) {
-  const data = !isFromJobPost
-    ? useRouteLoaderData("portfolio-page")
-    : useRouteLoaderData("portfolio-in-jobPost");
+export default function PortfolioPage() {
+  const data = useLoaderData();
   const theme = useTheme();
   const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
   const [imgPopUpData, setImgPopUpData] = useState(null);

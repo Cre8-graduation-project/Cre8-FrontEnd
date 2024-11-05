@@ -1,0 +1,104 @@
+.recommendText {
+  margin: 0 1.3rem;
+  position: relative;
+  bottom: 0.3rem;
+}
+
+.recommendImageArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--color-gray-400);
+  border-radius: 0.5rem;
+  margin: 0.8rem 1.2rem 1.3rem 1.2rem;
+  gap: 1rem;
+  min-height: 10rem;
+
+  p {
+    margin: 0;
+    overflow-wrap: break-word;
+  }
+  label {
+    margin: 1.3rem;
+  }
+}
+.recommendImageArea:hover {
+  background-color: var(--color-gray-100);
+}
+
+.recommendUploadedImageArea {
+  display: flex;
+  flex-direction: row;
+  gap: 1.3rem;
+
+  img {
+    height: 7.5rem;
+    object-fit: cover;
+  }
+}
+@media (max-width: 600px) {
+  .recommendUploadedImageArea {
+    flex-direction: column;
+  }
+}
+
+.recommendUploadedImageAreaText {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.recommendUploadedImageLinkArea {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+
+  input {
+    flex-grow: 1;
+    margin: 0;
+    width: 0;
+  }
+  button {
+    padding: 8px;
+    min-width: 0;
+    border-radius: 24px;
+  }
+}
+
+.recommendPortfolioArea {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  padding: 0 1.2rem 1.3rem 1.2rem;
+  p {
+    margin: 0;
+  }
+}
+
+.recommendPortfolioCard {
+  display: flex;
+  flex-direction: row;
+  gap: 0.7rem;
+  padding: 1rem;
+  background-color: var(--color-gray-200) !important;
+
+  img {
+    aspect-ratio: 4 / 3;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+    transform: scale(1);
+    transition: all 0.25s ease;
+  }
+}
+.recommendPortfolioCard:hover {
+  background-color: var(--color-gray-150) !important;
+  img {
+    transform: scale(1.02);
+  }
+}

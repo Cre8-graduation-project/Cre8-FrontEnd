@@ -9,7 +9,7 @@ export default function ErrorContent({ title, children }) {
   return (
     <div className={classes.errorContent}>
       <div className={classes.errorTitle}>
-        <RiErrorWarningLine color="black" size={40} />
+        <RiErrorWarningLine size={40} />
         <div>
           <h1>{title}</h1>
           {children}
