@@ -41,7 +41,7 @@
   background-color: var(--color-gray-100) !important;
 }
 .homeCommunityCardLink .titleCategory {
-  color: #656360;
+  color: var(--color-gray-900);
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
@@ -54,7 +54,7 @@
   min-width: 0;
 }
 .homeCommunityCardLink .titleComment {
-  color: #ef5350;
+  color: var(--color-warning) !important;
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;

@@ -47,6 +47,8 @@ html[data-theme="light"] {
   --color-mui-base: #fff;
   --color-mui-base-gradient: #fff;
   --color-mui-base-gradient-hover: #f3f3f3;
+
+  --color-warning: #DE1212;
 }
 
 html[data-theme="dark"] {
@@ -74,6 +76,8 @@ html[data-theme="dark"] {
   --color-mui-base: #121212;
   --color-mui-base-gradient: #303030;
   --color-mui-base-gradient-hover: #323232;
+
+  --color-warning: #FF3D3D;
 }
 
 body {

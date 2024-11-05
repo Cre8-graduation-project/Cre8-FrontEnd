@@ -9,7 +9,7 @@ export default function CommunityPostCard({ item, onClick = () => {} }) {
     >
       <span>
         <h4>{item.title}</h4>
-        <h4 style={{ color: "red" }}>[{item.replyCount}]</h4>
+        <h4 style={{ color: "var(--color-warning)" }}>[{item.replyCount}]</h4>
       </span>
       <p>
         {item.writerNickName} | {timeSince(item.createdAt) || '?'}
