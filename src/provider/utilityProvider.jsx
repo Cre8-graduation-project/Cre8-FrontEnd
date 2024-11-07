@@ -35,7 +35,7 @@ export const isEmpty = (input) => {
   else return false;
 }
 
-export const isFileSizeUnderLimit = (file, limit = 1024 * 1024) => {
+export const isFileSizeUnderLimit = (file, limit = 3 * 1024 * 1024) => {
   return file.size < limit;
 }
 
