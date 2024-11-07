@@ -4,6 +4,7 @@ import {
   useNavigate,
   useLocation,
   useRouteLoaderData,
+  useLoaderData,
 } from "react-router-dom";
 import {
   ImageList,
@@ -34,7 +35,7 @@ export default function PortfolioEditPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { userID } = useAuth();
-  const [data, setData] = useState(useRouteLoaderData("portfolio-page-edit"));
+  const [data, setData] = useState(useLoaderData());
   // Portfolio Description in JSON type
   const [ptfDesc, setPtfDesc] = useState(JSON.parse(data.description) || "");
   // Uploaded Image Array

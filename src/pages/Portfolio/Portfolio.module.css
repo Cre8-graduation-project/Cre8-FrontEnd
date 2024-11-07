@@ -38,7 +38,9 @@
   position: absolute !important;
   top: 4px;
   right: 4px;
-  background-color: rgba(255, 255, 255, 0.6) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
   transition: opacity 0.3s ease;
 }
 
