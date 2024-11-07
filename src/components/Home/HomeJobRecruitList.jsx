@@ -42,7 +42,7 @@ export default function HomeJobRecruitList({dataType = "job"}) {
               > 
                 <img src={item.accessUrl || errorImage} alt={item.title}/>
                 <div>
-                  <h3>{item.title}</h3>
+                  <h4>{item.title}</h4>
                   <TagList tagList={item.tagNameList} />
                 </div>
               </Card>

@@ -5,6 +5,7 @@
 
 .editorMenuBar {
   display: flex;
+  flex-wrap: wrap;
   padding: 0.3em;
   gap: 0.3em;
   color: var(--color-gray-200);

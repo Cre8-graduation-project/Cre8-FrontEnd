@@ -24,6 +24,7 @@
   padding: 1rem 1.2rem;
   border-bottom: 0.1rem solid var(--color-gray-400);
   gap: 1rem;
+  cursor: pointer;
 
   img {
     object-fit: cover;

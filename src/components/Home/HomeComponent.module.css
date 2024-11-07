@@ -12,6 +12,7 @@
     margin: 0.1rem 0;
     font-size: 18px;
     font-weight: 700;
+    cursor: default;
   }
 }
 
@@ -106,7 +107,7 @@
   position: relative;
   cursor: pointer;
 
-  h3 {
+  h4 {
     margin: 1.1rem 0 !important;
     margin-bottom: 1rem !important;
     overflow: hidden;
@@ -156,7 +157,7 @@
   .homeJobPostCard {
     flex-direction: row;
 
-    h3 {
+    h4 {
       margin-top: 0 !important;
       margin-bottom: 0.8rem !important;
     }
