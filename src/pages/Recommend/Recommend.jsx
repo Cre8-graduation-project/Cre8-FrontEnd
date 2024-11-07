@@ -36,7 +36,9 @@ export default function RecommendPage() {
       const uploadedImgURL = window.URL.createObjectURL(uploadedImg);
       setImageData(uploadedImgURL);
       try {
-        const res = await RecommendRequestWithImage(uploadedImgURL);
+        const formData = new FormData();
+        formData.append("imageFile", uploadedImg);
+        const res = await RecommendRequestWithImage(formData);
         if (res.status == "success") {
           setRecommendData(res.data);
         } else {
@@ -61,7 +63,9 @@ export default function RecommendPage() {
     }
 
     try {
-      const res = await RecommendRequestWithImage(imageData);
+      const formData = new FormData();
+      formData.append("imageUrl", imageData);
+      const res = await RecommendRequestWithImage(formData);
       if (res.status == "success") {
         setRecommendData(res.data);
       } else {
@@ -110,7 +114,7 @@ export default function RecommendPage() {
         {!isUploading ? (
           <label htmlFor="recommendImageUploadBtn">
             <div className={classes.recommendUploadedImageArea}>
-              {CheckImage(imageData) && <img src={imageData} alt="postImage" />}
+              {!isEmpty(imageData) && <img src={imageData} alt="postImage" />}
               <div className={classes.recommendUploadedImageAreaText}>
                 <p>이미지를 드래그 & 드랍하거나 아래 버튼을 눌러 추가하세요.</p>
                 <Button
@@ -171,10 +175,15 @@ export default function RecommendPage() {
 }
 
 // 추천 API 요청 함수
-async function RecommendRequestWithImage(imageUrl) {
+async function RecommendRequestWithImage(formData) {
   try {
-    const response = await apiInstance.post("/api/v1/portfolios/ai/recommend", {
-      query_image_url: imageUrl,
+    const response = await apiInstance({
+      method: "post",
+      url: "/api/v1/portfolios/ai/recommend",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
     // 성공
     return response.data;
