@@ -78,6 +78,12 @@ export default function RecommendPage() {
     setIsUploading(false);
   };
 
+  const handleRecommendListClick = (postID) => {
+    navigate(`./${postID}`, { 
+      state: { useJobButton: true },
+    });
+  }
+
   return (
     <Card
       sx={{ borderRadius: "0.7rem", margin: "1.3rem 0" }}
@@ -161,7 +167,7 @@ export default function RecommendPage() {
                 <Card
                   elevation={2}
                   className={classes.recommendPortfolioCard}
-                  onClick={() => navigate(`./${item.id}`)}
+                  onClick={() => handleRecommendListClick(item.id)}
                 >
                   <img src={item.accessUrl} alt="similarPortfolioImage" />
                 </Card>

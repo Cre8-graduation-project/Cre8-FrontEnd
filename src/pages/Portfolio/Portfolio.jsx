@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { useRouteLoaderData, useLoaderData } from "react-router-dom";
+import { useLocation, useLoaderData, useNavigate } from "react-router-dom";
 import {
   ImageList,
   ImageListItem,
   useTheme,
   useMediaQuery,
   Card,
+  Button,
 } from "@mui/material";
+import { RiUserLine, RiArrowRightLine } from "@remixicon/react";
 
 import PageContent from "../../components/Common/PageContent";
 import TitleBar from "../../components/Common/TitleBar";
@@ -19,6 +21,9 @@ import classes from "./Portfolio.module.css";
 export default function PortfolioPage() {
   const data = useLoaderData();
   const theme = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const useJobButton = location.state?.useJobButton ?? false;
   const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
   const [imgPopUpData, setImgPopUpData] = useState(null);
 
@@ -61,6 +66,16 @@ export default function PortfolioPage() {
               </ImageListItem>
             ))}
           </ImageList>
+          {useJobButton && (
+            <div className={classes.ptfJobBtnRow}>
+              {useJobButton && data.recentEmployeePostId != null && (
+                <Button variant="contained" color="secondary" onClick={() => navigate(`/job/${data.recentEmployeePostId}`)}>
+                  <RiArrowRightLine size={18} style={{ marginRight: "0.4rem" }} />
+                  최근 작성 구직글 보기
+                </Button>
+              )}
+            </div>
+          )}
           {imgPopUpData !== null && (
             <ImagePopUp
               imgPopUpData={imgPopUpData}
