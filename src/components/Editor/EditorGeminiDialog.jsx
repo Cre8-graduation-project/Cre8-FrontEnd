@@ -27,6 +27,7 @@ export default function EditorGeminiDialog({ editor, open, onClose }) {
       " = 앞서 제공된 HTML 형식의 본문 내용을 뒤이어 입력될 사용자의 요청에 맞게 개선해주세요. 출력값은 반드시 아래 사항들을 준수해야 합니다. \
       1. 만약 사용자가 입력한 요청이 충분하지 않더라도 반드시 결과값은 제공된 본문을 바탕으로 개선된 내용을 담고 있을 것 \
       2. 결과값은 #, *를 비롯한 각종 마크다운 기호를 완전 배제한 채, 순수히 HTML 태그과 한국어만으로 이루어진 HTML 문법을 준수하는 코드의 형태를 갖춰야 함. \
+      3. ```html 같은 코드블럭은 사용하지 말 것. \
       이 다음은 사용자의 요청임. = ";
 
     // Generate Content if editor is not empty

@@ -385,7 +385,7 @@ export default function RecruitEditPage() {
         </Grid>
       </div>
       <div className={classes.editDescArea}>
-        <h3>작업물 설명 *</h3>
+        <h3>설명 *</h3>
         <RecPostEditor
           postContent={postContent}
           setPostContent={setPostContent}
