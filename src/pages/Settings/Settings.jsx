@@ -9,11 +9,13 @@ export default function SettingsPage() {
   const SettingsMenuTab = ({ title, desc, children }) => {
     return (
       <div className={classes.settingsMenuTab}>
-        <div className={classes.settingsMenuTabLeft}>
+        <div className={classes.settingsMenuTabTop}>
           <h3>{title}</h3>
           <p>{desc}</p>
         </div>
-        <div className={classes.settingsMenuTabRight}>{children}</div>
+        <div className={classes.settingsMenuTabBottom}>
+          {children}
+        </div>
       </div>
     );
   };

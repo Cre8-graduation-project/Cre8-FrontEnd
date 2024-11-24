@@ -80,9 +80,8 @@ html[data-theme="dark"] {
   --color-warning: #FF3D3D;
 }
 
-body {
+html, body {
   margin: 0;
-  height: 100vh;
 }
 
 main {
@@ -123,6 +122,12 @@ ul {
 /* Basic editor styles */
 .tiptap {
   /* Youtube embed */
+  div[data-youtube-video] iframe {
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+  /* Youtube embed in Edit Mode */
   div[data-youtube-video]:not(.readOnlyEditor div[data-youtube-video]) {
     cursor: move;
 

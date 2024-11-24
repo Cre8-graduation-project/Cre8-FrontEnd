@@ -134,11 +134,14 @@
   right: 2rem;
 }
 .jobPostFAB {
+  display: flex;
+  flex-direction: row;
   position: fixed;
   bottom: 2rem;
 
   button {
     margin-left: 0.5rem;
+    text-wrap: nowrap;
   }
 }
 .jobPostFAB:hover {
