@@ -84,7 +84,10 @@
 }
 
 .cmNavBtnList {
+  display: flex;
+  flex-direction: column;
   margin: 0.7rem;
+  gap: 0.7rem;
 }
 .cmNavBtnList button {
   border-radius: 0.4rem;

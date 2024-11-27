@@ -17,6 +17,10 @@ export default function CommunityNavBar() {
       setCommunityListData(res);
     });
   }, []);
+  
+  const handleClick = (boardId) => {
+    navigate(`/c?b=${boardId}`);
+  }
 
   return (
     <div className={classes.cmNavBtnList}>
@@ -27,6 +31,7 @@ export default function CommunityNavBar() {
             key={`CM_NAV_BTN_${index}`} 
             variant="contained" 
             color={boardId == item.communityBoardId ? "primary" : "inherit"}
+            onClick={() => handleClick(item.communityBoardId)}
             fullWidth
           >
             {item.communityBoardName}
