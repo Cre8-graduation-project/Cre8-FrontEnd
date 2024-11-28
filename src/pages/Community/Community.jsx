@@ -60,6 +60,10 @@ export default function CommunityPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    fetchPage();
+  }, [boardId])
+
   // Fetch Data when Needed
   useEffect(() => {
     if (isFetching && hasNextPage) {
