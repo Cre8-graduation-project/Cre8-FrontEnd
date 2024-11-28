@@ -51,7 +51,10 @@ export default function CommunityPage() {
   );
 
   const tempFetchPage = throttle(() => {
-    searchCommunityPost(boardId, pageObj).then((res) => {
+    searchCommunityPost(boardId, {
+      size: 20,
+      lastPostId: null,
+    }).then((res) => {
       if (res?.communityPostSearchResponseDtoList?.length) {
         setData((prevData) => [
           ...prevData,
