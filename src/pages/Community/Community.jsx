@@ -63,7 +63,7 @@ export default function CommunityPage() {
         setPageObj((prev) => ({
           ...prev,
           lastPostId:
-            res.communityPostSearchResponseDtoList[20 - 1].communityPostId,
+            res.communityPostSearchResponseDtoList.at(-1).communityPostId,
         }));
         setHasNextPage(res.hasNextPage);
       }
