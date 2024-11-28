@@ -10,7 +10,7 @@ export default function HomePage() {
       <HomeBanner />
       <div className={classes.homePostArea}>
         <HomeCommunityCard title="자유게시판" boardID={1}/>
-        <HomeCommunityCard title="자유게시판 2" boardID={1} />
+        <HomeCommunityCard title="공모전 게시판" boardID={2} />
       </div>
       <HomeCategoryList />
       <HomeJobRecruitList dataType="recruit" />
