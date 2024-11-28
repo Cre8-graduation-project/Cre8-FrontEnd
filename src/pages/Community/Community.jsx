@@ -27,7 +27,7 @@ export default function CommunityPage() {
     size: 20,
     lastPostId: null,
   });
-  const [hasNextPage, setHasNextPage] = useState(true);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   const fetchPage = useCallback(
     throttle(() => {
@@ -89,7 +89,7 @@ export default function CommunityPage() {
   useEffect(() => {
     setData([]);
     setPageObj({ size: 20, lastPostId: null });
-    setHasNextPage(true);
+    setHasNextPage(false);
     tempFetchPage();
   }, [boardId]);
 
