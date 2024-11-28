@@ -61,6 +61,7 @@ export default function CommunityPage() {
   }, []);
 
   useEffect(() => {
+    setData([]);
     fetchPage();
   }, [boardId])
 
