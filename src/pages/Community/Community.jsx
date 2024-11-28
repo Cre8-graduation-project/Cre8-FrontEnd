@@ -33,10 +33,14 @@ export default function CommunityPage() {
     throttle(() => {
       searchCommunityPost(boardId, pageObj).then((res) => {
         if (res?.communityPostSearchResponseDtoList?.length) {
-          setData(prevData => [...prevData, ...res.communityPostSearchResponseDtoList]);
-          setPageObj(prev => ({
+          setData((prevData) => [
+            ...prevData,
+            ...res.communityPostSearchResponseDtoList,
+          ]);
+          setPageObj((prev) => ({
             ...prev,
-            lastPostId: res.communityPostSearchResponseDtoList[20 - 1].communityPostId,
+            lastPostId:
+              res.communityPostSearchResponseDtoList[20 - 1].communityPostId,
           }));
           setHasNextPage(res.hasNextPage);
         }
@@ -46,16 +50,35 @@ export default function CommunityPage() {
     [pageObj, boardId]
   );
 
+  const tempFetchPage = throttle(() => {
+    searchCommunityPost(boardId, pageObj).then((res) => {
+      if (res?.communityPostSearchResponseDtoList?.length) {
+        setData((prevData) => [
+          ...prevData,
+          ...res.communityPostSearchResponseDtoList,
+        ]);
+        setPageObj((prev) => ({
+          ...prev,
+          lastPostId:
+            res.communityPostSearchResponseDtoList[20 - 1].communityPostId,
+        }));
+        setHasNextPage(res.hasNextPage);
+      }
+      setIsFetching(false);
+    });
+  }, 500);
+
   // Add Scroll Event Listener
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const { scrollTop, scrollHeight, clientHeight } =
+        document.documentElement;
       const threshold = 300; // Adjust as needed
       if (scrollTop + clientHeight >= scrollHeight - threshold) {
         setIsFetching(true);
       }
     };
-  
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -64,8 +87,8 @@ export default function CommunityPage() {
     setData([]);
     setPageObj({ size: 20, lastPostId: null });
     setHasNextPage(true);
-    fetchPage();
-  }, [boardId])
+    tempFetchPage();
+  }, [boardId]);
 
   // Fetch Data when Needed
   useEffect(() => {
@@ -102,17 +125,16 @@ export default function CommunityPage() {
           )}
         </TitleBar>
         <Divider />
-        {!isEmpty(data) && data?.map((item, index) => (
-          <CommunityPostCard
-            key={`POST_${index}`}
-            item={item}
-            onClick={() => handlePostClick(item.communityPostId)}
-          />
-        ))}
+        {!isEmpty(data) &&
+          data?.map((item, index) => (
+            <CommunityPostCard
+              key={`POST_${index}`}
+              item={item}
+              onClick={() => handlePostClick(item.communityPostId)}
+            />
+          ))}
         {isFetching && <p>로딩 중</p>}
-        {!isFetching && isEmpty(data) && (
-          <p>표시할 내용이 없습니다.</p>
-        )}
+        {!isFetching && isEmpty(data) && <p>표시할 내용이 없습니다.</p>}
       </Card>
       {!matchDownSm && (
         <Card
@@ -135,7 +157,7 @@ export async function searchCommunityPost(
   boardType = 1,
   pageObj = {
     size: 10,
-  },
+  }
 ) {
   try {
     const response = await apiInstance.get(
