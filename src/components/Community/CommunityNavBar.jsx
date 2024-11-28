@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { replace, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { isEmpty } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
@@ -20,7 +20,7 @@ export default function CommunityNavBar() {
   }, []);
   
   const handleClick = (boardId) => {
-    navigate(`/c?b=${boardId}`);
+    navigate(`/c?b=${boardId}`, { replace: true });
   }
 
   return (
