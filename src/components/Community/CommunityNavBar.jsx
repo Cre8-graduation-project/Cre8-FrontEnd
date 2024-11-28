@@ -19,8 +19,8 @@ export default function CommunityNavBar() {
     });
   }, []);
   
-  const handleClick = (boardId) => {
-    navigate(`/c?b=${boardId}`, { replace: true });
+  const handleClick = (boardId, boardName) => {
+    navigate(`/c?b=${boardId}`, { replace: true, state: { boardName: boardName } });
   }
 
   return (
@@ -32,7 +32,7 @@ export default function CommunityNavBar() {
             key={`CM_NAV_BTN_${index}`} 
             variant="contained" 
             color={boardId == item.communityBoardId ? "primary" : "inherit"}
-            onClick={() => handleClick(item.communityBoardId)}
+            onClick={() => handleClick(item.communityBoardId, item.communityBoardName)}
             fullWidth
           >
             {item.communityBoardName}

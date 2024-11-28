@@ -62,6 +62,8 @@ export default function CommunityPage() {
 
   useEffect(() => {
     setData([]);
+    setPageObj({ size: 20, lastPostId: null });
+    setHasNextPage(true);
     fetchPage();
   }, [boardId])
 
