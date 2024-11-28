@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { isEmpty } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
@@ -8,6 +8,7 @@ import classes from "./CommComponent.module.css";
 
 export default function CommunityNavBar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const boardId = searchParams.get("b") || 1;
   const [communityListData, setCommunityListData] = useState();
