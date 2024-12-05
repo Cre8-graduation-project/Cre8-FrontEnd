@@ -15,9 +15,6 @@ const apiInstance = axios.create({
     post: {
       "Content-Type": "application/json"
     }
-  },
-  validateStatus: (status) => {
-    return status >= 200;
   }
 });
 

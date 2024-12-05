@@ -12,19 +12,22 @@ import JobPostPage, { JobPostLoader } from "../pages/JobRecruit/JobPost.jsx";
 import JobEditPage from "../pages/JobRecruit/JobEdit.jsx";
 import BookmarkPage from "../pages/Bookmark/Bookmark.jsx";
 import MyPostPage from "../pages/MyPost/MyPost.jsx";
-import CommunityPage, { CommunityLoader } from "../pages/Community/Community.jsx";
+import CommunityPage from "../pages/Community/Community.jsx";
 import CommunityEditPage, { CommunityEditLoader } from "../pages/Community/CommunityEdit.jsx";
 import CommunityPostPage, { CommunityPostLoader } from "../pages/Community/CommunityPost.jsx";
 import ChatPage, { ChatListLoader } from "../pages/Chat/Chat.jsx";
 import LoginPage from "../pages/UserAuth/Login.jsx";
 import RegisterPage, { RegisterAction } from "../pages/UserAuth/Register.jsx";
 import RecoverPasswordPage from "../pages/UserAuth/RecoverPassword.jsx";
+import ChangePasswordPage from "../pages/UserAuth/ChangePassword.jsx";
 import ProfilePage, { ProfileLoader } from "../pages/Profile/Profile.jsx";
 import ProfileEditPage from "../pages/Profile/ProfileEdit.jsx";
 import PortfolioPage, { PortfolioLoader } from "../pages/Portfolio/Portfolio.jsx";
 import PortfolioEditPage from "../pages/Portfolio/PortfolioEdit.jsx";
+import RecommendPage from "../pages/Recommend/Recommend.jsx";
+import SettingsPage from "../pages/Settings/Settings.jsx";
+import DeleteAccountPage from "../pages/UserAuth/DeleteAccount.jsx";
 import ErrorPage from "../pages/Error.jsx";
-import TestPage from "../pages/Test.jsx";
 import { TagLoader } from "../components/Tag/TagLoader.jsx";
 
 const Routes = () => {
@@ -72,16 +75,14 @@ const Routes = () => {
         },
         {
           path: ":jobPostID/:portfolioID",
-          id: "portfolio-in-jobPost",
           loader: PortfolioLoader,
-          element: <PortfolioPage isFromJobPost={true} />,
+          element: <PortfolioPage />,
         },
       ],
     },
     {
       path: "c",
       id: "community-page",
-      loader: CommunityLoader,
       children: [
         {
           index: true,
@@ -106,14 +107,12 @@ const Routes = () => {
         },
         {
           path: ":portfolioID",
-          id: "portfolio-page",
           loader: PortfolioLoader,
           element: <PortfolioPage />,
         },
       ],
     },
     { path: "register", element: <RegisterPage />, action: RegisterAction },
-    { path: "test", element: <TestPage /> },
   ];
 
   // Accessible only to authenticated users
@@ -138,7 +137,6 @@ const Routes = () => {
             },
             {
               path: "edit/:portfolioID",
-              id: "portfolio-page-edit",
               loader: PortfolioLoader,
               element: <PortfolioEditPage />,
             },
@@ -208,6 +206,20 @@ const Routes = () => {
             }
           ]
         },
+        { path: "recommend", children: [
+          {
+            index: true,
+            element: <RecommendPage />,
+          },
+          {
+            path: ":portfolioID",
+            loader: PortfolioLoader,
+            element: <PortfolioPage />,
+          },
+        ], },
+        { path: "settings", element: <SettingsPage /> },
+        { path: "changePassword", element: <ChangePasswordPage /> },
+        { path: "deleteAcc", element: <DeleteAccountPage /> },
       ],
     },
   ];

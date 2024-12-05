@@ -10,18 +10,23 @@ import { Toast } from "../Common/Toast";
 import apiInstance from "../../provider/networkProvider";
 import { useNavigate } from "react-router-dom";
 
-export default function DeleteDialog({ isOpen, onClose, onCancel, deleteAPIURL }) {
+export default function DeleteDialog({
+  isOpen,
+  onClose,
+  onCancel,
+  deleteAPIURL,
+}) {
   const navigate = useNavigate();
   const onProceed = () => {
     DeleteRequest(deleteAPIURL).then((res) => {
-      if(res == 200) {
-        Toast.success("게시글을 삭제했습니다.")
+      if (res == 200) {
+        Toast.success("게시글을 삭제했습니다.");
         navigate(-1);
       } else {
-        Toast.error("게시글을 삭제하는데 실패했습니다.")
+        Toast.error("게시글을 삭제하는데 실패했습니다.");
       }
-    })
-  }
+    });
+  };
 
   return (
     <Dialog
@@ -40,8 +45,12 @@ export default function DeleteDialog({ isOpen, onClose, onCancel, deleteAPIURL }
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>취소</Button>
-        <Button onClick={onProceed}>확인</Button>
+        <Button color="inherit" onClick={onCancel}>
+          취소
+        </Button>
+        <Button variant="contained" color="primary" onClick={onProceed}>
+          확인
+        </Button>
       </DialogActions>
     </Dialog>
   );

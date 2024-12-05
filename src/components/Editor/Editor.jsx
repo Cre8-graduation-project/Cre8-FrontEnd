@@ -1,14 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import {
-  Button,
-  Dialog,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  DialogTitle,
-  TextField,
-} from "@mui/material";
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -31,37 +22,19 @@ import {
   RiAlignCenter,
   RiAlignRight,
   RiYoutubeLine,
+  RiBardFill,
 } from "@remixicon/react";
 import { Divider } from "@mui/material";
+import EditorYoutubeDialog from "./EditorYoutubeDialog";
+import EditorGeminiDialog from "./EditorGeminiDialog";
 
-export const EditorMenuBar = ({ editor }) => {
+export const EditorMenuBar = ({ editor, enableGemini = false }) => {
   const [isYoutubeOpen, setIsYoutubeOpen] = useState(false);
-  const [isURLokay, setIsURLokay] = useState(true);
+  const [isGeminiOpen, setIsGeminiOpen] = useState(false);
 
   if (!editor) {
     return null;
   }
-
-  const handleYoutubeOpen = () => {
-    setIsYoutubeOpen(true);
-  };
-  const handleYoutubeClose = () => {
-    setIsYoutubeOpen(false);
-  };
-  const addYoutubeVideo = (e) => {
-    e.preventDefault();
-    const youtubeVideoUrl = e.target.elements.youtubeVideoUrl.value;
-
-    if (youtubeVideoUrl.includes("youtube.com/watch?v=")) {
-      editor.commands.setYoutubeVideo({
-        src: youtubeVideoUrl,
-      });
-      handleYoutubeClose();
-      setIsURLokay(true);
-    } else {
-      setIsURLokay(false);
-    }
-  };
 
   return (
     <>
@@ -137,9 +110,12 @@ export const EditorMenuBar = ({ editor }) => {
           flexItem
           sx={{ borderColor: "#aeaba7" }}
         />
-        <button onClick={handleYoutubeOpen}>
+        <button onClick={() => setIsYoutubeOpen(true)}>
           <RiYoutubeLine size={20} />
         </button>
+        {enableGemini && <button onClick={() => setIsGeminiOpen(true)}>
+          <RiBardFill size={20} />
+        </button>}
         <Divider
           orientation="vertical"
           variant="middle"
@@ -159,42 +135,16 @@ export const EditorMenuBar = ({ editor }) => {
           <RiArrowGoForwardLine size={20} />
         </button>
       </div>
-      <Dialog
+      <EditorYoutubeDialog 
+        editor={editor}
         open={isYoutubeOpen}
-        onClose={handleYoutubeClose}
-        PaperProps={{
-          component: "form",
-          onSubmit: (e) => {
-            addYoutubeVideo(e);
-            setIsURLokay(true);
-          },
-        }}
-      >
-        <DialogTitle>유튜브 영상 첨부</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {isURLokay
-              ? "첨부할 유튜브 영상의 주소를 입력해주세요."
-              : "올바른 유튜브 영상 URL을 입력해주세요."}
-          </DialogContentText>
-          <TextField
-            autoFocus
-            required
-            margin="dense"
-            id="youtubeVideoUrl"
-            label="유튜브 영상 URL"
-            type="url"
-            fullWidth
-            variant="standard"
-          />
-        </DialogContent>
-        <DialogActions sx={{ padding: "0 1rem 1rem 1rem" }}>
-          <Button onClick={handleYoutubeClose}>취소</Button>
-          <Button type="submit" variant="contained">
-            추가
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onClose={() => setIsYoutubeOpen(false)}
+      />
+      <EditorGeminiDialog 
+        editor={editor}
+        open={isGeminiOpen}
+        onClose={() => setIsGeminiOpen(false)}
+      />
     </>
   );
 };
@@ -234,7 +184,7 @@ export const ReadOnlyEditor = ({ content }) => {
   });
 
   return (
-    <div className={classes.editor}>
+    <div className={`${classes.editor} readOnlyEditor`}>
       <EditorContent editor={editor} />
     </div>
   );

@@ -8,7 +8,7 @@ import TitleBar from "../../components/Common/TitleBar";
 import TagList from "../../components/Tag/TagList";
 import DeleteDialog from "../../components/Dialog/DeleteDialog";
 import { Toast } from "../../components/Common/Toast";
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import apiInstance from "../../provider/networkProvider";
 import { useAuth } from "../../provider/authProvider";
 import classes from "./Job.module.css";
@@ -92,14 +92,14 @@ export default function RecruitPostPage() {
             >
               <Grid item xs={2} sm={15} className={classes.jobPostInfoBox}>
                 <h3>모집 정보</h3>
-                <div className={classes.jobPostInfoAreaRow}>
+                <div className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                   <p>급여</p>
                   <Chip label={data.paymentMethod} size="small" />
                   <b>{data.paymentAmount}원</b>
                 </div>
                 {data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
                   (item, itemIndex) => (
-                    <div key={itemIndex} className={classes.jobPostInfoAreaRow}>
+                    <div key={itemIndex} className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                       <p>{item.subCategoryName}</p>
                       <ul>
                         {item.childTagName.map((child, childIndex) => (
@@ -119,18 +119,18 @@ export default function RecruitPostPage() {
               />
               <Grid item xs={2} sm={15} className={classes.jobPostInfoBox}>
                 <h3>모집 조건</h3>
-                <div className={classes.jobPostInfoAreaRow}>
+                <div className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                   <p>모집 인원</p>
                   <b>{data.numberOfEmployee}명</b>
                 </div>
-                <div className={classes.jobPostInfoAreaRow}>
+                <div className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                   <p>모집 기간</p>
                   <b>{data.enrollDurationType}</b>
                   {data.enrollDurationType == "마감일 지정" && (
                     <b>[{data.deadLine}]</b>
                   )}
                 </div>
-                <div className={classes.jobPostInfoAreaRow}>
+                <div className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                   <p>요구 경력</p>
                   <b>
                     {data.hopeCareerYear == 0 || data.hopeCareerYear == null

@@ -39,7 +39,7 @@ export default function ChatInputBar({ handleChatSend }) {
         onKeyDown={handleKeyPress}
       />
       <div className={classes.chatInputBarButtonRow}>
-        <Button type="submit" size="small" variant="contained" color="primary">
+        <Button type="submit" variant="contained" color="primary">
           전송
         </Button>
       </div>

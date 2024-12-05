@@ -4,13 +4,13 @@
 
 .authForm {
   margin: 2rem auto;
-  padding: 1.7rem 1.3rem;
+  padding: 1.7rem 1.3rem 1.3rem 1.3rem;
   width: 100%;
   min-width: 10rem;
   max-width: 25rem;
   border: 0.1rem solid var(--color-gray-300);
   border-radius: 0.7rem;
-  background-color: white;
+  background-color: var(--color-gray-200);
 }
 .authForm ul {
   display: flex;
@@ -22,6 +22,9 @@
 .authForm h5 {
   margin-top: 1rem;
   margin-bottom: 0.5rem;
+}
+.authForm a h5 {
+  color: var(--color-primary-600)
 }
 
 .authLabel {
@@ -35,8 +38,12 @@
     margin: 1rem 0;
   }
   span {
-    margin-top: 0.5rem;
     font-weight: 600;
+  }
+  p {
+    font-weight: bold; 
+    font-size: 14px;
+    margin: 1rem 0 0 0;
   }
 }
 

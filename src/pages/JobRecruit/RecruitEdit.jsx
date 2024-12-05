@@ -20,10 +20,9 @@ import TagChildSelector from "../../components/Tag/TagChildSelector";
 import { TagElementLoader, TagLoader } from "../../components/Tag/TagLoader";
 import apiInstance from "../../provider/networkProvider";
 import { Toast } from "../../components/Common/Toast";
-import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import { EditorMenuBar, editorExtensions } from "../../components/Editor/Editor";
 import classes from "./Job.module.css";
-import { useAuth } from "../../provider/authProvider";
-import { isEmpty } from "../../provider/utilityProvider";
+import { isEmpty, isFileSizeUnderLimit } from "../../provider/utilityProvider";
 
 export default function RecruitEditPage() {
   const navigate = useNavigate();
@@ -94,10 +93,7 @@ export default function RecruitEditPage() {
   useEffect(() => {
     // After Tag Element loaded...
     // load post data as initial value
-    if (
-      data?.tagPostResponseDto?.subCategoryWithChildTagResponseDtoList?.length >
-      0
-    ) {
+    if (data?.tagPostResponseDto?.subCategoryWithChildTagResponseDtoList?.length > 0) {
       let tempData = [];
       data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
         (subItem) => {
@@ -107,14 +103,16 @@ export default function RecruitEditPage() {
       const tempElement = [];
       //
       if (tagElementData && tempData) {
-        tagElementData.map((elementItem) => {
-          elementItem.workFieldChildTagResponseDtoList.map((childItem) => {
-            if (tempData[0] == childItem.name) {
-              tempElement.push(childItem.workFieldChildTagId);
-              tempData.shift();
-            }
+        while (tempData.length > 0) {
+          tagElementData.map((elementItem) => {
+            elementItem.workFieldChildTagResponseDtoList.map((childItem) => {
+              if (tempData[0] == childItem.name) {
+                tempElement.push(childItem.workFieldChildTagId);
+                tempData.shift();
+              }
+            });
           });
-        });
+        }
         if (tempData.length == 0) {
           setSelectedElement(tempElement);
         }
@@ -135,6 +133,9 @@ export default function RecruitEditPage() {
     //console.log("ADD IMAGE!!");
     setIsUploading(true);
     if (e.target.type === "file" && e.target.files && e.target.files[0]) {
+      if (!isFileSizeUnderLimit(e.target.files[0])) {
+        Toast.error("1MB 이하의 이미지만 사용할 수 있습니다.");
+      }
       // Fetch Preview Image
       const uploadedImg = e.target.files[0];
       const uploadedImgURL = window.URL.createObjectURL(uploadedImg);
@@ -184,12 +185,6 @@ export default function RecruitEditPage() {
     } else {
       formData.append("workFieldChildTagId", "") 
     }
-    selectedElement.forEach((element) => {
-      if(element) { 
-        formData.append("workFieldChildTagId", element) 
-      } else {
-      };
-    })
     if(!isEmpty(data.paymentMethod)) {
       formData.append("paymentMethod", data.paymentMethod);
     }
@@ -382,7 +377,7 @@ export default function RecruitEditPage() {
                     value={data.hopeCareerYear}
                     onChange={handleInputChange}
                   />
-                  <b>명</b>
+                  <b>년</b>
                 </>
               )}
             </div>
@@ -390,7 +385,7 @@ export default function RecruitEditPage() {
         </Grid>
       </div>
       <div className={classes.editDescArea}>
-        <h3>작업물 설명 *</h3>
+        <h3>설명 *</h3>
         <RecPostEditor
           postContent={postContent}
           setPostContent={setPostContent}
@@ -488,9 +483,9 @@ const RecPostEditor = ({ postContent, setPostContent }) => {
   });
 
   return (
-    <div className={classes.editor}>
-      <EditorMenuBar editor={editor} />
-      <EditorContent editor={editor} />
+    <div className={classes.editDescAreaEditor}>
+      <EditorMenuBar editor={editor} enableGemini={true} />
+      <EditorContent editor={editor} style={{ display: "flex", flexDirection: "column", flexGrow: 1 }} />
     </div>
   );
 };

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { Avatar, Link, IconButton, Menu, MenuItem, Divider } from "@mui/material";
-import { RiMore2Line } from "@remixicon/react";
 
 import CommunityTextField from "./CommunityTextField";
 import CommunityCommentBox from "./CommunityCommentBox";
@@ -30,7 +28,11 @@ export default function CommunityComment({
       {!isEmpty(commentData) &&
         commentData.map((item, index) => (
           <div key={`COMMENT_${index}`}>
-            <CommunityCommentBox item={item.parentReplyResponseDto} />
+            <CommunityCommentBox 
+              item={item.parentReplyResponseDto} 
+              setIsUpdating={setIsUpdating}
+              setReplyTextFieldTarget={setReplyTextFieldTarget}
+            />
             {replyTextFieldTarget == item?.parentReplyResponseDto?.replyId &&
               isLoggedIn && (
                 <CommunityTextField
@@ -38,6 +40,7 @@ export default function CommunityComment({
                   parentReplyId={item.parentReplyResponseDto.replyId}
                   isUpdating={isUpdating}
                   setIsUpdating={setIsUpdating}
+                  isReplyTextField={true}
                 />
               )}
             {!isEmpty(item.childReplyResponseDto) &&
@@ -47,6 +50,7 @@ export default function CommunityComment({
                     item={reply} 
                     isReply={true} 
                     setIsUpdating={setIsUpdating}
+                    setReplyTextFieldTarget={setReplyTextFieldTarget}
                   />
                 </div>
               ))}

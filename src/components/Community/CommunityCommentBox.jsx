@@ -19,7 +19,8 @@ import classes from "./CommComponent.module.css";
 export default function CommunityCommentBox({
   item,
   isReply = false,
-  setIsUpdating,
+  setIsUpdating = () => {},
+  setReplyTextFieldTarget = () => {},
 }) {
   const { isLoggedIn } = useAuth();
   const [isEditing, setIsEditing] = useState(false);

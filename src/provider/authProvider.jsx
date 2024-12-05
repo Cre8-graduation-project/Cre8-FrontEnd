@@ -21,23 +21,32 @@ export const AuthProvider = ({ children }) => {
   const reissueToken = useCallback(async () => {
     if (!token) return; // Don't attempt to reissue if there's no token
 
-    try {
-      const response = await apiInstance.post("/api/v1/auth/reissue", null, {
-        headers: {
-          accessToken: token,
+    const maxRetries = 3;
+    const retryDelay = 100; // 0.1 second
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const response = await apiInstance.post("/api/v1/auth/reissue", null, {
+          headers: {
+            accessToken: token,
+          }
+        });
+        if (response.status === 200) {
+          setToken(response.data.data.accessToken);
+          return; // Success, exit the function
         }
-      });
-      if (response.status === 200) {
-        setToken(response.data.data.accessToken);
+        // If response is not 200, continue to next attempt
+      } catch (error) {
+        //console.error(`Error reissuing token (attempt ${attempt + 1}):`, error);
+        if (attempt < maxRetries - 1) {
+          // Wait before next attempt
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
       }
-      else {
-        // refreshToken deprecated
-        logout();
-      }
-    } catch (error) {
-      //console.error("Error reissuing token:", error);
-      logout();
     }
+
+    // If all attempts fail, logout
+    logout();
   }, [token]);
   
   useEffect(() => {

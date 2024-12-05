@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ImageList,
@@ -13,7 +13,7 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-  useTheme, 
+  useTheme,
   useMediaQuery,
 } from "@mui/material";
 import { RiMoreFill, RiAddFill } from "@remixicon/react";
@@ -24,12 +24,13 @@ import classes from "./PortfolioGrid.module.css";
 export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const matchDownSm = useMediaQuery(theme.breakpoints.down('sm'));
-  const matchDownMd = useMediaQuery(theme.breakpoints.down('md'));
+  const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
   const [ptfGridData, setPtfGridData] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
   // States for Menu
   const [anchorEl, setAnchorEl] = useState(null);
+  const [menuId, setMenuId] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   // State for Warning Dialog
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -65,16 +66,18 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
     }
   };
   // Context Menu functions - only available in 'Edit' Page
-  const handleMenuClick = (e) => {
+  const handleMenuClick = (e, id) => {
     setAnchorEl(e.currentTarget);
+    setMenuId(id);
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
+    setMenuId(null);
   };
-  const handleEdit = (e, portfolioID) => {
-    navigate(`./${portfolioID}`, { state: { isCreation: false }});
+  const handleEdit = () => {
+    navigate(`./${menuId}`, { state: { isCreation: false } });
   };
-  const handleRemove = (e, portfolioID) => {
+  const handleRemove = () => {
     RemovePortfolioPost(portfolioID).then(() => {
       reloadGridData();
     });
@@ -84,7 +87,7 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
     setIsDialogOpen(false);
     // Add Portfolio
     createPortfolioPost().then((ptfID) => {
-      navigate(`./${ptfID}`, { state: { isCreation: true }});
+      navigate(`./${ptfID}`, { state: { isCreation: true } });
     });
   };
   const handleDialogOpen = () => {
@@ -92,6 +95,56 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
   };
   const handleDialogClose = () => {
     setIsDialogOpen(false);
+  };
+
+  const renderImageListItem = (item) => {
+    return (
+      <ImageListItem
+        key={item.id}
+        className={
+          !isEditing ? classes.portfolioThumbnail : classes.editThumbnail
+        }
+      >
+        <img
+          src={`${item.accessUrl}`}
+          alt={item.id}
+          onClick={(e) => handleImgClick(e, item.id)}
+        />
+        {isEditing && (
+          <div>
+            <IconButton
+              aria-label="more"
+              className={classes.moreButton}
+              onClick={(e) => handleMenuClick(e, item.id)}
+            >
+              <RiMoreFill />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={isMenuOpen}
+              onClose={handleMenuClose}
+              onClick={handleMenuClose}
+              transformOrigin={{
+                horizontal: "right",
+                vertical: "top",
+              }}
+              anchorOrigin={{
+                horizontal: "right",
+                vertical: "bottom",
+              }}
+            >
+              <MenuItem onClick={handleEdit}>
+                편집
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={handleRemove}>
+                삭제
+              </MenuItem>
+            </Menu>
+          </div>
+        )}
+      </ImageListItem>
+    );
   };
 
   return (
@@ -104,67 +157,8 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
       )}
       {!loadingData && (
         <>
-          <ImageList cols={matchDownSm ? 2 : (matchDownMd ? 3 : 4)} gap={10} >
-            {ptfGridData &&
-              ptfGridData.map((item) => (
-                <ImageListItem
-                  key={item.id}
-                  className={
-                    !isEditing
-                      ? classes.portfolioThumbnail
-                      : classes.editThumbnail
-                  }
-                >
-                  <img
-                    src={`${item.accessUrl}`}
-                    alt={item.id}
-                    onClick={(e) => {
-                      handleImgClick(e, item.id);
-                    }}
-                  />
-                  {isEditing && (
-                    <div>
-                      <IconButton
-                        aria-label="more"
-                        className={classes.moreButton}
-                        onClick={handleMenuClick}
-                      >
-                        <RiMoreFill />
-                      </IconButton>
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={isMenuOpen}
-                        onClose={handleMenuClose}
-                        onClick={handleMenuClose}
-                        transformOrigin={{
-                          horizontal: "right",
-                          vertical: "top",
-                        }}
-                        anchorOrigin={{
-                          horizontal: "right",
-                          vertical: "bottom",
-                        }}
-                      >
-                        <MenuItem
-                          onClick={(e) => {
-                            handleEdit(e, item.id);
-                          }}
-                        >
-                          편집
-                        </MenuItem>
-                        <Divider />
-                        <MenuItem
-                          onClick={(e) => {
-                            handleRemove(e, item.id);
-                          }}
-                        >
-                          삭제
-                        </MenuItem>
-                      </Menu>
-                    </div>
-                  )}
-                </ImageListItem>
-              ))}
+          <ImageList cols={matchDownSm ? 2 : matchDownMd ? 3 : 4} gap={10}>
+            {ptfGridData && ptfGridData.map(renderImageListItem)}
             {isEditing && (
               <ImageListItem
                 key={"ptfAddBtn"}
@@ -198,7 +192,9 @@ export const PortfolioGrid = ({ memberCode, isEditing = false }) => {
 // 포트폴리오 목록 데이터 요청 함수
 async function fetchPortfolioGrid(memberCode) {
   try {
-    const response = await apiInstance.get(`/api/v1/portfolios/member/${memberCode}`);
+    const response = await apiInstance.get(
+      `/api/v1/portfolios/member/${memberCode}`
+    );
     if (response.status === 200) {
       // 조회 성공
       if (response.data.data == "") {
@@ -233,7 +229,9 @@ async function createPortfolioPost() {
 // 포트폴리오 삭제 함수
 export async function RemovePortfolioPost(portfolioID) {
   try {
-    const response = await apiInstance.delete(`/api/v1/portfolios/${portfolioID}`);
+    const response = await apiInstance.delete(
+      `/api/v1/portfolios/${portfolioID}`
+    );
     if (response.status === 200) {
       // 생성 성공
       return response.data.data;

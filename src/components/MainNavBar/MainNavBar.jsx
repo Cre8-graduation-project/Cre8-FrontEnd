@@ -1,59 +1,75 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   useTheme,
   useMediaQuery,
   Card,
   IconButton,
-  Menu,
-  MenuItem,
   Avatar,
-  Divider,
-  ListItemText,
-  ListItemIcon,
+  Badge,
 } from "@mui/material";
 import {
-  RiArticleLine,
-  RiBookmarkLine,
   RiChat4Line,
-  RiLogoutBoxLine,
   RiMenu2Line,
   RiNotification3Line,
-  RiUserLine,
+  RiBardFill,
 } from "@remixicon/react";
 
 import MainNavBarDrawer from "./MainNavBarDrawer";
+import MainNavBarMenu from "./MainNavBarMenu";
+import MainNavBarNotiMenu from "./MainNavBarNotiMenu";
 import classes from "./MainNavBar.module.css";
 import { useAuth } from "../../provider/authProvider";
+import { useNotifications } from "../../provider/notificationProvider";
 
 export default function MainNavBar() {
   const navigate = useNavigate();
-  const { logout, userID, userPFP, isLoggedIn } = useAuth();
+  const { userPFP, isLoggedIn } = useAuth();
+  const { hasUnreadChat, hasUnreadNotifications, setHasUnreadChat } =
+    useNotifications();
   const theme = useTheme();
   const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElNoti, setAnchorElNoti] = useState(null);
   const open = Boolean(anchorEl);
+  const openNoti = Boolean(anchorElNoti);
 
-  const handleClick = (event) => {
+  const handleMenuClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleNotiMenuClick = (event) => {
+    setAnchorElNoti(event.currentTarget);
+  };
+  const handleNotiMenuClose = () => {
+    setAnchorElNoti(null);
   };
 
   const navList = [
     { name: "구인", link: "/recruit" },
     { name: "구직", link: "/job" },
     { name: "커뮤니티", link: "/c" },
-    { name: "테스트", link: "/test" },
+    {
+      name: "추천",
+      link: "/recommend",
+      icon: (
+        <RiBardFill
+          size={18}
+          style={{ marginLeft: "0.3rem", marginTop: "0.2rem" }}
+        />
+      ),
+    },
   ];
 
   return (
     <>
       {matchDownSm && (
-        <MainNavBarDrawer 
+        <MainNavBarDrawer
           open={drawerOpen}
           onClose={() => setDrawerOpen(false)}
         />
@@ -92,6 +108,7 @@ export default function MainNavBar() {
                     }
                   >
                     {item.name}
+                    {item.icon}
                   </NavLink>
                 </li>
               ))}
@@ -123,66 +140,52 @@ export default function MainNavBar() {
           ) : (
             <ul className={classes.buttonList}>
               <li>
-                <IconButton onClick={() => navigate("/chat")}>
-                  <RiChat4Line size={20} className={classes.navIcon} />
+                <IconButton
+                  onClick={() => {
+                    navigate("/chat");
+                    setHasUnreadChat(false);
+                  }}
+                >
+                  <Badge
+                    color="secondary"
+                    variant="dot"
+                    invisible={!hasUnreadChat}
+                  >
+                    <RiChat4Line size={20} className={classes.navIcon} />
+                  </Badge>
                 </IconButton>
               </li>
               <li>
-                <IconButton>
-                  <RiNotification3Line size={20} className={classes.navIcon} />
+                <IconButton onClick={handleNotiMenuClick}>
+                  <Badge
+                    color="secondary"
+                    variant="dot"
+                    invisible={!hasUnreadNotifications}
+                  >
+                    <RiNotification3Line
+                      size={20}
+                      className={classes.navIcon}
+                    />
+                  </Badge>
                 </IconButton>
+                <MainNavBarNotiMenu
+                  anchorEl={anchorElNoti}
+                  open={openNoti}
+                  handleClose={handleNotiMenuClose}
+                />
               </li>
               <li>
-                <IconButton onClick={handleClick}>
+                <IconButton onClick={handleMenuClick}>
                   <Avatar
                     src={userPFP || ""}
                     sx={{ width: 36, height: 36 }}
                   ></Avatar>
                 </IconButton>
-                <Menu
+                <MainNavBarMenu
                   anchorEl={anchorEl}
                   open={open}
-                  onClose={handleClose}
-                  onClick={handleClose}
-                  transformOrigin={{ horizontal: "right", vertical: "top" }}
-                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                  disableScrollLock={true}
-                >
-                  <MenuItem
-                    sx={{ minHeight: "32px" }}
-                    onClick={() => navigate(`/p/${userID}`)}
-                  >
-                    <ListItemIcon>
-                      <RiUserLine size={22} />
-                    </ListItemIcon>
-                    <ListItemText>프로필</ListItemText>
-                  </MenuItem>
-                  <MenuItem
-                    sx={{ minHeight: "32px" }}
-                    onClick={() => navigate("/my-post")}
-                  >
-                    <ListItemIcon>
-                      <RiArticleLine size={22} />
-                    </ListItemIcon>
-                    <ListItemText>My 게시글</ListItemText>
-                  </MenuItem>
-                  <MenuItem
-                    sx={{ minHeight: "32px" }}
-                    onClick={() => navigate("/bookmark")}
-                  >
-                    <ListItemIcon>
-                      <RiBookmarkLine size={22} />
-                    </ListItemIcon>
-                    <ListItemText>My 북마크 & 좋아요</ListItemText>
-                  </MenuItem>
-                  <Divider />
-                  <MenuItem sx={{ minHeight: "32px" }} onClick={logout}>
-                    <ListItemIcon>
-                      <RiLogoutBoxLine size={22} />
-                    </ListItemIcon>
-                    <ListItemText>로그아웃</ListItemText>
-                  </MenuItem>
-                </Menu>
+                  handleClose={handleMenuClose}
+                />
               </li>
             </ul>
           )}

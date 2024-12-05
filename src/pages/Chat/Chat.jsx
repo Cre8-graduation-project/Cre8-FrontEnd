@@ -24,12 +24,14 @@ import { isEmpty } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
 
 import classes from "./Chat.module.css";
+import { useNotifications } from "../../provider/notificationProvider";
 
 export default function ChatPage() {
   const loadedData = useRouteLoaderData("chat-page");
   const theme = useTheme();
   const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
-  const { memberCode } = useAuth(); 
+  const { memberCode } = useAuth();
+  const { hasUnreadChat } = useNotifications();
   const [data, setData] = useState(loadedData);
   const [newChatDialogOpen, setNewChatDialogOpen] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState({
@@ -41,8 +43,8 @@ export default function ChatPage() {
   const location = useLocation();
   const chatQuery = location.state?.chatQuery ?? {};
 
+  // Immediately start chat upon request
   useEffect(() => {
-    // Immediately start chat upon request
     if (!isEmpty(chatQuery)) {
       chatRequestWithUserCode(chatQuery.targetCode).then((res) => {
         if (res != null) {
@@ -52,53 +54,74 @@ export default function ChatPage() {
     }
   }, []);
 
-  const onMsgReceived = useCallback((msg) => {
-    if(msg.messageType == "ENTER") {
-      // update read count to 0 in chatContent
-      setChatContent((prevChat) => {
-        const updatedMessageList = [...(prevChat.messageResponseDtoList || [])];
-        for (let i = updatedMessageList.length - 1; i >= 0; i--) {
-          if (updatedMessageList[i].senderId === memberCode && updatedMessageList[i].readCount === 1) {
-            updatedMessageList[i] = { ...updatedMessageList[i], readCount: 0 };
-          } else if (updatedMessageList[i].readCount === 0) {
-            break;
-          }
-        }
-        return {  
-          ...prevChat,
-          messageResponseDtoList: updatedMessageList,
-        };
-      });
-    }
-    else if(msg.messageType == "MESSAGE") {
-      // update chat content
-      setChatContent((prevChat) => {
-        const updatedMessageList = [msg, ...(prevChat.messageResponseDtoList || [])];
-        return {
-          ...prevChat,
-          messageResponseDtoList: updatedMessageList,
-        };
-      });
-      // update chat list
-      setData((prevData) => {
-        const listIndex = prevData.findIndex(
-          (item) => item.roomId == selectedRoom.roomId
-        );
-        if (listIndex === -1) return prevData;
-        const updatedObj = {
-          ...prevData[listIndex],
-          latestMessage: msg.contents,
-        };
+  // Update Chat list when new chat is received
+  useEffect(() => {
+    ChatListLoader({}).then((listRes) => {
+      setData(listRes);
+    })
+  }, [hasUnreadChat]);
 
-        return [
-          updatedObj,
-          ...prevData.slice(0, listIndex),
-          ...prevData.slice(listIndex + 1),
-        ];
-      });
-    }
-  }, [selectedRoom.roomId]);
-  
+  const onMsgReceived = useCallback(
+    (msg) => {
+      if (msg.messageType == "ENTER") {
+        // update read count to 0 in chatContent
+        setChatContent((prevChat) => {
+          const updatedMessageList = [
+            ...(prevChat.messageResponseDtoList || []),
+          ];
+          for (let i = 0; i < updatedMessageList.length; i++) {
+            if (
+              updatedMessageList[i].senderId == memberCode &&
+              updatedMessageList[i].readCount == 1
+            ) {
+              updatedMessageList[i] = {
+                ...updatedMessageList[i],
+                readCount: 0,
+              };
+            } else {
+              break;
+            }
+          }
+          return {
+            ...prevChat,
+            messageResponseDtoList: updatedMessageList,
+          };
+        });
+        //console.log(chatContent);
+      } else if (msg.messageType == "MESSAGE") {
+        // update chat content
+        setChatContent((prevChat) => {
+          const updatedMessageList = [
+            msg,
+            ...(prevChat.messageResponseDtoList || []),
+          ];
+          return {
+            ...prevChat,
+            messageResponseDtoList: updatedMessageList,
+          };
+        });
+        // update chat list
+        setData((prevData) => {
+          const listIndex = prevData.findIndex(
+            (item) => item.roomId == selectedRoom.roomId
+          );
+          if (listIndex === -1) return prevData;
+          const updatedObj = {
+            ...prevData[listIndex],
+            latestMessage: msg.contents,
+          };
+
+          return [
+            updatedObj,
+            ...prevData.slice(0, listIndex),
+            ...prevData.slice(listIndex + 1),
+          ];
+        });
+      }
+    },
+    [selectedRoom.roomId]
+  );
+
   const { sendMessage, connectionStatus } = useChatConnection(
     selectedRoom.roomId,
     onMsgReceived
@@ -123,7 +146,7 @@ export default function ChatPage() {
       chatRequest(userID).then((res) => {
         if (res != null) {
           setSelectedRoom({ roomId: res, nickName: userID });
-          ChatListLoader().then((listRes) => {
+          ChatListLoader({}).then((listRes) => {
             setData(listRes);
           });
         }
@@ -133,9 +156,9 @@ export default function ChatPage() {
       Toast.error("채팅 서버에 연결되지 않았습니다. 나중에 다시 시도해주세요.");
     }
   };
-  const handleListClick = (key, name) => {
+  const handleListClick = (key, name, accessUrl) => {
     if (connectionStatus === "connected") {
-      setSelectedRoom({ roomId: key, nickName: name });
+      setSelectedRoom({ roomId: key, nickName: name, accessUrl: accessUrl });
     } else {
       Toast.error("채팅 서버에 연결되지 않았습니다. 나중에 다시 시도해주세요.");
     }
@@ -193,9 +216,9 @@ export default function ChatPage() {
               label="사용자 아이디"
             />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleDialogClose}>취소</Button>
-            <Button type="submit">대화 시작</Button>
+          <DialogActions sx={{padding: "0 24px 24px 24px"}}>
+            <Button color="inherit" onClick={handleDialogClose}>취소</Button>
+            <Button variant="contained" type="submit">대화 시작</Button>
           </DialogActions>
         </Dialog>
       </TitleBar>
@@ -206,11 +229,25 @@ export default function ChatPage() {
               data.map((item, index) => (
                 <ChatListCard
                   key={index}
+                  accessUrl={item.accessUrl}
                   name={item.nickName}
                   message={item.latestMessage}
                   unReadCount={item.unReadMessage}
                   onClick={() => {
-                    handleListClick(item.roomId, item.nickName);
+                    handleListClick(item.roomId, item.nickName, item.accessUrl);
+                    if (item.unReadMessage > 0) {
+                      setData((prev) => {
+                        const updatedObj = {
+                          ...prev[index],
+                          unReadMessage: 0,
+                        };
+                        return [
+                          updatedObj,
+                          ...prev.slice(0, index),
+                          ...prev.slice(index + 1),
+                        ];
+                      });
+                    }
                   }}
                 />
               ))}
@@ -226,16 +263,13 @@ export default function ChatPage() {
                   accessUrl={selectedRoom.accessUrl}
                   backBtn={matchDownSm}
                   onBackClick={() => {
-                    setSelectedRoom({roomId: -1, nickName: ""});
+                    setSelectedRoom({ roomId: -1, nickName: "" });
                   }}
                 />
                 <ChatContent
                   roomId={selectedRoom.roomId}
                   chatContent={chatContent}
                   setChatContent={setChatContent}
-                  updateAvatar={(url) => {
-                    setSelectedRoom((prev) => ({ ...prev, accessUrl: url }));
-                  }}
                 />
                 <ChatInputBar handleChatSend={handleChatSend} />
               </>

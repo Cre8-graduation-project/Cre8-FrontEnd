@@ -12,6 +12,7 @@
     margin: 0.1rem 0;
     font-size: 18px;
     font-weight: 700;
+    cursor: default;
   }
 }
 
@@ -41,7 +42,7 @@
   background-color: var(--color-gray-100) !important;
 }
 .homeCommunityCardLink .titleCategory {
-  color: #656360;
+  color: var(--color-gray-900);
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
@@ -54,7 +55,7 @@
   min-width: 0;
 }
 .homeCommunityCardLink .titleComment {
-  color: #ef5350;
+  color: var(--color-warning) !important;
   font-weight: 500;
   white-space: nowrap;
   flex-shrink: 0;
@@ -102,12 +103,11 @@
   flex-direction: column;
   padding: 1rem 1rem 0.7rem 1rem;
   border-radius: 0.7rem !important;
-  background-color: white !important;
   border: 1px solid var(--color-gray-200);
   position: relative;
   cursor: pointer;
 
-  h3 {
+  h4 {
     margin: 1.1rem 0 !important;
     margin-bottom: 1rem !important;
     overflow: hidden;
@@ -146,18 +146,18 @@
   bottom: 0;
   width: 30%;
   height: 6rem;
-  background: linear-gradient(to left, white 30%, transparent 100%);
+  background: linear-gradient(to left, var(--color-mui-base-gradient) 30%, transparent 100%);
   pointer-events: none;
 }
 .homeJobPostCard:hover::after {
-  background: linear-gradient(to left, var(--color-gray-100) 30%, transparent 100%);
+  background: linear-gradient(to left, var(--color-mui-base-gradient-hover) 30%, transparent 100%);
 }
 
 @media (max-width: 600px) {
   .homeJobPostCard {
     flex-direction: row;
 
-    h3 {
+    h4 {
       margin-top: 0 !important;
       margin-bottom: 0.8rem !important;
     }

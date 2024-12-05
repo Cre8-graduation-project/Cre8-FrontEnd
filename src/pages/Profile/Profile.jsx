@@ -8,7 +8,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 import classes from "./Profile.module.css";
 
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import { PortfolioGrid } from "../../components/Portfolio/PortfolioGrid";
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider";

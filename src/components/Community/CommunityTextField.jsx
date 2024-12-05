@@ -8,6 +8,7 @@ import classes from "./CommComponent.module.css";
 export default function CommunityTextField({
   communityPostId,
   parentReplyId,
+  isReplyTextField = false,
   isUpdating,
   setIsUpdating,
 }) {
@@ -24,13 +25,20 @@ export default function CommunityTextField({
       contents: commentData,
     }).then((res) => {
       if (res == "201") {
+        setCommentData("");
         setIsUpdating("done");
       }
     });
   };
 
   return (
-    <div className={classes.communityCommentTextField}>
+    <div
+      className={
+        isReplyTextField
+          ? `${classes.communityCommentTextField} ${classes.communityReplyTextField}`
+          : classes.communityCommentTextField
+      }
+    >
       <TextField
         value={commentData}
         onChange={(e) => setCommentData(e.target.value)}

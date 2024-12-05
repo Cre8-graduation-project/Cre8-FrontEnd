@@ -11,7 +11,8 @@ import { RiGlobalLine, RiTwitterXLine, RiYoutubeLine } from "@remixicon/react";
 
 import { useAuth } from "../../provider/authProvider";
 import apiInstance from "../../provider/networkProvider"
-import { EditorMenuBar, editorExtensions } from "../../components/Common/Editor";
+import { isFileSizeUnderLimit } from "../../provider/utilityProvider";
+import { EditorMenuBar, editorExtensions } from "../../components/Editor/Editor";
 import { PortfolioGrid } from "../../components/Portfolio/PortfolioGrid";
 import { Toast } from "../../components/Common/Toast";
 import classes from "./Profile.module.css";
@@ -71,6 +72,9 @@ export default function ProfileEditPage() {
     if (e.target.type === "file") {
       // Fetch Preview Image
       if (!e.target.files) return;
+      if (!isFileSizeUnderLimit(e.target.files[0])) {
+        Toast.error("1MB 이하의 이미지만 사용할 수 있습니다.");
+      }
       const userImg = e.target.files[0];
       const imgURL = window.URL.createObjectURL(userImg);
       setUploadedPFP(userImg);
@@ -225,7 +229,7 @@ const ProfileEditor = ({ profileAbout, setProfileAbout }) => {
 
   return (
     <>
-      <EditorMenuBar editor={editor} />
+      <EditorMenuBar editor={editor} enableGemini={true} />
       <EditorContent editor={editor} />
     </>
   );
@@ -249,6 +253,7 @@ async function profileEditAction(formData) {
     }
   } catch (error) {
     // 로그인 실패
+    console.log(error)
     if (error.response && error.response.status === 400) {
       Toast.error("이미 사용 중인 닉네임입니다.");
     } else if (error.response && error.response.status === 401) {

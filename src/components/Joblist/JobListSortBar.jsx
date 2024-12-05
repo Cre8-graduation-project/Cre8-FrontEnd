@@ -73,11 +73,7 @@ export default function JobListSortBar({ pageType, pageObj, setObj }) {
             <li key={`btn${index}`}>
               <Button
                 onClick={() => handleBtnClick(index)}
-                sx={
-                  selectedItemIndex == index
-                    ? { color: "#512DA8" }
-                    : { color: "#1f1d1b" }
-                }
+                color={(selectedItemIndex == index) ? "primary" : "inherit"}
                 disabled={false}
               >
                 {menu.name}

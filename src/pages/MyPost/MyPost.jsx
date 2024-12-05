@@ -25,8 +25,7 @@ export default function MyPostPage() {
   const [pageSearchObj, setPageSearchObj] = useState({
     page: 0,
     size: 10,
-    sort: ["createdAt"],
-    direction: "desc",
+    sort: ["createdAt,desc"],
   });
   const [hasNextPage, setHasNextPage] = useState(true);
 
@@ -68,12 +67,13 @@ export default function MyPostPage() {
   // Add Scroll Event Listener
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollTop, offsetHeight } = document.documentElement;
-      if (window.innerHeight + scrollTop >= offsetHeight) {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const threshold = 300; // Adjust as needed
+      if (scrollTop + clientHeight >= scrollHeight - threshold) {
         setIsFetching(true);
       }
     };
-    setIsFetching(true);
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

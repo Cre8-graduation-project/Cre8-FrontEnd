@@ -10,12 +10,15 @@
   display: flex;
   flex-grow: 2;
   border-top: 1px solid var(--color-gray-400);
+  min-height: 75dvh;
 }
 
 .chatList {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  width: 100%;
+  min-width: 13rem;
   max-width: 15rem;
 }
 
@@ -31,9 +34,16 @@
   flex-grow: 5;
   justify-content: space-between;
   border-left: 1px solid var(--color-gray-400);
+  width: 100%;
 }
 .chatContent p {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .chatContent {
+    border-left: 0;
+  }
 }

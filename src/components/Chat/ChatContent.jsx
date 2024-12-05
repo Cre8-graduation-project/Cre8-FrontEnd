@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { CircularProgress } from "@mui/material";
-import { throttle, getAMPMTime } from "../../provider/utilityProvider";
+import { throttle, getAMPMTime, getDateString } from "../../provider/utilityProvider";
 import apiInstance from "../../provider/networkProvider";
 import { useAuth } from "../../provider/authProvider";
 import { Toast } from "../Common/Toast";
 import classes from "./ChatComponent.module.css";
 
-export default function ChatContent({ roomId, chatContent, setChatContent, updateAvatar = () => {}  }) {
+export default function ChatContent({ roomId, chatContent, setChatContent }) {
   const { memberCode } = useAuth();
   const [isFetching, setIsFetching] = useState(false);
   // Page Info
@@ -35,7 +35,6 @@ export default function ChatContent({ roomId, chatContent, setChatContent, updat
     chatContentLoader(roomId).then((res) => {
       isInitialLoad.current = true;
       setChatContent(res);
-      updateAvatar(res.opponentAccessUrl);
       setHasNextPage(res.hasNextPage);
       setIsFetching(false);
     });
@@ -74,7 +73,6 @@ export default function ChatContent({ roomId, chatContent, setChatContent, updat
           ...prev,
           page: prev.page + 1,
         }));
-        updateAvatar(data.opponentAccessUrl);
         setHasNextPage(data.hasNextPage);
         setIsFetching(false);
         // Adjust scroll position after new content is rendered
@@ -108,30 +106,43 @@ export default function ChatContent({ roomId, chatContent, setChatContent, updat
     return () => chatContentElement.removeEventListener("scroll", handleScroll);
   }, [hasNextPage, isFetching]);
 
-  // Chat Bubble Renderer
-  const renderChatBubble = useCallback(
-    (item, index) => {
-      const bubbleClass = memberCode == item.senderId ? classes.chatMyBubble : classes.chatOthersBubble;
-      return (
-        <div className={`${classes.chatBubbleContainer} ${bubbleClass}`}>
-          <div className={classes.chatReadCount}>
-            {item.senderId == memberCode && <p>{item.readCount}</p>}
-            <p>{getAMPMTime(item.createdAt)}</p>
-          </div>
-          <span
-            key={item.id || index}
-            className={classes.chatBubble}
-          >
-            {item.contents}
-          </span>
-        </div>
-      );
-    }, [memberCode]
-  );
-
   const reversedMessages = useMemo(() => {
     return chatContent?.messageResponseDtoList?.slice(0).reverse() || [];
   }, [chatContent]);
+
+  // Chat Bubble Renderer
+  const renderChatBubble = useCallback(
+    (item, index) => {
+      const bubbleClass =
+        memberCode == item.senderId
+          ? classes.chatMyBubble
+          : classes.chatOthersBubble;
+
+      const previousItem = reversedMessages[index - 1];
+      const showDateIndicator = !previousItem ||
+        getDateString(item.createdAt) !== getDateString(previousItem.createdAt);
+
+      return (
+        <div key={item.id || index}>
+          {showDateIndicator && (
+            <div className={classes.chatDateIndicator}>
+              <p>{getDateString(item.createdAt)}</p>
+            </div>
+          )}
+          <div className={`${classes.chatBubbleContainer} ${bubbleClass}`}>
+            <div className={classes.chatReadCount}>
+            {item.senderId == memberCode && item.readCount != 0 && (
+              <p>{item.readCount}</p>
+            )}
+            <p>{getAMPMTime(item.createdAt)}</p>
+            </div>
+            <span className={classes.chatBubble}>{item.contents}</span>
+          </div>
+        </div>
+      );
+    },
+    [memberCode, reversedMessages]
+  );
 
   return (
     <div className={classes.chatContent} ref={chatContentRef}>
@@ -140,9 +151,7 @@ export default function ChatContent({ roomId, chatContent, setChatContent, updat
         <p>표시할 내용이 없습니다.</p>
       )}
       {reversedMessages.length > 0 && (
-        <>
-          {reversedMessages.map(renderChatBubble)}
-        </>
+        <>{reversedMessages.map(renderChatBubble)}</>
       )}
     </div>
   );

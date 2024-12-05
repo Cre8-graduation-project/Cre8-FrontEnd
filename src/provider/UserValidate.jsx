@@ -77,5 +77,17 @@ export default function UserValidate(data, type) {
     }
   }
 
+  if (type === "changePassword") {
+    if (!data.newPassword) {
+      errors.newPassword = "새로운 비밀번호를 입력해주세요.";
+    } else if (data.newPassword.length < 5) {
+      errors.newPassword = "비밀번호는 5글자 이상이어야 합니다.";
+    } else if (data.newPassword.length > 20) {
+      errors.newPassword = "비밀번호는 20글자 이하이어야 합니다.";
+    } else {
+      delete errors.newPassword;
+    }
+  }
+
   return errors;
 }

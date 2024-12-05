@@ -9,7 +9,7 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
-import { RiHeartFill, RiMoreLine } from "@remixicon/react";
+import { RiHeartLine, RiHeartFill, RiMoreLine } from "@remixicon/react";
 
 import PageContent from "../../components/Common/PageContent";
 import TitleBar from "../../components/Common/TitleBar";
@@ -17,7 +17,7 @@ import ImagePopUp from "../../components/Common/ImagePopUp";
 import apiInstance from "../../provider/networkProvider";
 import { useAuth } from "../../provider/authProvider";
 import { Toast } from "../../components/Common/Toast";
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import { dateTimeExtractor, isEmpty } from "../../provider/utilityProvider";
 import classes from "./Community.module.css";
 import CommunityComment from "../../components/Community/CommunityComment";
@@ -126,7 +126,7 @@ export default function CommunityPostPage() {
           <div className={classes.communityPostTitle}>
             <h2>{data.title}</h2>
             <h4>{data.writerNickName}</h4>
-            <p>{dateTimeExtractor(data.createdAt).fullString}</p>
+            <p>{dateTimeExtractor(data.createdAt)?.fullString}</p>
           </div>
           <div className={classes.communityPostContentArea}>
             {!isEmpty(data.accessUrl) && (
@@ -147,7 +147,7 @@ export default function CommunityPostPage() {
                   variant="contained"
                   size="small"
                   disabled={!isLoggedIn}
-                  startIcon={<RiHeartFill size="16" />}
+                  startIcon={isLikeClicked ? <RiHeartFill size="16"/> : <RiHeartLine size="16"/>}
                   onClick={handleLikeClick}
                 >
                   좋아요

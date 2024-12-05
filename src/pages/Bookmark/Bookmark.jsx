@@ -80,12 +80,13 @@ export default function BookmarkPage() {
   // Add Scroll Event Listener
   useEffect(() => {
     const handleScroll = () => {
-      const { scrollTop, offsetHeight } = document.documentElement;
-      if (window.innerHeight + scrollTop >= offsetHeight) {
-        setIsFetching(hasNextPage);
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      const threshold = 300; // Adjust as needed
+      if (scrollTop + clientHeight >= scrollHeight - threshold) {
+        setIsFetching(true);
       }
     };
-    setIsFetching(true);
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

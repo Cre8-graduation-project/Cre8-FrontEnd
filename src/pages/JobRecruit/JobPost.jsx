@@ -18,8 +18,9 @@ import PageContent from "../../components/Common/PageContent";
 import TitleBar from "../../components/Common/TitleBar";
 import TagList from "../../components/Tag/TagList";
 import DeleteDialog from "../../components/Dialog/DeleteDialog";
+import PortfolioAccordion from "../../components/Portfolio/PortfolioAccordion";
 import { Toast } from "../../components/Common/Toast";
-import { ReadOnlyEditor } from "../../components/Common/Editor";
+import { ReadOnlyEditor } from "../../components/Editor/Editor";
 import apiInstance from "../../provider/networkProvider";
 import { isEmpty } from "../../provider/utilityProvider";
 import { useAuth } from "../../provider/authProvider";
@@ -49,10 +50,6 @@ export default function JobPostPage() {
     );
     setTagDataList(tempList);
   }, []);
-
-  const handleImgClick = (e, portfolioID) => {
-    navigate(`./${portfolioID}`);
-  };
 
   const handleChatClick = () => {
     navigate('/chat', { state: { chatQuery: {
@@ -101,27 +98,11 @@ export default function JobPostPage() {
           <div className={classes.jobTagListArea}>
             <TagList tagList={tagDataList} />
           </div>
-          <div className={classes.jobPostPtfArea}>
-            <h3>작성자 포트폴리오</h3>
-            <ImageList cols={matchDownMd ? 3 : 5 } gap={10}>
-              {data.portfolioSimpleResponseDtoList.length > 0 &&
-                data.portfolioSimpleResponseDtoList.map((item) => (
-                  <ImageListItem
-                    key={item.id}
-                    className={classes.jobPortfolioThumbnail}
-                  >
-                    <img
-                      src={`${item.accessUrl}`}
-                      alt={item.id}
-                      onClick={(e) => {
-                        handleImgClick(e, item.id);
-                      }}
-                    />
-                  </ImageListItem>
-                ))}
-              {data.portfolioSimpleResponseDtoList.length == 0 && "표시할 내용이 없습니다."}
-            </ImageList>
-          </div>
+          <PortfolioAccordion 
+            memberCode={data.writerId} 
+            memberId={data.writerLoginId}
+            portfolioData={data.portfolioSimpleResponseDtoList} 
+          />
           <div className={classes.jobPostInfoArea}>
             <Grid
               container
@@ -136,7 +117,7 @@ export default function JobPostPage() {
                 <h3>역량</h3>
                 {data.tagPostResponseDto.subCategoryWithChildTagResponseDtoList.map(
                   (item, itemIndex) => (
-                    <div key={itemIndex} className={classes.jobPostInfoAreaRow}>
+                    <div key={itemIndex} className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                       <p>{item.subCategoryName}</p>
                       <ul>
                         {item.childTagName.map((child, childIndex) => (
@@ -156,12 +137,12 @@ export default function JobPostPage() {
               />
               <Grid item xs={2} sm={15} className={classes.jobPostInfoBox}>
                 <h3>작성자 정보</h3>
-                <div className={classes.jobPostInfoAreaRow}>
+                <div className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                   <p>희망 급여</p>
                   <Chip label={data.paymentMethod} size="small" />
                   <b>{data.paymentAmount}원</b>
                 </div>
-                <div className={classes.jobPostInfoAreaRow}>
+                <div className={`${classes.jobPostInfoAreaRow} ${classes.jobPostIntoAreaRowDisp}`}>
                   <p>작업 경력</p>
                   <b>{data.careerYear}년</b>
                 </div>

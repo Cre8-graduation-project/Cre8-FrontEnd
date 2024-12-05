@@ -48,11 +48,16 @@ export default function LoginPage() {
       setFocus(FOCUS_ALL_DATA);
     } else {
       // 로그인 시도
-      const success = await sendLoginRequest(loginData);
-      // 로그인 성공 시 메인 페이지로 이동
-      if (success) {
-        navigate("/", { replace: true });
-      }
+      sendLoginRequest(loginData).then((res) => {
+        // 로그인 성공 시 메인 페이지로 이동
+        if (res.isSuccess) {
+          if(res.isTempPassword) {
+            navigate("/changePassword", { state: { isTempPassword: true } });
+          } else {
+            navigate("/", { replace: true });
+          }
+        }
+      });
     }
   };
 
@@ -82,7 +87,7 @@ export default function LoginPage() {
             required
           />
           {loginError.userID && focus.userID && (
-            <span>{loginError.userID}</span>
+            <p>{loginError.userID}</p>
           )}
         </div>
         <div className={classes.authLabel}>
@@ -97,7 +102,7 @@ export default function LoginPage() {
             required
           />
           {loginError.password && focus.password && (
-            <span>{loginError.password}</span>
+            <p>{loginError.password}</p>
           )}
         </div>
         <ul className={classes.rightUL}>
@@ -140,7 +145,7 @@ const sendLoginRequest = async (inputData) => {
       });
 
       Toast.loginSuccess(`${inputData.userID}님 환영합니다.`);
-      return true;
+      return { isSuccess: true, isTempPassword: response.data.data.tmppassword };
     }
   } catch (error) {
     if (error.response && error.response.status === 400) {
@@ -150,7 +155,7 @@ const sendLoginRequest = async (inputData) => {
       Toast.loginError("알 수 없는 오류가 발생했습니다.");
     }
   }
-  return false;
+  return { isSuccess: false };
 };
 
 const FOCUS_ALL_DATA = {
